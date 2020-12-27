@@ -1,0 +1,56 @@
+***************
+*             *
+* Wyri's Tale *
+*             *
+***************
+
+=========
+| Story |
+=========
+
+Outline
+^^^^^^^
+
+Wyri seeks to reach the top of mount ascent to unravel the mystery behind the legend of the dragon.
+
+Characters
+^^^^^^^^^^
+
+Wyri - the protagonist. He is a bubble mage.
+The dragon - a 10000 year old dragon waiting for the chosen one.
+
+==============
+| Game Scope |
+==============
+
+* 5 abilities
+* 1 boss
+
+Abilities
+^^^^^^^^^
+
+* small bubbles (hold action key)
+	- push objects, hit switches
+* big bubble (press action key)
+	- can jump on it -> perform double jump
+* bubble around player (hold jump underwater)
+	- float upwards in water & air refill
+* bubble boost (up + action key)
+	- upwards boost to reach high places
+* bubble explosion (jump on bubble)
+	- destroy blocks
+
+Biomes/Places
+^^^^^^^^^^^^^
+
+* The dragon's foot
+* 
+
+Objects
+^^^^^^^
+
+* block
+* platform
+* spikes (^,v,<,>)
+* switch
+* switch block
