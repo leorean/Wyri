@@ -223,7 +223,7 @@ namespace Wyri.Main
                 {
                     for (var j = 0; j < Height * G.T; j += camera.ViewHeight)
                     {
-                        var c = CollisionExtensions.CollisionPoint<Room>(i + G.T, j + G.T);
+                        var c = Collisions.CollisionPoint<Room>(i + G.T, j + G.T);
                         if (c.Count == 0)
                         {
                             room = new Room(i, j, camera.ViewWidth, camera.ViewHeight);

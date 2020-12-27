@@ -135,7 +135,7 @@ namespace Wyri.Objects
 
             //onPlatform
 
-            var waterTile = CollisionExtensions.TileAt(X, Y + 4, "WATER");
+            var waterTile = Collisions.TileAt(X, Y + 4, "WATER");
 
             inWater = waterTile != null;
             yGrav = inWater ? yGravWater : yGravAir;
@@ -143,6 +143,20 @@ namespace Wyri.Objects
             yMax = inWater ? yMaxWater : yMaxAir;
 
             onGround = yVel >= 0 && this.CollisionRectTile(0, yGrav);
+
+            var platformTile = Collisions.TileAt(X, Y + G.T + yVel, "FG");
+            var platformTileAbove = Collisions.TileAt(X, Y + yVel, "FG");
+            var platformTileBelow = Collisions.TileAt(X, Y + yVel + 2, "FG");
+
+            if (platformTile != null && platformTile.IsPlatform && asdf)
+            {
+                if (yVel > -yGrav)
+                {
+                    yVel = -yGrav;
+                    onGround = true;
+                }
+            }
+
             if (onGround)
             {
                 jumped = false;
@@ -191,7 +205,7 @@ namespace Wyri.Objects
 
             AnimationState[State].Update();
 
-            var room = CollisionExtensions.CollisionPoint<Room>(X, Y).FirstOrDefault();
+            var room = Collisions.CollisionPoint<Room>(X, Y).FirstOrDefault();
             if (room != null)
             {
                 if (room != MainGame.Camera.Room)

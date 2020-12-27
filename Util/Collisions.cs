@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Wyri.Objects;
 using Wyri.Types;
 
-namespace Wyri.Objects
+namespace Wyri
 {
-    public static class CollisionExtensions
+    public static class Collisions
     {
         public static List<T> CollisionBounds<T>(this SpatialObject self, int offX = 0, int offY = 0) where T : SpatialObject
         {
