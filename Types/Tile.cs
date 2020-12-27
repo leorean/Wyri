@@ -63,7 +63,7 @@ namespace Wyri.Types
         public int AnimationFrame { get; private set; } = 0;
         public bool IsPlatform { get; set; } = false;        
         public SwitchState SwitchState { get; set; } = SwitchState.None;
-
+        
         public Tile(int id)
         {
             ID = id;
@@ -88,7 +88,10 @@ namespace Wyri.Types
                         IsVisible = false;
 
                     if (o == "P")
+                    {
+                        IsSolid = false;
                         IsPlatform = true;
+                    }
 
                     if (o.StartsWith("A"))
                     {

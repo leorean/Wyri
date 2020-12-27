@@ -84,7 +84,8 @@ namespace Wyri.Main
                     for (int i = 0; i < layerData.Length; i++)
                     {
                         var tileID = int.Parse(layerData[i]) - 1;
-                        tileGrid[i] = new Tile(tileID, OptionsForID(tileID));
+                        if (tileID != -1)
+                            tileGrid[i] = new Tile(tileID, OptionsForID(tileID));
                     }
 
                     LayerData.Add(xmlLayer.Attributes["name"].Value, tileGrid);
@@ -291,10 +292,12 @@ namespace Wyri.Main
                             if(tile.SwitchState == SwitchState.Switch1)
                             {
                                 switchOffset = camera.Room.SwitchState ? 1 : 0;
+                                tile.IsSolid = camera.Room.SwitchState ? false : true;
                             }
                             if (tile.SwitchState == SwitchState.Switch2)
                             {
                                 switchOffset = camera.Room.SwitchState ? -1 : 0;
+                                tile.IsSolid = camera.Room.SwitchState ? true : false;
                             }
 
                             var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
@@ -303,42 +306,11 @@ namespace Wyri.Main
                         }
                     }
                 }
-
-                //for (int i = minX; i < maxX; i++)
-                //{
-                //    for (int j = minY; j < maxY; j++)
-                //    {
-                //        var tile = layer.Value[i, j];
-
-                //        if (tile == null)
-                //            continue;
-
-                //        //tile.UpdateAnimation();
-
-                //        if (tile.IsVisible)
-                //        {
-                //            var tid = tile.ID;
-
-                //            var tix = (tid * G.T) % GameResources.Tiles.Width;
-                //            var tiy = M.Div(tid * G.T, GameResources.Tiles.Width) * G.T;
-
-                //            var frame = AnimationForID(tile.ID) != null ? AnimationForID(tile.ID).AnimationFrame : 0;
-
-                //            var partRect = new Rectangle(tix + G.T * frame, tiy, G.T, G.T);
-
-                //            sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
-                //        }
-                //    }
-                //}
             }
         }
 
         public void Update()
         {
-            //foreach (var element in TileOptionsDictionary.Values)
-            //{
-            //    element.Item2.Update();
-            //}
         }
     }
 }

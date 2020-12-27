@@ -11,7 +11,11 @@ namespace Wyri.Types
         public TextureSet Texture { get; set; }
         public int MinFrame { get; set; }
         public int MaxFrame { get; set; }
-        public int Frame => (int)Math.Floor(frame);
+        public int Frame
+        {
+            get { return (int)Math.Floor(frame); }
+            set { frame = value; }
+        }
         public float AnimationSpeed { get; set; }
         public bool IsLooping { get; set; }
         public bool IsDone { get; private set; }

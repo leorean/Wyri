@@ -112,7 +112,7 @@ namespace Wyri
             GraphicsDevice.Clear(Color.Gray);
 
             Camera.ResolutionRenderer.SetupDraw();
-
+            
             // actual object drawing etc.
 
             SpriteBatch.BeginCamera(Camera, BlendState.NonPremultiplied, DepthStencilState.None);
@@ -120,9 +120,9 @@ namespace Wyri
             Map.Draw(SpriteBatch);
             ObjectController.Draw(SpriteBatch);
 
-            SpriteBatch.End();
+            Camera.Draw(SpriteBatch);
 
-            //base.Draw(gameTime);
+            SpriteBatch.End();
         }
     }
 }

@@ -31,8 +31,12 @@ namespace Wyri.Types
 
         public bool Intersects(RectF b)
         {
+            /*
             return (Math.Abs(x - b.x) * 2 < (w + b.w)) &&
                 (Math.Abs(y - b.y) * 2 < (h + b.h));
+            */
+            return (Math.Abs((x + w / 2) - (b.x + b.w / 2)) * 2 < (w + b.w)) &&
+                (Math.Abs((y + h / 2) - (b.y + b.h / 2)) * 2 < (h + b.h));
         }
 
         public override int GetHashCode() => base.GetHashCode();

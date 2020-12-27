@@ -286,7 +286,10 @@ namespace Wyri.Main
 
         public void Draw(SpriteBatch sb)
         {
-
+            if (Room != null)
+            {
+                sb.Draw(GameResources.Background[Room.Background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
+            }
         }
     }
 }

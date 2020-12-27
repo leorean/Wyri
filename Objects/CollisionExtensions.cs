@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Wyri.Types;
 
 namespace Wyri.Objects
 {
@@ -70,15 +72,35 @@ namespace Wyri.Objects
             return detected;
         }
 
-        /*public static bool CollisionPoint<T>(this SpatialObject self, T other, float x, float y) where T : SpatialObject
+        public static Tile TileAt(float x, float y, string layer)
         {
-            if ((x >= other.Left || x <= other.Right)
-                && (y >= other.Top || y <= other.Bottom))
+            var grid = MainGame.Map.LayerData[layer];
+
+            var tx = M.Div(x, G.T);
+            var ty = M.Div(y, G.T);
+
+            return grid[tx, ty];
+        }
+
+        public static bool CollisionRectTile(this SpatialObject o, float x, float y)
+        {
+            var grid = MainGame.Map.LayerData["FG"];
+
+            for (float i = M.Div(o.Left, G.T) - G.T; i < M.Div(o.Right, G.T) + G.T; i++)
             {
-                return true;
+                for (float j = M.Div(o.Top, G.T) - G.T; j < M.Div(o.Bottom, G.T) + G.T; j++)
+                {
+                    var t = grid[(int)i, (int)j];
+                    if (t == null || !t.IsSolid)
+                        continue;
+
+                    var tileRect = new RectF(i * G.T, j * G.T, G.T, G.T);
+                    if ((o.BBox + new Vector2(o.X + x, o.Y + y)).Intersects(tileRect))
+                        return true;
+                }
             }
 
             return false;
-        }*/
+        }
     }
 }
