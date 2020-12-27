@@ -12,6 +12,9 @@ namespace Wyri
 
     public static class InputController
     {
+        private static MouseState prevMouseState;
+        private static MouseState currentMouseState;
+
         private static KeyboardState prevKeyState;
         private static KeyboardState currentKeyState;
 
@@ -33,10 +36,27 @@ namespace Wyri
             }
         }
 
+        public static bool IsMousePressed(KeyState keyState = KeyState.Holding)
+        {
+            switch (keyState)
+            {
+                case KeyState.Pressed:
+                    return currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton != ButtonState.Pressed;
+                case KeyState.Released:
+                    return currentMouseState.LeftButton != ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Pressed;
+                case KeyState.Holding:
+                    return currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Pressed;
+                default: return false;
+            }
+        }
+
         public static void Update()
         {
             prevKeyState = currentKeyState;
-            currentKeyState = Keyboard.GetState();            
+            currentKeyState = Keyboard.GetState();
+
+            prevMouseState = currentMouseState;
+            currentMouseState = Mouse.GetState();
         }
     }
 }

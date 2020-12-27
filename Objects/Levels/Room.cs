@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using Wyri.Types;
 
 namespace Wyri.Objects.Levels
 {
@@ -11,14 +12,14 @@ namespace Wyri.Objects.Levels
     {
         readonly List<Object> objects;
 
-        public int Width => BoundingBox.Width;
-        public int Height => BoundingBox.Height;
+        public int Width => (int)BBox.w;
+        public int Height => (int)BBox.h;
 
         public bool SwitchState { get; set; } = false;
 
-        public Room(int x, int y, int width, int height) : base(new Vector2(x, y), new Rectangle(0, 0, width, height))
+        public Room(int x, int y, int width, int height) : base(new Vector2(x, y), new RectF(0, 0, width, height))
         {
-            Offset = new Vector2(width * .5f, height * .5f);
+            //Offset = new Vector2(width * .5f, height * .5f);
             objects = new List<Object>();
         }
 
@@ -33,15 +34,9 @@ namespace Wyri.Objects.Levels
             objects.Remove(roomObject);
         }
 
-        public override void Draw(SpriteBatch sb)
-        {
-            //
-        }
-
-        public override void Update()
-        {
-            //
-        }
+        public override void Draw(SpriteBatch sb) { }
+        
+        public override void Update() { }
 
         ~Room()
         {

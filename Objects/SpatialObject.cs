@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,21 +10,30 @@ namespace Wyri.Objects
     public abstract class SpatialObject : Object
     {
         public Vector2 Position { get; set; }
-        public Rectangle BoundingBox { get; set; }
-        
-        public Vector2 Offset { get; set; }
+        public RectF BBox { get; set; }
 
-        public float X => Position.X;
-        public float Y => Position.Y;
-        public float Left => Position.X - BoundingBox.Width * .5f + Offset.X;
-        public float Top => Position.Y - BoundingBox.Height * .5f + Offset.Y;
-        public float Right => Position.X + BoundingBox.Width * .5f + Offset.X;
-        public float Bottom => Position.Y + BoundingBox.Height * .5f + Offset.Y;
+        public Vector2 Center { get => new Vector2((Left + Right) *.5f, (Top + Bottom) * .5f); }
+        public Vector2 DrawOffset { get; set; }
 
-        public SpatialObject(Vector2 position, Rectangle boundingBox)
+        public float X
+        {
+            get { return Position.X; }
+            set { Position = new Vector2(value, Y); }
+        }
+        public float Y
+        {
+            get { return Position.Y; }
+            set { Position = new Vector2(X, value); }
+        }
+        public float Left => X + BBox.x;
+        public float Top => Y + BBox.y;
+        public float Right => X + BBox.x + BBox.w;
+        public float Bottom => Y + BBox.y + BBox.h;
+
+        public SpatialObject(Vector2 position, RectF boundingBox)
         {
             Position = position;
-            BoundingBox = boundingBox;            
+            BBox = boundingBox;            
         }
     }
 }

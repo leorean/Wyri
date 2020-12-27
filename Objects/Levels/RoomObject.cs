@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Wyri.Types;
 
 namespace Wyri.Objects.Levels
 {
@@ -9,7 +10,7 @@ namespace Wyri.Objects.Levels
     {
         public Room Room { get; }
         
-        public RoomObject (Vector2 position, Rectangle boundingBox, Room room) : base(position, boundingBox)
+        public RoomObject (Vector2 position, RectF boundingBox, Room room) : base(position, boundingBox)
         {
             Room = room;
             room.AddObject(this);

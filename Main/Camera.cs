@@ -249,7 +249,7 @@ namespace Wyri.Main
         /// <param name="useIrr"></param>
         public Vector2 ToVirtual(Vector2 coord, bool useIrr = true)
         {
-            if (useIrr) coord = coord - new Vector2(ResolutionRenderer.Viewport.X, ResolutionRenderer.Viewport.Y);
+            if (useIrr) coord -= new Vector2(ResolutionRenderer.Viewport.X, ResolutionRenderer.Viewport.Y);
             return Vector2.Transform(coord, Matrix.Invert(GetViewTransformationMatrix()));
         }
 

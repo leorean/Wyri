@@ -173,7 +173,7 @@ namespace Wyri.Main
 
                 if (type == "player")
                 {
-                    MainGame.Player = new Player(new Vector2(x, y));
+                    MainGame.Player = new Player(new Vector2(x + width * .5f, y + height * .5f));
                     MainGame.Camera.Target = MainGame.Player;
                     break;
                 }
@@ -290,11 +290,11 @@ namespace Wyri.Main
                             int switchOffset = 0;
                             if(tile.SwitchState == SwitchState.Switch1)
                             {
-                                switchOffset = camera.Room.SwitchState ? 0 : 1;
+                                switchOffset = camera.Room.SwitchState ? 1 : 0;
                             }
                             if (tile.SwitchState == SwitchState.Switch2)
                             {
-                                switchOffset = camera.Room.SwitchState ? 0 : -1;
+                                switchOffset = camera.Room.SwitchState ? -1 : 0;
                             }
 
                             var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);

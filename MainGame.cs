@@ -16,7 +16,7 @@ namespace Wyri
         public static GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
         public static SpriteBatch SpriteBatch { get; private set; }
 
-        public static Map map;
+        public static Map Map;
         public static Camera Camera;
         public static Player Player;
 
@@ -71,16 +71,11 @@ namespace Wyri
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             GameResources.Init(Content);
-
-            map = new Map($"map.tmx");
-
-            // TODO: use this.Content to load your game content here
+            Map = new Map($"map.tmx");
 
             Camera.Position = new Vector2(ViewSize.Width * .5f, ViewSize.Height * .5f);
-            Camera.Room = map.Rooms[0];
+            Camera.Room = Map.Rooms[0];
         }
-
-        int debugRoomIndex;
 
         protected override void Update(GameTime gameTime)
         {
@@ -91,14 +86,14 @@ namespace Wyri
 
             InputController.Update();
 
-            if (InputController.IsKeyPressed(Keys.Right)) { Player.Position = new Vector2(Player.Position.X + 2, Player.Position.Y); }
-            if (InputController.IsKeyPressed(Keys.Left)) { Player.Position = new Vector2(Player.Position.X - 2, Player.Position.Y); }
-            if (InputController.IsKeyPressed(Keys.Down)) { Player.Position = new Vector2(Player.Position.X, Player.Position.Y + 2); }
-            if (InputController.IsKeyPressed(Keys.Up)) { Player.Position = new Vector2(Player.Position.X, Player.Position.Y - 2); }
-
-            if (InputController.IsKeyPressed(Keys.A, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
+            if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
             
-            map.Update();
+            if(InputController.IsMousePressed(KeyState.Pressed))
+            {
+                Player.Position = Camera.ToVirtual(Mouse.GetState().Position.ToVector2());
+            }
+
+            Map.Update();
             Camera.Update();
 
             ObjectController.Update();
@@ -122,7 +117,7 @@ namespace Wyri
 
             SpriteBatch.BeginCamera(Camera, BlendState.NonPremultiplied, DepthStencilState.None);
 
-            map.Draw(SpriteBatch);
+            Map.Draw(SpriteBatch);
             ObjectController.Draw(SpriteBatch);
 
             SpriteBatch.End();

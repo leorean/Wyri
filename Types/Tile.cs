@@ -67,6 +67,11 @@ namespace Wyri.Types
         public Tile(int id)
         {
             ID = id;
+            if (id == -1)
+            {
+                IsVisible = false;
+                IsSolid = false;
+            }
         }
 
         public Tile(int id, string expression) : this(id)
