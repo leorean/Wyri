@@ -113,7 +113,7 @@ namespace Wyri.Objects
                 float ty = M.Div(Y + G.T + yVel, G.T);
 
                 var t = grid[(int)tx, (int)ty];
-                if (t == null || !t.IsPlatform)
+                if (t == null || t.Type != TileType.Platform)
                     continue;
 
                 tx *= G.T;
@@ -166,6 +166,15 @@ namespace Wyri.Objects
 
         private bool jumpFromClimb;
         private int grabTimer;
+
+        public void SetCameraRoom()
+        {
+            var room = Collisions.CollisionPoint<Room>(X, Y).FirstOrDefault();
+            if (room != null)
+            {
+                MainGame.Camera.Room = room;
+            }
+        }
 
         public override void Update()
         {
@@ -400,14 +409,7 @@ namespace Wyri.Objects
 
             AnimationState[State].Update();
 
-            var room = Collisions.CollisionPoint<Room>(X, Y).FirstOrDefault();
-            if (room != null)
-            {
-                if (room != MainGame.Camera.Room)
-                {
-                    MainGame.Camera.Room = room;
-                }
-            }
+            SetCameraRoom();
 
             // movement & collision
 

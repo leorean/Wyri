@@ -54,7 +54,7 @@ namespace Wyri.Types
         }
         public static RectF operator +(Vector2 b, RectF a)
         {
-            return new RectF(a.x + b.X, a.y + b.Y, a.w, a.h);
+            return a + b;
         }
         public static RectF operator -(RectF a, RectF b)
         {
@@ -66,7 +66,7 @@ namespace Wyri.Types
         }
         public static RectF operator -(Vector2 b, RectF a)
         {
-            return new RectF(a.x - b.X, a.y - b.Y, a.w, a.h);
+            return a - b;
         }
     }
 }

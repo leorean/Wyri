@@ -174,6 +174,7 @@ namespace Wyri.Main
         #endregion
 
         public Room Room { get; set; }
+        public int background = 0;
 
         public Camera(ResolutionRenderer resolutionRenderer)
         {
@@ -280,15 +281,17 @@ namespace Wyri.Main
                 var my = M.Clamp(Position.Y, Room.Y + .5f * ViewHeight, Room.Y + Room.Height - .5f * ViewHeight);
 
                 Position = new Vector2(mx, my);
-            }
 
+                if (Room.Background != -1)
+                    background = Room.Background;
+            }
         }
 
         public void Draw(SpriteBatch sb)
         {
             if (Room != null)
             {
-                sb.Draw(GameResources.Background[Room.Background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
+                sb.Draw(GameResources.Background[background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
             }
         }
     }

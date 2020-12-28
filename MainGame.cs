@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using Wyri.Main;
 using Wyri.Objects;
 using Wyri.Objects.Levels;
@@ -24,12 +25,15 @@ namespace Wyri
         private float scale;
         private Size screenSize;
 
+        public Animation LoadingAnimation { get; private set; }
+        private bool isLoading;
+        private float fadeInAlpha;
+
         public MainGame()
         {
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
 
             ViewSize = new Size(256, 144);
             scale = 4.0f;
@@ -38,13 +42,15 @@ namespace Wyri
             IsMouseVisible = true;
             Window.AllowUserResizing = true;
 
+            Map = new Map();
         }
 
         protected override void Initialize()
         {
+            Primitives2D.Setup(GraphicsDevice);
+
             var resolutionRenderer = new ResolutionRenderer(GraphicsDevice, ViewSize.Width, ViewSize.Height, screenSize.Width, screenSize.Height);
             Camera = new Camera(resolutionRenderer) { MaxZoom = 2f, MinZoom = .5f, Zoom = 1f };
-
             Camera.Position = new Vector2(ViewSize.Width * .5f, ViewSize.Height * .5f);
             
             InvokeSizeChange(screenSize);
@@ -71,10 +77,28 @@ namespace Wyri
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             GameResources.Init(Content);
-            Map = new Map($"map.tmx");
 
-            Camera.Position = new Vector2(ViewSize.Width * .5f, ViewSize.Height * .5f);
-            Camera.Room = Map.Rooms[0];
+            LoadingAnimation = new Animation(GameResources.Spinner, 0, 7, .3f);
+
+            Reload();
+        }
+
+        public void Reload()
+        {
+            isLoading = true;
+            fadeInAlpha = 1;
+
+            Player?.Destroy();
+            Player = null;
+
+            Task.Run(async () => {
+                await Map?.UnloadAsync();
+                await Map.LoadMapContentAsync("map.tmx");
+
+                isLoading = false;
+            });
+
+            GC.Collect();
         }
 
         protected override void Update(GameTime gameTime)
@@ -84,19 +108,29 @@ namespace Wyri
 
             // TODO: Add your update logic here
 
-            InputController.Update();
-
-            if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
-            
-            if(InputController.IsMousePressed(KeyState.Pressed))
+            if (!isLoading)
             {
-                Player.Position = Camera.ToVirtual(Mouse.GetState().Position.ToVector2());
+                InputController.Update();
+
+                Camera.Update();
+
+                ObjectController.SetAllActive<RoomObject>(false);
+                ObjectController.SetRegionActive<SpatialObject>(Camera.Room.X, Camera.Room.Y, Camera.Room.Width, Camera.Room.Height, true);
+
+                ObjectController.Update();
+
+                if (InputController.IsKeyPressed(Keys.R, KeyState.Pressed))
+                {
+                    Reload();
+                }
+
+                if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
+
+                if (InputController.IsMousePressed(KeyState.Pressed))
+                {
+                    Player.Position = Camera.ToVirtual(Mouse.GetState().Position.ToVector2());
+                }        
             }
-
-            Map.Update();
-            Camera.Update();
-
-            ObjectController.Update();
 
             base.Update(gameTime);
         }
@@ -109,7 +143,7 @@ namespace Wyri
 
             // ++++ begin draw ++++
 
-            GraphicsDevice.Clear(Color.Gray);
+            GraphicsDevice.Clear(Color.Black);
 
             Camera.ResolutionRenderer.SetupDraw();
             
@@ -117,10 +151,28 @@ namespace Wyri
 
             SpriteBatch.BeginCamera(Camera, BlendState.NonPremultiplied, DepthStencilState.None);
 
-            Map.Draw(SpriteBatch);
-            ObjectController.Draw(SpriteBatch);
+            if (!isLoading)
+            {
+                Map.Draw(SpriteBatch);
+                ObjectController.Draw(SpriteBatch);
 
-            Camera.Draw(SpriteBatch);
+                Camera.Draw(SpriteBatch);
+            }
+
+            if (isLoading)
+            {
+                LoadingAnimation.Update();
+                LoadingAnimation.Draw(SpriteBatch, new Vector2(Camera.ViewX + Camera.ViewWidth - 32, Camera.ViewY + Camera.ViewHeight - 32), Vector2.Zero, Vector2.One, Color.White, 0, .9999f);
+                fadeInAlpha = 1.5f;
+            }
+            else
+            {
+                fadeInAlpha = Math.Max(fadeInAlpha - .025f, 0);
+                if (fadeInAlpha > 0)
+                {
+                    Primitives2D.DrawRectangle(SpriteBatch, new RectF(Camera.ViewX, Camera.ViewY, Camera.ViewWidth, Camera.ViewHeight), new Color(Color.Black, fadeInAlpha), true, .9999f);
+                }
+            }
 
             SpriteBatch.End();
         }

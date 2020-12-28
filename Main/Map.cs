@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Wyri.Objects;
@@ -40,148 +41,159 @@ namespace Wyri.Main
         public Dictionary<int, string> TileOptionsDictionary { get; private set; } = new Dictionary<int, string>();
         private string OptionsForID(int tileID) => TileOptionsDictionary.ContainsKey(tileID) ? TileOptionsDictionary[tileID] : null;
 
-        List<Dictionary<string, object>> ObjectData { get; } = new List<Dictionary<string, object>>();
+        private List<Dictionary<string, object>> ObjectData { get; set; } = new List<Dictionary<string, object>>();
 
         public List<Room> Rooms { get; } = new List<Room>();
 
-        public Map(string name)
+        public async Task LoadMapContentAsync(string name)
         {
-            XmlDocument xmlRoot = new XmlDocument();
-
-            using (var s = typeof(Map).Assembly.GetManifestResourceStream($"Wyri.Content.{name}"))
+            await Task.Run(() =>
             {
-                xmlRoot.Load(s);
-            }
 
-            var xmlMap = xmlRoot["map"];
-            Width = int.Parse(xmlMap.Attributes["width"].Value);
-            Height = int.Parse(xmlMap.Attributes["height"].Value);
+                XmlDocument xmlRoot = new XmlDocument();
 
-            // parse options to dictionary
-            foreach (XmlNode tilesetNode in xmlMap.ChildNodes)
-            {
-                if (tilesetNode.Name == "tileset")
+                using (var s = typeof(Map).Assembly.GetManifestResourceStream($"Wyri.Content.{name}"))
                 {
-                    foreach (XmlNode tileNode in tilesetNode.ChildNodes)
-                    {
-                        if (tileNode.Name == "tile")
-                        {
-                            string val = tileNode.Attributes["type"].Value;
-                            TileOptionsDictionary.Add(int.Parse(tileNode.Attributes["id"].Value), val);
-                        }
-                    }
-                }
-            }
-
-            foreach (XmlNode xmlLayer in xmlMap.ChildNodes)
-            {
-                if (xmlLayer.Name == "layer")
-                {
-                    string[] layerData = xmlLayer["data"].ChildNodes[0].Value.Split(',');
-
-                    Grid<Tile> tileGrid = new Grid<Tile>(Width, Height);
-
-                    for (int i = 0; i < layerData.Length; i++)
-                    {
-                        var tileID = int.Parse(layerData[i]) - 1;
-                        if (tileID != -1)
-                            tileGrid[i] = new Tile(tileID, OptionsForID(tileID));
-                    }
-
-                    LayerData.Add(xmlLayer.Attributes["name"].Value, tileGrid);
+                    xmlRoot.Load(s);
                 }
 
-                if (xmlLayer.Name == "objectgroup")
+                var xmlMap = xmlRoot["map"];
+                Width = int.Parse(xmlMap.Attributes["width"].Value);
+                Height = int.Parse(xmlMap.Attributes["height"].Value);
+
+                // parse options to dictionary
+                foreach (XmlNode tilesetNode in xmlMap.ChildNodes)
                 {
-                    foreach (XmlNode objectNode in xmlLayer.ChildNodes)
+                    if (tilesetNode.Name == "tileset")
                     {
-                        var objProperties = new Dictionary<string, object>();
-
-                        var objName = objectNode.Attributes["type"].Value;
-                        int x = int.Parse(objectNode.Attributes["x"].Value);
-                        int y = int.Parse(objectNode.Attributes["y"].Value);
-                        int width = int.Parse(objectNode.Attributes["width"].Value);
-                        int height = int.Parse(objectNode.Attributes["height"].Value);
-
-                        objProperties.Add("name", objName); // is actually the type name!
-                        objProperties.Add("x", x);
-                        objProperties.Add("y", y);
-                        objProperties.Add("width", width);
-                        objProperties.Add("height", height);
-
-                        if (objectNode.HasChildNodes)
+                        foreach (XmlNode tileNode in tilesetNode.ChildNodes)
                         {
-                            foreach (XmlNode node in objectNode.ChildNodes)
+                            if (tileNode.Name == "tile")
                             {
-                                foreach (XmlNode prop in node.ChildNodes)
-                                {
-                                    var propName = prop.Attributes["name"].Value;
-
-                                    var propValueString = prop.Attributes.Find("value");
-
-                                    if (propValueString == null)
-                                    {
-                                        propValueString = prop.InnerText;
-                                    }
-
-                                    // unknown value types are treated as strings
-                                    var propValueType = "string";
-
-                                    if (prop.Attributes.Find("type") != null)
-                                        propValueType = prop.Attributes["type"].Value;
-
-                                    object propValue;
-
-                                    switch (propValueType)
-                                    {
-                                        case "int":
-                                            propValue = int.Parse(propValueString);
-                                            break;
-                                        case "float":
-                                            float res;
-                                            if (float.TryParse(propValueString, out res))
-                                                propValue = res;
-                                            else
-                                                propValue = float.Parse(propValueString.Replace('.', ','));
-                                            break;
-                                        case "bool":
-                                            propValue = bool.Parse(propValueString);
-                                            break;
-                                        default:
-                                            propValue = propValueString;
-                                            break;
-                                    }
-
-                                    objProperties.Add(propName, propValue);
-                                }
+                                string val = tileNode.Attributes["type"].Value;
+                                TileOptionsDictionary.Add(int.Parse(tileNode.Attributes["id"].Value), val);
                             }
                         }
-                        ObjectData.Add(objProperties);
                     }
                 }
-            }
 
-            // create rooms
-            CreateAllRooms();
-
-            foreach (var data in ObjectData)
-            {
-                var x = (int)data["x"];
-                var y = (int)data["y"];
-                var width = (int)data["width"];
-                var height = (int)data["height"];
-                var type = data["name"].ToString();
-
-                if (type == "player")
+                foreach (XmlNode xmlLayer in xmlMap.ChildNodes)
                 {
-                    MainGame.Player = new Player(new Vector2(x + width * .5f, y + height * .5f));
-                    MainGame.Camera.Target = MainGame.Player;
-                    break;
+                    if (xmlLayer.Name == "layer")
+                    {
+                        string[] layerData = xmlLayer["data"].ChildNodes[0].Value.Split(',');
+
+                        Grid<Tile> tileGrid = new Grid<Tile>(Width, Height);
+
+                        for (int i = 0; i < layerData.Length; i++)
+                        {
+                            var tileID = int.Parse(layerData[i]) - 1;
+                            if (tileID != -1)
+                            {
+                                tileGrid[i] = new Tile(tileID, OptionsForID(tileID));
+                            }
+                        }
+
+                        LayerData.Add(xmlLayer.Attributes["name"].Value, tileGrid);
+                    }
+
+                    if (xmlLayer.Name == "objectgroup")
+                    {
+                        foreach (XmlNode objectNode in xmlLayer.ChildNodes)
+                        {
+                            var objProperties = new Dictionary<string, object>();
+
+                            var objName = objectNode.Attributes["type"].Value;
+                            int x = int.Parse(objectNode.Attributes["x"].Value);
+                            int y = int.Parse(objectNode.Attributes["y"].Value);
+                            int width = int.Parse(objectNode.Attributes["width"].Value);
+                            int height = int.Parse(objectNode.Attributes["height"].Value);
+
+                            objProperties.Add("name", objName); // is actually the type name!
+                            objProperties.Add("x", x);
+                            objProperties.Add("y", y);
+                            objProperties.Add("width", width);
+                            objProperties.Add("height", height);
+
+                            if (objectNode.HasChildNodes)
+                            {
+                                foreach (XmlNode node in objectNode.ChildNodes)
+                                {
+                                    foreach (XmlNode prop in node.ChildNodes)
+                                    {
+                                        var propName = prop.Attributes["name"].Value;
+
+                                        var propValueString = prop.Attributes.Find("value");
+
+                                        if (propValueString == null)
+                                        {
+                                            propValueString = prop.InnerText;
+                                        }
+
+                                        // unknown value types are treated as strings
+                                        var propValueType = "string";
+
+                                        if (prop.Attributes.Find("type") != null)
+                                            propValueType = prop.Attributes["type"].Value;
+
+                                        object propValue;
+
+                                        switch (propValueType)
+                                        {
+                                            case "int":
+                                                propValue = int.Parse(propValueString);
+                                                break;
+                                            case "float":
+                                                float res;
+                                                if (float.TryParse(propValueString, out res))
+                                                    propValue = res;
+                                                else
+                                                    propValue = float.Parse(propValueString.Replace('.', ','));
+                                                break;
+                                            case "bool":
+                                                propValue = bool.Parse(propValueString);
+                                                break;
+                                            default:
+                                                propValue = propValueString;
+                                                break;
+                                        }
+
+                                        objProperties.Add(propName, propValue);
+                                    }
+                                }
+                            }
+                            ObjectData.Add(objProperties);
+                        }
+                    }
                 }
-            }
+
+                // create rooms
+                CreateAllRooms();
+
+                foreach (var data in ObjectData)
+                {
+                    var x = (int)data["x"];
+                    var y = (int)data["y"];
+                    var width = (int)data["width"];
+                    var height = (int)data["height"];
+                    var type = data["name"].ToString();
+
+                    if (type == "player")
+                    {
+                        MainGame.Player = new Player(new Vector2(x + width * .5f, y + height * .5f));
+                        MainGame.Camera.Target = MainGame.Player;
+                        MainGame.Camera.Position = MainGame.Player.Position;
+                        MainGame.Player.SetCameraRoom();
+
+                        break;
+                    }
+                }
+            });
         }
 
-        public void CreateAllRooms()
+        public Map() { }
+
+        private void CreateAllRooms()
         {
             var camera = MainGame.Camera;
 
@@ -212,10 +224,27 @@ namespace Wyri.Main
                         throw new ArgumentException($"The room at ({x},{y}) has an incorrect size or position!");
 
                     room = new Room(x, y, w, h);
+                    room.Background = bg;
+                    room.Weather = weather;
+                    room.Darkness = darkness;
                     Rooms.Add(room);
-                    //room.Background = bg;
-                    //room.Weather = weather;
-                    //room.Darkness = darkness;
+
+                    for (var i = M.Div(x, G.T); i < M.Div(x + w, G.T); i++) {
+                        for (var j = M.Div(y, G.T); j < M.Div(y + h, G.T); j++)
+                        {
+                            var t = LayerData["FG"][i, j];
+
+                            if (t == null)
+                                continue;
+
+                            switch (t.Type)
+                            {
+                                case TileType.SpikeUp:
+                                    new SpikeUp(new Vector2(i * G.T, j * G.T), room);                                    
+                                    break;
+                            }
+                        }
+                    }
                 }
 
                 // load rooms of standard size when there is none
@@ -238,6 +267,22 @@ namespace Wyri.Main
                 Debug.WriteLine("Unable to initialize room from data: " + e.Message);
                 throw;
             }
+        }
+
+        public async Task UnloadAsync()
+        {
+            await Task.Run(() =>
+            {
+                foreach (var r in Rooms.ToList())
+                {
+                    r.Destroy();
+                    Rooms.Remove(r);
+                }
+
+                LayerData.Clear();
+                TileOptionsDictionary.Clear();
+                ObjectData.Clear();
+            });            
         }
 
         public void Draw(SpriteBatch sb)
@@ -307,10 +352,6 @@ namespace Wyri.Main
                     }
                 }
             }
-        }
-
-        public void Update()
-        {
         }
     }
 }

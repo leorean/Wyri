@@ -16,14 +16,13 @@ namespace Wyri.Objects.Levels
         public int Height => (int)BBox.h;
 
         public bool SwitchState { get; set; } = false;
-        public int Background { get; set; } = 0;
+        public int Background { get; set; } = -1;
         public int Weather { get; set; } = -1;
         public float Darkness { get; set; } = -1;
 
 
         public Room(int x, int y, int width, int height) : base(new Vector2(x, y), new RectF(0, 0, width, height))
         {
-            //Offset = new Vector2(width * .5f, height * .5f);
             objects = new List<Object>();
         }
 

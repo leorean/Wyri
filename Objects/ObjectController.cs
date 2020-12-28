@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Wyri.Objects
@@ -47,6 +48,28 @@ namespace Wyri.Objects
             {
                 activeObjects.Remove(o);
             }            
+        }
+
+        public static void SetAllActive<T>(bool active) where T: Object
+        {
+            foreach (var obj in objects)
+            {
+                if (obj is T o)
+                {
+                    o.IsActive = active;
+                }
+            }
+        }
+
+        public static void SetRegionActive<T>(float x, float y, float width, float height, bool active) where T : SpatialObject
+        {
+            foreach (var obj in objects)
+            {
+                if (obj is T o)
+                {
+                    if (o.X >= x && o.Y >= y && o.X < x + width && o.Y < y + height) o.IsActive = active;
+                }
+            }
         }
 
         public static void Draw(SpriteBatch sb)
