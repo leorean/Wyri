@@ -63,8 +63,8 @@ namespace Wyri
 
             foreach (var o in ObjectController.FindActive<T>())
             {
-                if (o.Left >= x && o.Right <= x
-                    && o.Top >= y && o.Bottom <= y)
+                if (o.Right >= x && o.Left <= x
+                    && o.Bottom >= y && o.Top <= y)
                 {
                     detected.Add(o);
                 }

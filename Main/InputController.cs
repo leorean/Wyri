@@ -33,7 +33,7 @@ namespace Wyri
                 case KeyState.Holding:
                     return currentKeyState.IsKeyDown(key) && prevKeyState.IsKeyDown(key);
                 default: return false;
-            }
+            }            
         }
 
         public static bool IsMousePressed(KeyState keyState = KeyState.Holding)

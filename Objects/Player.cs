@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Wyri.Main;
@@ -24,6 +25,10 @@ namespace Wyri.Objects
         Left = -1,
         Right = 1        
     }
+
+    // add: flags |= flag
+    // remove: flags &= ~flag
+    // toggle: flags ^= flag
 
     [Flags]
     public enum PlayerAbility
@@ -60,6 +65,8 @@ namespace Wyri.Objects
             }
         }
 
+        public PlayerAbility Abilities { get; set; } = PlayerAbility.NONE;
+
         public PlayerDirection Direction { get; set; } = PlayerDirection.Right;
 
         public Dictionary<PlayerState, Animation> AnimationState { get; } = new Dictionary<PlayerState, Animation>();
@@ -69,7 +76,9 @@ namespace Wyri.Objects
         private bool onGround, jumped, inWater;
 
         private int jumps;
-        private int maxJumps = 2;
+        private int maxJumps;
+        private float jumpPowerTimer = 10;
+        private float maxJumpPowerTimer = 10;
 
         const float yGravAir = .12f;
         const float yGravWater = .01f;
@@ -83,13 +92,13 @@ namespace Wyri.Objects
             DrawOffset = new Vector2(8f, 8f);
             AnimationState.Add(PlayerState.Idle, new Animation(GameResources.Player, 0, 4, .1f));
             AnimationState.Add(PlayerState.Walk, new Animation(GameResources.Player, 6, 12, .2f));
-            AnimationState.Add(PlayerState.Jump, new Animation(GameResources.Player, 12, 16, .3f, false));
-            //AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 18, 22, .2f));
+            AnimationState.Add(PlayerState.Jump, new Animation(GameResources.Player, 12, 16, .3f, false));            
             AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 18, 22, .1f));
+
+            //Abilities |= PlayerAbility.DOUBLE_JUMP;
         }
 
-        float jumpPowerTimer = 10;
-
+        
         private void HandlePlatforms()
         {
             if (yVel < -yGrav)
@@ -147,17 +156,55 @@ namespace Wyri.Objects
             return false;
         }
 
+        private void ResetJumps()
+        {
+            jumped = false;
+            jumps = maxJumps;
+            jumpPowerTimer = maxJumpPowerTimer;
+            jumpFromClimb = false;
+        }
+
+        private bool jumpFromClimb;
+        private int grabTimer;
+
         public override void Update()
         {
             // input
 
             var kLeft = InputController.IsKeyPressed(Keys.Left);
             var kRight = InputController.IsKeyPressed(Keys.Right);
-            var kUp = InputController.IsKeyPressed(Keys.Up); 
+            var kLeftPressed = InputController.IsKeyPressed(Keys.Left, KeyState.Pressed);
+            var kRightPressed = InputController.IsKeyPressed(Keys.Right, KeyState.Pressed);
+            var kLeftReleased = InputController.IsKeyPressed(Keys.Left, KeyState.Released);
+            var kRightReleased = InputController.IsKeyPressed(Keys.Right, KeyState.Released);
+            var kUp = InputController.IsKeyPressed(Keys.Up);
             var kDown = InputController.IsKeyPressed(Keys.Down);
+            var kUpPressed = InputController.IsKeyPressed(Keys.Up, KeyState.Pressed);
+            var kDownPressed = InputController.IsKeyPressed(Keys.Down, KeyState.Pressed);
             var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed);
             var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding);
             var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released);
+
+            if (InputController.IsKeyPressed(Keys.LeftShift, KeyState.Holding))
+            {
+                if (kLeftPressed)
+                    X -= 32 * G.T;
+                if (kRightPressed)
+                    X += 32 * G.T;
+                if (kUpPressed)
+                    Y -= 18 * G.T;
+                if (kDownPressed)
+                    Y += 18 * G.T;
+            }
+
+            if (Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
+            {
+                maxJumps = 2;
+            }
+            else
+            {
+                maxJumps = 1;
+            }
 
             if (State != PlayerState.Climb)
             {
@@ -219,79 +266,11 @@ namespace Wyri.Objects
                     AnimationState[State].Frame = 15;
 
 
-                if (OnWall())
+                if (OnWall() && ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)))
                 {
                     State = PlayerState.Climb;
                 }                
             }
-
-            if (State  == PlayerState.Climb)
-            {
-                bool jumpFromClimb = false;
-
-                if (!OnWall())
-                {
-                    State = PlayerState.Jump;
-
-                    if (kUp)
-                    {
-                        yVel = -1.5f;
-                    }                        
-                }
-
-                jumps = maxJumps;
-                xVel = 0;
-                
-                if (kDown)
-                {
-                    yVel = Math.Min(yVel + .2f, .5f);
-                }
-                else
-                {
-                    yVel = -yGrav;
-                }
-
-                if (kDown)
-                    AnimationState[State].Reset();
-
-                //if (kUp)
-                //{
-                //    //if (OnWall())
-                //    //yVel = Math.Max(yVel - .2f - yGrav, -.5f);
-                //}
-                //else
-                //{
-                //    AnimationState[State].Reset();
-                //}
-
-                if ((Direction == PlayerDirection.Right && kLeft) || (Direction == PlayerDirection.Left && kRight)
-                    || kJumpPressed)
-                {
-                    Direction = Direction.Reverse();
-                    
-                    if ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right))
-                    {
-                        xVel = 1.5f * Math.Sign((int)Direction);
-                        yVel = -2f;
-                    }
-                    else
-                    {
-                        xVel = .5f * Math.Sign((int)Direction);
-                        yVel = -2.5f;
-                    }
-
-                    jumpFromClimb = true;
-                }
-
-                if (jumpFromClimb)
-                {
-                    jumped = true;
-                    State = PlayerState.Jump;
-                    AnimationState[State].Frame = 15;
-                }
-            }
-
-            //onPlatform
 
             var waterTile = Collisions.TileAt(X, Y + 4, "WATER");
 
@@ -306,8 +285,7 @@ namespace Wyri.Objects
 
             if (onGround)
             {
-                jumps = maxJumps;
-                jumped = false;
+                ResetJumps();
                 if (State == PlayerState.Jump)
                 {
                     State = PlayerState.Idle;
@@ -319,11 +297,63 @@ namespace Wyri.Objects
                     State = PlayerState.Jump;
             }
 
-            if (inWater)
+            if (State == PlayerState.Climb)
             {
-                jumps = maxJumps;
-                jumped = false;
-                jumpPowerTimer = 10;
+                if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown && !kJumpHolding)
+                    grabTimer = Math.Max(grabTimer - 1, 0);
+                else
+                    grabTimer = 20;
+
+                if (!OnWall() || grabTimer == 0)
+                {
+                    jumpFromClimb = false;
+                    State = PlayerState.Jump;
+                }
+                xVel = 0;
+
+                if (kDown)
+                {
+                    yVel = Math.Min(yVel + .2f, .5f);
+                }
+                else
+                {
+                    yVel = -yGrav;
+                }
+
+                if (kDown)
+                    AnimationState[State].Reset();
+
+                if ((Direction == PlayerDirection.Right && kLeft) || (Direction == PlayerDirection.Left && kRight)
+                    || kJumpPressed)
+                {
+                    Direction = Direction.Reverse();
+
+                    if ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right))
+                    {
+                        xVel = 1.5f * Math.Sign((int)Direction);
+                        yVel = -2f;
+                    }
+                    else
+                    {
+                        xVel = .5f * Math.Sign((int)Direction);
+                        yVel = -2.5f;
+                    }
+
+                    ResetJumps();
+                    jumpFromClimb = true;
+                    if (Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
+                    {
+                        jumps = 1;
+                    }
+                    else
+                    {
+                        jumps = 0;
+                        jumped = true;
+                    }
+
+                    State = PlayerState.Jump;
+                    AnimationState[State].Frame = 15;
+                }
             }
 
             if (kJumpHolding)
@@ -343,22 +373,27 @@ namespace Wyri.Objects
             }
             else
             {
-                if (kJumpReleased)
+                if (kJumpReleased && !jumpFromClimb)
                 {
                     if (jumps > 1)
                     {
                         // todo: double-jump effect
 
                         jumps = Math.Max(jumps - 1, 0);
-                        jumpPowerTimer = 10;
+                        jumpPowerTimer = maxJumpPowerTimer;
                         jumped = false;
                     }
                     else
                     {
                         jumped = true;
-                        jumpPowerTimer = 10;
+                        jumpPowerTimer = maxJumpPowerTimer;
                     }
                 }
+            }
+
+            if (inWater)
+            {
+                ResetJumps(); 
             }
 
             // logic
@@ -373,8 +408,6 @@ namespace Wyri.Objects
                     MainGame.Camera.Room = room;
                 }
             }
-
-            
 
             // movement & collision
 
