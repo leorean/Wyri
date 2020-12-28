@@ -83,7 +83,7 @@ namespace Wyri
             return grid[tx, ty];
         }
 
-        public static bool CollisionRectTile(this SpatialObject o, float x, float y)
+        public static bool CollisionSolidTile(this SpatialObject o, float x, float y)
         {
             var grid = MainGame.Map.LayerData["FG"];
 

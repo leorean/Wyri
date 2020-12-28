@@ -15,13 +15,29 @@ namespace Wyri.Objects
     {
         Idle,
         Walk,
-        Jump,        
+        Jump,
+        Climb
     }
 
     public enum PlayerDirection
     {
         Left = -1,
-        Right = 1
+        Right = 1        
+    }
+
+    [Flags]
+    public enum PlayerAbility
+    {
+        NONE = 0,
+        SWIM = 1,
+        DOUBLE_JUMP = 2,
+        CLIMB = 4,
+        GLIDE = 8        
+    }
+
+    public static class PlayerExtensions
+    {
+        public static PlayerDirection Reverse(this PlayerDirection dir) => (PlayerDirection)(-(int)dir);
     }
 
     public class Player : SpatialObject
@@ -52,12 +68,15 @@ namespace Wyri.Objects
 
         private bool onGround, jumped, inWater;
 
+        private int jumps;
+        private int maxJumps = 2;
+
         const float yGravAir = .12f;
         const float yGravWater = .01f;
-        const float xMaxAir = 3;
-        const float yMaxAir = 3;
-        const float xMaxWater = .75f;
-        const float yMaxWater = .5f;
+        const float xVelMaxAir = 3;
+        const float yVelMaxAir = 3;
+        const float xVelMaxWater = .75f;
+        const float yVelMaxWater = .5f;
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
@@ -65,9 +84,68 @@ namespace Wyri.Objects
             AnimationState.Add(PlayerState.Idle, new Animation(GameResources.Player, 0, 4, .1f));
             AnimationState.Add(PlayerState.Walk, new Animation(GameResources.Player, 6, 12, .2f));
             AnimationState.Add(PlayerState.Jump, new Animation(GameResources.Player, 12, 16, .3f, false));
+            //AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 18, 22, .2f));
+            AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 18, 22, .1f));
         }
 
         float jumpPowerTimer = 10;
+
+        private void HandlePlatforms()
+        {
+            if (yVel < -yGrav)
+                return;
+
+            var grid = MainGame.Map.LayerData["FG"];
+
+            for (var i = -1; i < 2; i++)
+            {
+
+                float tx = M.Div(X, G.T) + i;
+                float ty = M.Div(Y + G.T + yVel, G.T);
+
+                var t = grid[(int)tx, (int)ty];
+                if (t == null || !t.IsPlatform)
+                    continue;
+
+                tx *= G.T;
+                ty *= G.T;
+
+                if (tx > Right || tx + G.T < Left)
+                    continue;
+
+                if (Bottom > ty - 4 && Bottom < ty + 1)
+                {
+                    yVel = -yGrav;
+                    Y = ty - G.T;
+                    onGround = true;
+                    return;
+                }
+            }
+        }
+
+        private bool OnWall()
+        {
+            if (inWater)
+                return false;
+
+            var grid = MainGame.Map.LayerData["FG"];
+            float tx = M.Div(X + Math.Sign((int)Direction) * 4f, G.T);
+            float ty = M.Div(Y + 2, G.T);
+            var t = grid[(int)tx, (int)ty];
+
+            float txg = M.Div(X, G.T);
+            float tyg = M.Div(Y + G.T + 2, G.T);
+
+            var tg = grid[(int)txg, (int)tyg];
+            if (tg != null && tg.IsSolid)
+                return false;
+
+            if (t != null && t.IsSolid)
+            {
+                return true;
+            }
+            return false;
+        }
 
         public override void Update()
         {
@@ -75,53 +153,61 @@ namespace Wyri.Objects
 
             var kLeft = InputController.IsKeyPressed(Keys.Left);
             var kRight = InputController.IsKeyPressed(Keys.Right);
+            var kUp = InputController.IsKeyPressed(Keys.Up); 
+            var kDown = InputController.IsKeyPressed(Keys.Down);
             var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed);
             var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding);
             var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released);
 
-            if (kLeft && !kRight)
+            if (State != PlayerState.Climb)
             {
-                Direction = PlayerDirection.Left;
-                if (onGround)
-                {
-                    State = PlayerState.Walk;
-                    xVel = Math.Max(xVel - .16f, -1.2f);
-                }
-                else
-                {
-                    State = PlayerState.Jump;
-                    xVel = Math.Max(xVel - .06f, -1.2f);
-                }
-            }
-            if (kRight && !kLeft)
-            {
-                Direction = PlayerDirection.Right;
-                if (onGround)
-                {
-                    State = PlayerState.Walk;
-                    xVel = Math.Min(xVel + .16f, 1.2f);
-                }
-                else
-                {
-                    State = PlayerState.Jump;
-                    xVel = Math.Min(xVel + .06f, 1.2f);
-                }                
-            }
 
-            if ((!kLeft && !kRight) || (kLeft && kRight))
-            {
-                if (onGround)
+                if (kLeft && !kRight)
                 {
-                    xVel *= .6f;
-                    if (Math.Abs(xVel) < .15f)
+                    Direction = PlayerDirection.Left;
+                    if (onGround)
                     {
-                        xVel = 0;
-                        State = PlayerState.Idle;
+                        State = PlayerState.Walk;
+                        xVel = Math.Max(xVel - .16f, -1.2f);
+                    }
+                    else
+                    {
+                        State = PlayerState.Jump;
+                        if (xVel > -1.2f)
+                            xVel = Math.Max(xVel - .06f, -1.2f);
                     }
                 }
-                else
+                if (kRight && !kLeft)
                 {
-                    xVel *= .9f;
+                    Direction = PlayerDirection.Right;
+                    if (onGround)
+                    {
+                        State = PlayerState.Walk;
+                        xVel = Math.Min(xVel + .16f, 1.2f);
+                    }
+                    else
+                    {
+                        State = PlayerState.Jump;
+                        if (xVel < 1.2f)
+                            xVel = Math.Min(xVel + .06f, 1.2f);
+                    }
+                }
+
+                if ((!kLeft && !kRight) || (kLeft && kRight))
+                {
+                    if (onGround)
+                    {
+                        xVel *= .6f;
+                        if (Math.Abs(xVel) < .15f)
+                        {
+                            xVel = 0;
+                            State = PlayerState.Idle;
+                        }
+                    }
+                    else
+                    {
+                        xVel *= .9f;
+                    }
                 }
             }
 
@@ -131,6 +217,78 @@ namespace Wyri.Objects
                     AnimationState[State].Frame = 14;
                 if (yVel >= 0 && AnimationState[State].Frame < 15)
                     AnimationState[State].Frame = 15;
+
+
+                if (OnWall())
+                {
+                    State = PlayerState.Climb;
+                }                
+            }
+
+            if (State  == PlayerState.Climb)
+            {
+                bool jumpFromClimb = false;
+
+                if (!OnWall())
+                {
+                    State = PlayerState.Jump;
+
+                    if (kUp)
+                    {
+                        yVel = -1.5f;
+                    }                        
+                }
+
+                jumps = maxJumps;
+                xVel = 0;
+                
+                if (kDown)
+                {
+                    yVel = Math.Min(yVel + .2f, .5f);
+                }
+                else
+                {
+                    yVel = -yGrav;
+                }
+
+                if (kDown)
+                    AnimationState[State].Reset();
+
+                //if (kUp)
+                //{
+                //    //if (OnWall())
+                //    //yVel = Math.Max(yVel - .2f - yGrav, -.5f);
+                //}
+                //else
+                //{
+                //    AnimationState[State].Reset();
+                //}
+
+                if ((Direction == PlayerDirection.Right && kLeft) || (Direction == PlayerDirection.Left && kRight)
+                    || kJumpPressed)
+                {
+                    Direction = Direction.Reverse();
+                    
+                    if ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right))
+                    {
+                        xVel = 1.5f * Math.Sign((int)Direction);
+                        yVel = -2f;
+                    }
+                    else
+                    {
+                        xVel = .5f * Math.Sign((int)Direction);
+                        yVel = -2.5f;
+                    }
+
+                    jumpFromClimb = true;
+                }
+
+                if (jumpFromClimb)
+                {
+                    jumped = true;
+                    State = PlayerState.Jump;
+                    AnimationState[State].Frame = 15;
+                }
             }
 
             //onPlatform
@@ -139,26 +297,16 @@ namespace Wyri.Objects
 
             inWater = waterTile != null;
             yGrav = inWater ? yGravWater : yGravAir;
-            xMax = inWater ? xMaxWater : xMaxAir;
-            yMax = inWater ? yMaxWater : yMaxAir;
+            xMax = inWater ? xVelMaxWater : xVelMaxAir;
+            yMax = inWater ? yVelMaxWater : yVelMaxAir;
 
-            onGround = yVel >= 0 && this.CollisionRectTile(0, yGrav);
+            onGround = yVel >= 0 && this.CollisionSolidTile(0, yGrav);
 
-            var platformTile = Collisions.TileAt(X, Y + G.T + yVel, "FG");
-            var platformTileAbove = Collisions.TileAt(X, Y + yVel, "FG");
-            var platformTileBelow = Collisions.TileAt(X, Y + yVel + 2, "FG");
-
-            if (platformTile != null && platformTile.IsPlatform && asdf)
-            {
-                if (yVel > -yGrav)
-                {
-                    yVel = -yGrav;
-                    onGround = true;
-                }
-            }
+            HandlePlatforms();
 
             if (onGround)
             {
+                jumps = maxJumps;
                 jumped = false;
                 if (State == PlayerState.Jump)
                 {
@@ -173,6 +321,7 @@ namespace Wyri.Objects
 
             if (inWater)
             {
+                jumps = maxJumps;
                 jumped = false;
                 jumpPowerTimer = 10;
             }
@@ -182,7 +331,7 @@ namespace Wyri.Objects
                 jumpPowerTimer = Math.Max(jumpPowerTimer - 1, 0);
                 
                 if (jumpPowerTimer == 0)
-                {
+                {                    
                     jumped = true;
                 }
                 if (!jumped)
@@ -196,8 +345,19 @@ namespace Wyri.Objects
             {
                 if (kJumpReleased)
                 {
-                    jumped = true;
-                    jumpPowerTimer = 10;
+                    if (jumps > 1)
+                    {
+                        // todo: double-jump effect
+
+                        jumps = Math.Max(jumps - 1, 0);
+                        jumpPowerTimer = 10;
+                        jumped = false;
+                    }
+                    else
+                    {
+                        jumped = true;
+                        jumpPowerTimer = 10;
+                    }
                 }
             }
 
@@ -226,7 +386,7 @@ namespace Wyri.Objects
             //var tcolx = CollisionExtensions.TileAt(X + xVel, Y);
             //var tcoly = CollisionExtensions.TileAt(X, Y + yVel);
 
-            if (!this.CollisionRectTile(xVel, 0))// || (tcolx != null && !tcolx.IsOn))
+            if (!this.CollisionSolidTile(xVel, 0))// || (tcolx != null && !tcolx.IsOn))
             {
                 X += xVel;
             }
@@ -234,7 +394,7 @@ namespace Wyri.Objects
             {
                 xVel = 0;
             }
-            if (!this.CollisionRectTile(0, yVel))// || (tcoly != null && !tcoly.IsOn))
+            if (!this.CollisionSolidTile(0, yVel))// || (tcoly != null && !tcoly.IsOn))
             {
                 Y += yVel;
             }
@@ -253,8 +413,6 @@ namespace Wyri.Objects
             }
 
         }
-
-        
 
         public override void Draw(SpriteBatch sb)
         {
