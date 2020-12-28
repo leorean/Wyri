@@ -10,7 +10,7 @@ namespace Wyri.Types
     {
         public TextureSet Texture { get; set; }
         public int MinFrame { get; set; }
-        public int MaxFrame { get; set; }
+        public int FrameCount { get; set; }
         public int Frame
         {
             get { return (int)Math.Floor(frame); }
@@ -22,41 +22,41 @@ namespace Wyri.Types
 
         private float frame;
 
-        public Animation(TextureSet texture, int minFrame, int maxFrame, float animationSpeed, bool isLooping = true)
+        public Animation(TextureSet texture, int minFrame, int frameCount, float animationSpeed, bool isLooping = true)
         {
             Texture = texture;
             MinFrame = minFrame;
-            MaxFrame = maxFrame;
+            FrameCount = frameCount;
             AnimationSpeed = animationSpeed;
             IsLooping = isLooping;
         }
 
         public void Reset()
         {
-            frame = MinFrame;
+            frame = 0;
             IsDone = false;
         }
 
         public void Update()
         {
             frame = (frame + AnimationSpeed);
-            if (frame >= MaxFrame)
+
+            if (IsLooping)
             {
-                if (!IsLooping)
-                {
-                    frame = MaxFrame;
+                if (frame >= FrameCount)
+                    frame = 0;
+            }
+            else
+            {                
+                frame = Math.Min(frame, FrameCount - 1);
+                if (frame == FrameCount - 1)
                     IsDone = true;
-                }
-                else
-                {
-                    frame = MinFrame;
-                }
             }
         }
 
         public void Draw(SpriteBatch sb, Vector2 position, Vector2 offset, Vector2 scale, Color color, float angle, float depth)
         {
-            sb.Draw(Texture[Frame], position, null, color, angle, offset, scale, SpriteEffects.None, depth);
+            sb.Draw(Texture[MinFrame + Frame], position, null, color, angle, offset, scale, SpriteEffects.None, depth);
         }
     }
 }

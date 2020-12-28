@@ -27,6 +27,7 @@ namespace Wyri
 
         public Animation LoadingAnimation { get; private set; }
         private bool isLoading;
+        private static bool issueReloading;
         private float fadeInAlpha;
 
         public MainGame()
@@ -83,6 +84,11 @@ namespace Wyri
             Reload();
         }
 
+        public static void ReloadLevel()
+        {
+            issueReloading = true;
+        }
+
         public void Reload()
         {
             isLoading = true;
@@ -118,6 +124,15 @@ namespace Wyri
                 ObjectController.SetRegionActive<SpatialObject>(Camera.Room.X, Camera.Room.Y, Camera.Room.Width, Camera.Room.Height, true);
 
                 ObjectController.Update();
+
+                if (issueReloading)
+                {
+                    if (fadeInAlpha == 1)
+                    {
+                        issueReloading = false;
+                        Reload();
+                    }
+                }
 
                 if (InputController.IsKeyPressed(Keys.R, KeyState.Pressed))
                 {
@@ -162,15 +177,23 @@ namespace Wyri
             if (isLoading)
             {
                 LoadingAnimation.Update();
-                LoadingAnimation.Draw(SpriteBatch, new Vector2(Camera.ViewX + Camera.ViewWidth - 32, Camera.ViewY + Camera.ViewHeight - 32), Vector2.Zero, Vector2.One, Color.White, 0, .9999f);
+                LoadingAnimation.Draw(SpriteBatch, new Vector2(Camera.ViewX + 12, Camera.ViewY + Camera.ViewHeight - 12), new Vector2(8), Vector2.One, Color.White, 0, G.D_FADE);
                 fadeInAlpha = 1.5f;
             }
             else
             {
-                fadeInAlpha = Math.Max(fadeInAlpha - .025f, 0);
+                //if (Player == null || Player.State != PlayerState.Dead)
+                if (!issueReloading)
+                {
+                    fadeInAlpha = Math.Max(fadeInAlpha - .025f, 0);
+                }
+                else
+                {
+                    fadeInAlpha = Math.Min(fadeInAlpha + .025f, 1);
+                }
                 if (fadeInAlpha > 0)
                 {
-                    Primitives2D.DrawRectangle(SpriteBatch, new RectF(Camera.ViewX, Camera.ViewY, Camera.ViewWidth, Camera.ViewHeight), new Color(Color.Black, fadeInAlpha), true, .9999f);
+                    Primitives2D.DrawRectangle(SpriteBatch, new RectF(Camera.ViewX, Camera.ViewY, Camera.ViewWidth, Camera.ViewHeight), new Color(Color.Black, fadeInAlpha), true, G.D_FADE);
                 }
             }
 
