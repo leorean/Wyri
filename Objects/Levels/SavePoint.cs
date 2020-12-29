@@ -42,19 +42,7 @@ namespace Wyri.Objects.Levels
                 eff.Delay = i * 12;
             }
 
-            MainGame.SaveGame.Abilities = MainGame.Player.Abilities;
-            MainGame.SaveGame.Position = Position + new Vector2(8, 0);
-            MainGame.SaveGame.Direction = MainGame.Player.Direction;
-            MainGame.SaveGame.Background = MainGame.Camera.Background;
-            MainGame.SaveGame.Weather = MainGame.Camera.Weather;
-            MainGame.SaveGame.Darkness = MainGame.Camera.Darkness;
-
-            //    public PlayerDirection PlayerDirection;
-            //public int Background;
-            //public int Weather;
-            //public float Darkness;
-
-            SaveManager.Save(MainGame.SaveGame);
+            MainGame.Save(Position + new Vector2(8, 0));
 
             t = 0;
             canSave = false;

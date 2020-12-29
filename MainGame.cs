@@ -109,6 +109,18 @@ namespace Wyri
             GC.Collect();
         }
 
+        public static void Save(Vector2 position)
+        {
+            SaveGame.Abilities = Player.Abilities;
+            SaveGame.Position = position;
+            SaveGame.Direction = Player.Direction;
+            SaveGame.Background = Camera.Background;
+            SaveGame.Weather = Camera.Weather;
+            SaveGame.Darkness = Camera.Darkness;
+
+            SaveManager.Save(SaveGame);
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -146,7 +158,13 @@ namespace Wyri
                     SaveManager.DeleteSaveGame();
                 }
 
-                if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
+                if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed))
+                {
+                    Save(Player.Position);
+                }
+                
+
+                //if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
 
                 if (InputController.IsMousePressed(KeyState.Holding))
                 {

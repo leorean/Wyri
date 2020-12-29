@@ -11,12 +11,18 @@
 Outline
 ^^^^^^^
 
-Wyri seeks to reach the top of mount ascent to unravel the mystery behind the legend of the dragon.
+After something went wrong during Wyri's time-machine experiment, he arrives at an unknown place in an unknown time.
+All his gadgets went missing and the time machine is broken.
+
+Objective
+^^^^^^^^^
+
+Find your lost gadgets and fix the time-machine.
 
 Characters
 ^^^^^^^^^^
 
-Wyri - the protagonist.
+Wyri - the protagonist, a lost time traveler.
 The dragon - a 10000 year old dragon waiting for the chosen one.
 
 ==============
@@ -26,8 +32,22 @@ The dragon - a 10000 year old dragon waiting for the chosen one.
 * 5 abilities
 * 1 boss
 
-Abilities
-^^^^^^^^^
+Gadgets
+^^^^^^^
+
+* Map
+	- Can open map
+* Compass
+	- Shows abilities & time machine parts on map
+* Grapple Glove
+	- Wall grab	
+* Rocket Boots
+	- Double Jump
+* Gill Piece
+	- Can swim & dive
+* Power Core
+	- Can levitate
+
 
 * small bubbles (hold action key)
 	- push objects, hit switches

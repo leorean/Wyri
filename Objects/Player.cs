@@ -38,7 +38,9 @@ namespace Wyri.Objects
         SWIM = 1,
         DOUBLE_JUMP = 2,
         WALL_GRAB = 4,
-        GLIDE = 8        
+        LEVITATE = 8,
+        MAP = 16,
+        COMPASS = 32
     }
 
     public static class PlayerExtensions
