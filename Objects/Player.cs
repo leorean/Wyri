@@ -93,7 +93,6 @@ namespace Wyri.Objects
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
-            DrawOffset = new Vector2(8f, 8f);
             AnimationState.Add(PlayerState.Idle, new Animation(GameResources.Player, 0, 4, .1f));
             AnimationState.Add(PlayerState.Walk, new Animation(GameResources.Player, 8, 6, .2f));
             AnimationState.Add(PlayerState.Jump, new Animation(GameResources.Player, 16, 5, .3f, false));
@@ -223,8 +222,18 @@ namespace Wyri.Objects
 
             // logic
 
+            var obstacle = this.CollisionBounds<Obstacle>().FirstOrDefault();
+            if (obstacle != null)
+                state = PlayerState.Dead;
+
             if (State != PlayerState.Dead)
             {
+                var savePoint = this.CollisionBounds<SavePoint>().FirstOrDefault();
+                if (savePoint != null)
+                {
+                    savePoint.SaveHere();
+                }
+
                 if (State != PlayerState.Climb)
                 {
 
@@ -470,7 +479,7 @@ namespace Wyri.Objects
 
         public override void Draw(SpriteBatch sb)
         {
-            AnimationState[State].Draw(sb, Position, DrawOffset, new Vector2((int)Direction, 1), Color.White, 0, depth);
+            AnimationState[State].Draw(sb, Position, new Vector2(8), new Vector2((int)Direction, 1), Color.White, 0, depth);
             
             //sb.DrawRectangle(Position + BBox, Color.White, false, G.D_PLAYER + .001f);
             //sb.DrawPixel(X, Y, Color.Red, G.D_PLAYER + .001f);

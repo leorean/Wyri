@@ -16,9 +16,10 @@ namespace Wyri.Objects.Levels
             room.AddObject(this);
         }
 
-        ~RoomObject()
+        public override void Destroy()
         {
-            Room.RemoveObject(this);            
+            Room.RemoveObject(this);
+            base.Destroy();
         }
     }
 }

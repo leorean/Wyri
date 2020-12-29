@@ -21,6 +21,8 @@ namespace Wyri
         public static Camera Camera;
         public static Player Player;
 
+        public static SaveGame SaveGame = new SaveGame();
+
         public Size ViewSize { get; private set; }
         private float scale;
         private Size screenSize;
@@ -139,9 +141,14 @@ namespace Wyri
                     Reload();
                 }
 
+                if (InputController.IsKeyPressed(Keys.C, KeyState.Pressed))
+                {
+                    SaveManager.DeleteSaveGame();
+                }
+
                 if (InputController.IsKeyPressed(Keys.D0, KeyState.Pressed)) { Camera.Room.SwitchState = !Camera.Room.SwitchState; }
 
-                if (InputController.IsMousePressed(KeyState.Pressed))
+                if (InputController.IsMousePressed(KeyState.Holding))
                 {
                     Player.Position = Camera.ToVirtual(Mouse.GetState().Position.ToVector2());
                 }        

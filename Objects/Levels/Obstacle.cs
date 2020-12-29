@@ -16,13 +16,9 @@ namespace Wyri.Objects.Levels
 
         public override void Draw(SpriteBatch sb)
         {
-            sb.DrawRectangle(Position + BBox, Color.Red, false, .8f);
-            //throw new NotImplementedException();
+            //sb.DrawRectangle(Position + BBox, Color.Red, false, .8f);            
         }
-        public override void Update()
-        {
-            //throw new NotImplementedException();
-        }
+        public override void Update() { }        
     }
 
     public class SpikeCorner : Obstacle

@@ -7,9 +7,9 @@ namespace Wyri.Types
 {
     public enum TileType
     {
-        Solid,
-        NonSolid,
+        Default,        
         Platform,
+        Save,
         SpikeUp,
         SpikeDown,
         SpikeLeft,
@@ -24,30 +24,7 @@ namespace Wyri.Types
     {
         public int ID { get; private set; }
 
-        private bool isSolid = true;
-
-        public bool IsSolid
-        {
-            get
-            {
-                switch (Type)
-                {
-                    case TileType.Platform:
-                    case TileType.SpikeDown:
-                    case TileType.SpikeUp:
-                    case TileType.SpikeLeft:
-                    case TileType.SpikeRight:                        
-                        return false;
-                    default:
-                        return isSolid;
-                }                
-            }
-            set
-            {
-                isSolid = value;
-            }
-        }
-
+        public bool IsSolid { get; set; } = true;
         public bool IsVisible { get; set; } = true;
         public bool IsAnimated { get { return AnimationLength > 0 && AnimationTimeout > 0; } }
         public int AnimationLength { get; set; } = 0;
@@ -63,6 +40,7 @@ namespace Wyri.Types
             ID = id;
             if (id == -1)
             {
+                Type = TileType.Default;
                 IsVisible = false;
                 IsSolid = false;
             }
@@ -84,6 +62,7 @@ namespace Wyri.Types
                     if (o == "P")
                     {
                         Type = TileType.Platform;
+                        IsSolid = false;
                     }
 
                     if (o.StartsWith("A"))
@@ -91,6 +70,13 @@ namespace Wyri.Types
                         string[] animationOptions = o.Remove(0, 1).Split('-');
                         AnimationLength = int.Parse(animationOptions[0]);
                         AnimationTimeout = int.Parse(animationOptions[1]);
+                    }
+
+                    if (o == "SAVE")
+                    {
+                        Type = TileType.Save;
+                        IsVisible = false;
+                        IsSolid = false;
                     }
 
                     if (o == "SB1")
@@ -102,6 +88,22 @@ namespace Wyri.Types
                     if (o == "SPIKE_UP")
                     {
                         Type = TileType.SpikeUp;
+                        IsSolid = false;
+                    }
+                    if (o == "SPIKE_DOWN")
+                    {
+                        Type = TileType.SpikeDown;
+                        IsSolid = false;
+                    }
+                    if (o == "SPIKE_LEFT")
+                    {
+                        Type = TileType.SpikeLeft;
+                        IsSolid = false;
+                    }
+                    if (o == "SPIKE_RIGHT")
+                    {
+                        Type = TileType.SpikeRight;
+                        IsSolid = false;
                     }
                 }
             }

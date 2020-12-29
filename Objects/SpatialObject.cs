@@ -13,8 +13,7 @@ namespace Wyri.Objects
         public RectF BBox { get; set; }
 
         public Vector2 Center { get => new Vector2((Left + Right) *.5f, (Top + Bottom) * .5f); }
-        public Vector2 DrawOffset { get; set; }
-
+        
         public float X
         {
             get { return Position.X; }

@@ -17,12 +17,9 @@ namespace Wyri
             {
                 if (o == self)
                     continue;
-
-                if (((self.Right + offX) >= o.Left || (self.Left + offX) <= o.Right)
-                    && ((self.Bottom + offY) >= o.Top || (self.Top + offY) <= o.Bottom))
-                {
+                
+                if ((o.Position + o.BBox).Intersects(self.Position + self.BBox + new Vector2(offX, offY)))
                     detected.Add(o);
-                }
             }
 
             return detected;

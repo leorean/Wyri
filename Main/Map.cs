@@ -170,24 +170,36 @@ namespace Wyri.Main
                 // create rooms
                 CreateAllRooms();
 
-                foreach (var data in ObjectData)
+                if (!SaveManager.Load(ref MainGame.SaveGame))
                 {
-                    var x = (int)data["x"];
-                    var y = (int)data["y"];
-                    var width = (int)data["width"];
-                    var height = (int)data["height"];
-                    var type = data["name"].ToString();
-
-                    if (type == "player")
+                    foreach (var data in ObjectData)
                     {
-                        MainGame.Player = new Player(new Vector2(x + width * .5f, y + height * .5f));
-                        MainGame.Camera.Target = MainGame.Player;
-                        MainGame.Camera.Position = MainGame.Player.Position;
-                        MainGame.Player.SetCameraRoom();
+                        var x = (int)data["x"];
+                        var y = (int)data["y"];
+                        var width = (int)data["width"];
+                        var height = (int)data["height"];
+                        var type = data["name"].ToString();
 
-                        break;
+                        if (type == "player")
+                        {
+                            MainGame.Player = new Player(new Vector2(x + width * .5f, y + height * .5f));
+                            MainGame.Camera.Target = MainGame.Player;
+                            MainGame.Camera.Position = MainGame.Player.Position;
+                            MainGame.Player.SetCameraRoom();
+
+                            break;
+                        }
                     }
                 }
+                else
+                {
+                    MainGame.Player = new Player(MainGame.SaveGame.Position);
+                    MainGame.Player.Abilities = MainGame.SaveGame.Abilities;
+                    MainGame.Camera.Target = MainGame.Player;
+                    MainGame.Camera.Position = MainGame.Player.Position;
+                    MainGame.Player.SetCameraRoom();
+                }
+                
             });
         }
 
@@ -240,8 +252,20 @@ namespace Wyri.Main
                             switch (t.Type)
                             {
                                 case TileType.SpikeUp:
-                                    new SpikeUp(new Vector2(i * G.T, j * G.T), room);                                    
+                                    new SpikeUp(new Vector2(i * G.T, j * G.T), room);
                                     break;
+                                case TileType.SpikeDown:
+                                    new SpikeDown(new Vector2(i * G.T, j * G.T), room);
+                                    break;
+                                case TileType.SpikeLeft:
+                                    new SpikeLeft(new Vector2(i * G.T, j * G.T), room);
+                                    break;
+                                case TileType.SpikeRight:
+                                    new SpikeRight(new Vector2(i * G.T, j * G.T), room);
+                                    break;
+                                case TileType.Save:
+                                    new SavePoint(new Vector2((i - .5f) * G.T, (j - 1) * G.T), room);
+                                break;
                             }
                         }
                     }

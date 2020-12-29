@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using Wyri.Types;
@@ -37,17 +38,17 @@ namespace Wyri.Objects.Levels
             objects.Remove(roomObject);
         }
 
-        public override void Draw(SpriteBatch sb) { }
-        
-        public override void Update() { }
-
-        ~Room()
+        public override void Destroy()
         {
-            foreach(var o in objects)
+            foreach(var o in objects.ToList())
             {
                 o.Destroy();
             }
-            objects.Clear();
+            base.Destroy();
         }
+
+        public override void Draw(SpriteBatch sb) { }
+        
+        public override void Update() { }
     }
 }

@@ -36,7 +36,7 @@ namespace Wyri.Objects
             }
         }
 
-        public void Destroy()
+        public virtual void Destroy()
         {
             ObjectController.Remove(this);
         }
