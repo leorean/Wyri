@@ -12,28 +12,54 @@ Outline
 ^^^^^^^
 
 After something went wrong during Wyri's time-machine experiment, he arrives at an unknown place in an unknown time.
-All his gadgets went missing and the time machine is broken.
+All his gear went missing and the time machine is broken.
 
 Objective
 ^^^^^^^^^
 
-Find your lost gadgets and fix the time-machine.
+Find your lost gear and fix the time-machine.
+
+Ending
+^^^^^^
+
+Wyri uses the time-machine.
 
 Characters
 ^^^^^^^^^^
 
 Wyri - the protagonist, a lost time traveler.
-The dragon - a 10000 year old dragon waiting for the chosen one.
+Celtic A-1800 - a mechoid
+
+========
+| Lore |
+========
+
+Wyri worked as a scientist on his time-machine and started his experiment in the year 2162.
+When the experiment failed, he was transported to the year 10023.
+
+Timeline
+^^^^^^^^
+
+Year 2065: 			Global peace achieved
+Year 2070 - 2078:	Humans inhabited Mars
+Year 2105 - 2120:	Humans inhabited Jupiter
+Year 2144: 			Teleportation invented
+Year 2145: 			Teleportation to Mars established
+Year 2150: 			Teleportation to Jupiter established
+Year 2157: 			First contact with alien lifeforms (non-carbon-based)
+Year 2162: 			*** Wyri uses his time-machine ***
+Year 3089 - 3099:	Humans abandon earth and migrate to Mars & Jupiter
+Year 3100: 			Meteor 'Apophis' hits earth
+Year 3100 - 8420: 	Impact-induced ice-age
+Year 6780:			Teleportation capsule reached Alpha-Centauri 127 (establishes teleportation from Jupiter)
+Year 10023:			*** Wyri arrives with time-machine ***
 
 ==============
 | Game Scope |
 ==============
 
-* 5 abilities
-* 1 boss
-
-Gadgets
-^^^^^^^
+Gear
+^^^^
 
 * Map
 	- Can open map
@@ -47,24 +73,14 @@ Gadgets
 	- Can swim & dive
 * Power Core
 	- Can levitate
-
-
-* small bubbles (hold action key)
-	- push objects, hit switches
-* big bubble (press action key)
-	- can jump on it -> perform double jump
-* bubble around player (hold jump underwater)
-	- float upwards in water & air refill
-* bubble boost (up + action key)
-	- upwards boost to reach high places
-* bubble explosion (jump on bubble)
-	- destroy blocks
+* Pulsator
+	- Can toggle switch-blocks
 
 Biomes/Places
 ^^^^^^^^^^^^^
 
 * The dragon's foot
-* 
+* The rift
 
 Objects
 ^^^^^^^

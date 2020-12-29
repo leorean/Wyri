@@ -40,7 +40,8 @@ namespace Wyri.Objects
         WALL_GRAB = 4,
         LEVITATE = 8,
         MAP = 16,
-        COMPASS = 32
+        COMPASS = 32,
+        TOGGLE_BLOCKS = 64
     }
 
     public static class PlayerExtensions
