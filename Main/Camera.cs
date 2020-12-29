@@ -174,7 +174,10 @@ namespace Wyri.Main
         #endregion
 
         public Room Room { get; set; }
-        public int background = 0;
+        
+        public int Background { get; set; } = 0;
+        public int Weather { get; set; } = 0;
+        public float Darkness { get; set; } = 0;
 
         public Camera(ResolutionRenderer resolutionRenderer)
         {
@@ -283,7 +286,11 @@ namespace Wyri.Main
                 Position = new Vector2(mx, my);
 
                 if (Room.Background != -1)
-                    background = Room.Background;
+                    Background = Room.Background;
+                if (Room.Weather != -1)
+                    Weather = Room.Weather;
+                if (Room.Darkness != -1)
+                    Darkness = Room.Darkness;
             }
         }
 
@@ -291,7 +298,7 @@ namespace Wyri.Main
         {
             if (Room != null)
             {
-                sb.Draw(GameResources.Background[background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
+                sb.Draw(GameResources.Background[Background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
             }
         }
     }

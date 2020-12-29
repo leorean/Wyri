@@ -11,6 +11,8 @@ namespace Wyri
         public const float D_PLAYER_DEAD = .91f;
         public const float D_FADE = .9f;
 
+        public const float D_EFFECT = .8f;
+
         public const float D_FG = .04f;
         public const float D_WATER = .03f;
         public const float D_PLAYER = .025f;

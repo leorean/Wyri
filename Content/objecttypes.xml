@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="player" color="#ffffff">
+  <property name="direction" type="int" default="0"/>
+  <property name="levelText" type="string"/>
+ </objecttype>
+ <objecttype name="room" color="#e7ffff">
+  <property name="bg" type="int" default="-1"/>
+  <property name="darkness" type="float" default="-1"/>
+  <property name="weather" type="int" default="-1"/>
+ </objecttype>
+</objecttypes>

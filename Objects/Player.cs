@@ -37,7 +37,7 @@ namespace Wyri.Objects
         NONE = 0,
         SWIM = 1,
         DOUBLE_JUMP = 2,
-        CLIMB = 4,
+        WALL_GRAB = 4,
         GLIDE = 8        
     }
 
@@ -99,7 +99,8 @@ namespace Wyri.Objects
             AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 24, 4, .1f));
             AnimationState.Add(PlayerState.Dead, new Animation(GameResources.Player, 32, 8, .2f, false));
 
-            //Abilities |= PlayerAbility.DOUBLE_JUMP;
+            Abilities |= PlayerAbility.DOUBLE_JUMP;
+            Abilities |= PlayerAbility.WALL_GRAB;
         }
 
 
@@ -293,10 +294,12 @@ namespace Wyri.Objects
                     if (yVel >= 0 && AnimationState[State].Frame < 3)
                         AnimationState[State].Frame = 3;
 
-
-                    if (OnWall() && ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)))
+                    if (Abilities.HasFlag(PlayerAbility.WALL_GRAB))
                     {
-                        State = PlayerState.Climb;
+                        if (OnWall() && ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)))
+                        {
+                            State = PlayerState.Climb;
+                        }
                     }
                 }
 
@@ -390,6 +393,9 @@ namespace Wyri.Objects
                     }
                 }
 
+                if (kJumpPressed && !jumped && jumps == 1 && Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
+                    new AnimationEffect(new Vector2(X, Bottom), 1);
+
                 if (kJumpHolding)
                 {
                     jumpPowerTimer = Math.Max(jumpPowerTimer - 1, 0);
@@ -399,7 +405,7 @@ namespace Wyri.Objects
                         jumped = true;
                     }
                     if (!jumped)
-                    {
+                    {                        
                         yVel = -2f;
                         State = PlayerState.Jump;
                         onGround = false;
@@ -411,8 +417,6 @@ namespace Wyri.Objects
                     {
                         if (jumps > 1)
                         {
-                            // todo: double-jump effect
-
                             jumps = Math.Max(jumps - 1, 0);
                             jumpPowerTimer = maxJumpPowerTimer;
                             jumped = false;

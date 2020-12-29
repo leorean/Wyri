@@ -15,6 +15,10 @@ namespace Wyri.Main
     {        
         public Vector2 Position;
         public PlayerAbility Abilities = PlayerAbility.NONE;
+        public PlayerDirection Direction;
+        public int Background;
+        public int Weather;
+        public float Darkness;
     }
 
     public static class BinarySerializer

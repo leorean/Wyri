@@ -195,6 +195,12 @@ namespace Wyri.Main
                 {
                     MainGame.Player = new Player(MainGame.SaveGame.Position);
                     MainGame.Player.Abilities = MainGame.SaveGame.Abilities;
+
+                    MainGame.Player.Direction = MainGame.SaveGame.Direction;
+                    MainGame.Camera.Background = MainGame.SaveGame.Background;
+                    MainGame.Camera.Weather = MainGame.SaveGame.Weather;
+                    MainGame.Camera.Darkness = MainGame.SaveGame.Darkness;
+
                     MainGame.Camera.Target = MainGame.Player;
                     MainGame.Camera.Position = MainGame.Player.Position;
                     MainGame.Player.SetCameraRoom();

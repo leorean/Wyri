@@ -31,8 +31,13 @@ namespace Wyri.Objects
 
         public static void Update()
         {
-            foreach (var o in activeObjects)
-                o.Update();
+            for(int i = 0; i < activeObjects.Count; i++)
+            {
+                activeObjects[i].Update();
+            }
+
+            //foreach (var o in activeObjects)
+            //    o.Update();
         }
 
         public static void SetActive(Object o, bool value)

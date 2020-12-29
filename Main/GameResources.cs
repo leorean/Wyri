@@ -14,6 +14,7 @@ namespace Wyri.Main
         public static TextureSet Background { get; private set; }
         public static TextureSet Spinner { get; private set; }
         public static TextureSet Save { get; private set; }
+        public static TextureSet Effects { get; private set; }
 
         public static void Init(ContentManager content)
         {
@@ -22,6 +23,7 @@ namespace Wyri.Main
             Background = content.LoadTextureSet("background", 256, 144);
             Spinner = content.LoadTextureSet("spinner", 16, 16);
             Save = content.LoadTextureSet("save", 16, 16);
+            Effects = content.LoadTextureSet("effects", 16, 16);
         }
     }
 }

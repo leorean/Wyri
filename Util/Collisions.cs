@@ -25,15 +25,20 @@ namespace Wyri
             return detected;
         }
 
-        public static bool CollisionBounds<T>(this SpatialObject self, T other, int offX = 0, int offY = 0) where T : SpatialObject
+        public static bool CollisionBounds(this SpatialObject self, SpatialObject other, int offX = 0, int offY = 0)
         {
-            if (((self.Right + offX) >= other.Left || (self.Left + offX) <= other.Right)
-                    && ((self.Bottom + offY) >= other.Top || (self.Top + offY) <= other.Bottom))
-            {
-                return true;
-            }
-            return false;
+            return (other.Position + other.BBox).Intersects(self.Position + self.BBox + new Vector2(offX, offY));
         }
+
+        //public static bool CollisionBounds<T>(this SpatialObject self, T other, int offX = 0, int offY = 0) where T : SpatialObject
+        //{
+        //    if (((self.Right + offX) >= other.Left || (self.Left + offX) <= other.Right)
+        //            && ((self.Bottom + offY) >= other.Top || (self.Top + offY) <= other.Bottom))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         public static List<T> CollisionPoint<T>(this SpatialObject self, float x, float y) where T : SpatialObject
         {
