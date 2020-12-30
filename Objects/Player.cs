@@ -79,7 +79,7 @@ namespace Wyri.Objects
 
         private float xVel, yVel, yGrav, xMax, yMax;
 
-        private bool onGround, jumped, inWater;
+        private bool onGround, inWater;
 
         private int jumps;
         private int maxJumps;
@@ -99,6 +99,10 @@ namespace Wyri.Objects
         float getUpTimer = 2 * 60;
         bool somethingPressedOnce = false;
 
+        int oxygen;
+        int maxOxygen = 4 * 60;
+        float oxygenAlpha = 0;
+
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
             AnimationState.Add(PlayerState.Idle, new Animation(GameResources.Player, 0, 4, .1f));
@@ -108,8 +112,10 @@ namespace Wyri.Objects
             AnimationState.Add(PlayerState.Dead, new Animation(GameResources.Player, 32, 8, .2f, false));
             AnimationState.Add(PlayerState.StandUp, new Animation(GameResources.Player, 40, 8, .15f, false));
 
-            Abilities |= PlayerAbility.DOUBLE_JUMP;
-            Abilities |= PlayerAbility.WALL_GRAB;
+            oxygen = maxOxygen;
+
+            //Abilities |= PlayerAbility.DOUBLE_JUMP;
+            //Abilities |= PlayerAbility.WALL_GRAB;
         }
 
 
@@ -172,13 +178,10 @@ namespace Wyri.Objects
 
         private void ResetJumps()
         {
-            jumped = false;
             jumps = maxJumps;
-            jumpPowerTimer = maxJumpPowerTimer;
-            jumpFromClimb = false;
+            jumpPowerTimer = maxJumpPowerTimer;            
         }
 
-        private bool jumpFromClimb;
         private int grabTimer;
 
         public void SetCameraRoom()
@@ -186,7 +189,14 @@ namespace Wyri.Objects
             var room = Collisions.CollisionPoint<Room>(X, Y).FirstOrDefault();
             if (room != null)
             {
-                MainGame.Camera.Room = room;
+                if (room != MainGame.Camera.Room)
+                {
+                    var effects = ObjectController.FindAll<AnimationEffect>();
+                    foreach(var e in effects)
+                        e.Destroy();
+                }
+
+                MainGame.Camera.Room = room;                
             }
         }
 
@@ -269,12 +279,40 @@ namespace Wyri.Objects
             if (obstacle != null)
                 State = PlayerState.Dead;
 
+            var waterTile = Collisions.TileAt(X, Y + 4, "WATER");
+            inWater = waterTile != null;
+
+            /*if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
+                State = PlayerState.Dead;*/
+
             if (State != PlayerState.Dead && State != PlayerState.StandUp)
             {
                 var savePoint = this.CollisionBounds<SavePoint>().FirstOrDefault();
                 if (savePoint != null)
                 {
                     savePoint.SaveHere();
+                }
+
+                if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
+                {
+                    var underWater = Collisions.TileAt(X, Y - 4, "WATER") != null;
+                    if (underWater)
+                    {
+                        oxygen = Math.Max(oxygen - 1, 0);
+                        if (oxygen == 0)
+                        {
+                            State = PlayerState.Dead;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        oxygen = Math.Min(oxygen + 2, maxOxygen);
+                    }
+                }
+                else
+                {
+                    oxygen = Math.Min(oxygen + 2, maxOxygen);
                 }
 
                 if (State != PlayerState.Climb)
@@ -345,9 +383,6 @@ namespace Wyri.Objects
                     }
                 }
 
-                var waterTile = Collisions.TileAt(X, Y + 4, "WATER");
-
-                inWater = waterTile != null;
                 yGrav = inWater ? yGravWater : yGravAir;
                 xMax = inWater ? xVelMaxWater : xVelMaxAir;
                 yMax = inWater ? yVelMaxWater : yVelMaxAir;
@@ -378,8 +413,7 @@ namespace Wyri.Objects
                         grabTimer = 20;
 
                     if (!OnWall() || grabTimer == 0)
-                    {
-                        jumpFromClimb = false;
+                    {                        
                         State = PlayerState.Jump;
                         AnimationState[State].Frame = 2;
                     }
@@ -419,55 +453,52 @@ namespace Wyri.Objects
                         }
 
                         ResetJumps();
-                        jumpFromClimb = true;
-                        if (Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
-                        {
-                            jumps = 1;
-                        }
-                        else
-                        {
-                            jumps = 0;
-                            jumped = true;
-                        }
+                        if (!kJumpPressed)
+                            jumps = Math.Max(jumps - 1, 0);
+                        kJumpPressed = false;
 
                         State = PlayerState.Jump;
                         AnimationState[State].Frame = 3;
                     }
                 }
 
-                if (kJumpPressed && !jumped && jumps == 1 && Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
-                    new AnimationEffect(new Vector2(X, Bottom), 1);
+                if (kJumpPressed && jumps == 1 && Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
+                    new AnimationEffect(new Vector2(X, Bottom), 1, MainGame.Camera.Room);
+
+                var jumped = false;
 
                 if (kJumpHolding)
                 {
-                    jumpPowerTimer = Math.Max(jumpPowerTimer - 1, 0);
-
-                    if (jumpPowerTimer == 0)
+                    if (jumps > 0)
                     {
-                        jumped = true;
-                    }
-                    if (!jumped)
-                    {                        
-                        yVel = -2f;
-                        State = PlayerState.Jump;
-                        onGround = false;
+                        jumpPowerTimer = Math.Max(jumpPowerTimer - 1, 0);
+                        if (jumpPowerTimer == 0)
+                        {
+                            jumped = true;
+                        }
+                        if (!jumped)
+                        {
+                            yVel = -2f;
+                            State = PlayerState.Jump;
+                            onGround = false;
+                        }
                     }
                 }
                 else
                 {
-                    if (kJumpReleased && !jumpFromClimb)
+                    if (kJumpReleased)// && !jumpFromClimb)
                     {
-                        if (jumps > 1)
+                        jumps = Math.Max(jumps - 1, 0);
+                        jumpPowerTimer = maxJumpPowerTimer;
+
+                        /*if (jumps > 1)
                         {
-                            jumps = Math.Max(jumps - 1, 0);
-                            jumpPowerTimer = maxJumpPowerTimer;
-                            jumped = false;
+                                                       
                         }
                         else
-                        {
-                            jumped = true;
+                        {                            
                             jumpPowerTimer = maxJumpPowerTimer;
-                        }
+                        }*/
                     }
                 }
 
@@ -529,6 +560,27 @@ namespace Wyri.Objects
         public override void Draw(SpriteBatch sb)
         {
             AnimationState[State].Draw(sb, Position, new Vector2(8), new Vector2((int)Direction, 1), Color.White, 0, depth);
+
+            if (oxygen < maxOxygen && State != PlayerState.Dead)
+                oxygenAlpha = 2;
+            else
+                oxygenAlpha = Math.Max(oxygenAlpha - .1f, 0);
+
+            if (oxygenAlpha > 0)
+            {
+                var o = (float)Math.Floor((1 - ((float)oxygen) / ((float)maxOxygen)) * 16);
+                var top = o;
+                var bottom = 16 - o;
+                var px = -24;
+                var py = -16;
+
+                sb.Draw(GameResources.Oxygen[0], Position + new Vector2(px, py), null, new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .001f);
+                sb.Draw(GameResources.Oxygen[1], Position + new Vector2(px, py + (int)o), new Rectangle(0, (int)top, 16, (int)bottom), new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .001f);
+                if (o > 1 && o < 15)
+                {
+                    sb.Draw(GameResources.Oxygen[2], Position + new Vector2(px, py + o), null, new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .002f);
+                }                
+            } 
             
             //sb.DrawRectangle(Position + BBox, Color.White, false, G.D_PLAYER + .001f);
             //sb.DrawPixel(X, Y, Color.Red, G.D_PLAYER + .001f);

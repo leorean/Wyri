@@ -9,13 +9,13 @@ using Wyri.Types;
 
 namespace Wyri.Objects.Levels.Effects
 {
-    public class AnimationEffect : SpatialObject
+    public class AnimationEffect : RoomObject
     {
         private Animation animation;
 
         public int Delay { get; set; } = 0;
 
-        public AnimationEffect(Vector2 position, int type) : base(position, new RectF(0, 0, 16, 16))
+        public AnimationEffect(Vector2 position, int type, Room room) : base(position, new RectF(0, 0, 16, 16), room)
         {
             switch (type)
             {

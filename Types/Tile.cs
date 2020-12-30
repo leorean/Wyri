@@ -73,6 +73,7 @@ namespace Wyri.Types
                             break;
                         case "P":
                             Type = TileType.Platform;
+                            IsSolid = false;
                             break;
                         case "SB1":
                             SwitchState = SwitchState.Switch1;

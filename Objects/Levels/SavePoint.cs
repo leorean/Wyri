@@ -39,7 +39,7 @@ namespace Wyri.Objects.Levels
 
             for(var i = 0; i < 5; i++)
             {
-                var eff = new AnimationEffect(new Vector2(Center.X - 8 + RND.Next * 16, Center.Y - 8 + RND.Next * 16), 0);
+                var eff = new AnimationEffect(new Vector2(Center.X - 8 + RND.Next * 16, Center.Y - 8 + RND.Next * 16), 0, MainGame.Camera.Room);
                 eff.Delay = i * 12;
             }
 
