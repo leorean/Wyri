@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Wyri.Objects;
 using Wyri.Objects.Levels;
+using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
 
 namespace Wyri.Main
@@ -170,28 +171,43 @@ namespace Wyri.Main
                 // create rooms
                 CreateAllRooms();
 
-                if (!SaveManager.Load(ref MainGame.SaveGame))
-                {
-                    foreach (var data in ObjectData)
-                    {
-                        var x = (int)data["x"];
-                        var y = (int)data["y"];
-                        var width = (int)data["width"];
-                        var height = (int)data["height"];
-                        var type = data["name"].ToString();
+                var loadSuccess = SaveManager.Load(ref MainGame.SaveGame);
 
-                        if (type == "player")
+                foreach (var data in ObjectData)
+                {
+                    var x = (int)data["x"];
+                    var y = (int)data["y"];
+                    var width = (int)data["width"];
+                    var height = (int)data["height"];
+                    var type = data["name"].ToString();
+
+                    if (type == "player")
+                    {
+                        if (!loadSuccess)
                         {
                             MainGame.Player = new Player(new Vector2(x + width * .5f, y + height * .5f));
                             MainGame.Camera.Target = MainGame.Player;
                             MainGame.Camera.Position = MainGame.Player.Position;
                             MainGame.Player.SetCameraRoom();
+                            MainGame.Player.State = PlayerState.StandUp;
+                        }                        
+                    }
 
-                            break;
+                    if (type == "effect")
+                    {
+                        var effectType = data.ContainsKey("type") ? (int)data["type"] : -1;                        
+                        switch (effectType)
+                        {
+                            case 0:
+                                new ElectricSparkEmitter(new Vector2(x + 4, y + 4));
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
-                else
+                
+                if (loadSuccess)
                 {
                     MainGame.Player = new Player(MainGame.SaveGame.Position);
                     MainGame.Player.Abilities = MainGame.SaveGame.Abilities;

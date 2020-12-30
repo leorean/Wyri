@@ -33,11 +33,9 @@ namespace Wyri.Objects
         {
             for(int i = 0; i < activeObjects.Count; i++)
             {
-                activeObjects[i].Update();
+                var o = activeObjects[i];
+                o.Update();
             }
-
-            //foreach (var o in activeObjects)
-            //    o.Update();
         }
 
         public static void SetActive(Object o, bool value)
@@ -57,8 +55,9 @@ namespace Wyri.Objects
 
         public static void SetAllActive<T>(bool active) where T: Object
         {
-            foreach (var obj in objects)
+            for (int i = 0; i < objects.Count; i++)
             {
+                var obj = objects[i];
                 if (obj is T o)
                 {
                     o.IsActive = active;

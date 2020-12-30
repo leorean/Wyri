@@ -21,5 +21,10 @@ namespace Wyri
         {
             return Math.Min(Math.Max(value, min), max);
         }
+
+        public static bool In(this float x, float min, float max)
+        {
+            return x >= min && x <= max;
+        }
     }
 }

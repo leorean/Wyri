@@ -9,6 +9,7 @@ using Wyri.Main;
 using Wyri.Objects;
 using Wyri.Objects.Levels;
 using Wyri.Types;
+using Object = Wyri.Objects.Object;
 
 namespace Wyri
 {
@@ -101,6 +102,14 @@ namespace Wyri
 
             Task.Run(async () => {
                 await Map?.UnloadAsync();
+
+                foreach(var o in ObjectController.FindAll<Object>())
+                {
+                    if (o is Player)
+                        continue;
+                    o.Destroy();
+                }
+
                 await Map.LoadMapContentAsync("map.tmx");
 
                 isLoading = false;
@@ -132,12 +141,14 @@ namespace Wyri
             {
                 InputController.Update();
 
-                Camera.Update();
-
-                ObjectController.SetAllActive<RoomObject>(false);
+                ObjectController.SetAllActive<Object>(false);
+                ObjectController.SetAllActive<Player>(true);
+                ObjectController.SetAllActive<Room>(true);
                 ObjectController.SetRegionActive<SpatialObject>(Camera.Room.X, Camera.Room.Y, Camera.Room.Width, Camera.Room.Height, true);
 
                 ObjectController.Update();
+
+                Camera.Update();
 
                 if (issueReloading)
                 {

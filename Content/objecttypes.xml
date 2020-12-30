@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objecttypes>
+ <objecttype name="effect" color="#ffff00">
+  <property name="type" type="int" default="0"/>
+ </objecttype>
  <objecttype name="player" color="#ffffff">
   <property name="direction" type="int" default="0"/>
   <property name="levelText" type="string"/>

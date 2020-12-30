@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Wyri.Main;
+using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
 using Wyri.Util;
 

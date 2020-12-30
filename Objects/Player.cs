@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using Wyri.Main;
 using Wyri.Objects.Levels;
+using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
 
 namespace Wyri.Objects
@@ -18,7 +19,8 @@ namespace Wyri.Objects
         Walk,
         Jump,
         Climb,
-        Dead
+        Dead,
+        StandUp
     }
 
     public enum PlayerDirection
@@ -93,6 +95,9 @@ namespace Wyri.Objects
 
         float depth = G.D_PLAYER;
         float deadTimer = 2 * 60;
+        float standUpTimer = 2 * 60;
+        float getUpTimer = 2 * 60;
+        bool somethingPressedOnce = false;
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
@@ -101,6 +106,7 @@ namespace Wyri.Objects
             AnimationState.Add(PlayerState.Jump, new Animation(GameResources.Player, 16, 5, .3f, false));
             AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 24, 4, .1f));
             AnimationState.Add(PlayerState.Dead, new Animation(GameResources.Player, 32, 8, .2f, false));
+            AnimationState.Add(PlayerState.StandUp, new Animation(GameResources.Player, 40, 8, .15f, false));
 
             Abilities |= PlayerAbility.DOUBLE_JUMP;
             Abilities |= PlayerAbility.WALL_GRAB;
@@ -226,11 +232,44 @@ namespace Wyri.Objects
 
             // logic
 
+            if (State == PlayerState.StandUp)
+            {
+                standUpTimer = Math.Max(standUpTimer - 1, 0);
+                if (standUpTimer == 0)
+                {
+                    if (kJumpPressed)
+                        State = PlayerState.Jump;
+                    
+                    if (!somethingPressedOnce)
+                    {
+                        if (getUpTimer == 0)
+                        {
+                            if (InputController.IsAnyKeyPressed())
+                                somethingPressedOnce = true;
+
+                            if (AnimationState[State].Frame >= 5) AnimationState[State].Frame = 5;
+                        }
+                        else
+                        {
+                            getUpTimer = Math.Max(getUpTimer - 1, 0);
+                            if (AnimationState[State].Frame >= 3) AnimationState[State].Frame = 3;
+                        }
+                    }
+
+                    if (AnimationState[State].IsDone)
+                        State = PlayerState.Idle;
+                }
+                else
+                {
+                    AnimationState[State].Reset();
+                }
+            }
+
             var obstacle = this.CollisionBounds<Obstacle>().FirstOrDefault();
             if (obstacle != null)
-                state = PlayerState.Dead;
+                State = PlayerState.Dead;
 
-            if (State != PlayerState.Dead)
+            if (State != PlayerState.Dead && State != PlayerState.StandUp)
             {
                 var savePoint = this.CollisionBounds<SavePoint>().FirstOrDefault();
                 if (savePoint != null)
@@ -475,11 +514,14 @@ namespace Wyri.Objects
             }
             else // player is dead
             {
-                depth = G.D_PLAYER_DEAD;
-                deadTimer = Math.Max(deadTimer - 1, 0);
-                if (deadTimer == 0)
+                if (State == PlayerState.Dead)
                 {
-                    MainGame.ReloadLevel();
+                    depth = G.D_PLAYER_DEAD;
+                    deadTimer = Math.Max(deadTimer - 1, 0);
+                    if (deadTimer == 0)
+                    {
+                        MainGame.ReloadLevel();
+                    }
                 }
             }
         }

@@ -30,8 +30,7 @@ namespace Wyri.Objects
             }
             set
             {
-                if (value)
-                    ObjectController.SetActive(this, value);                
+                ObjectController.SetActive(this, value);                
                 isActive = value;
             }
         }
