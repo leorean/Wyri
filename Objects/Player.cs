@@ -115,7 +115,7 @@ namespace Wyri.Objects
             oxygen = maxOxygen;
 
             //Abilities |= PlayerAbility.DOUBLE_JUMP;
-            //Abilities |= PlayerAbility.WALL_GRAB;
+            Abilities |= PlayerAbility.WALL_GRAB;
         }
 
 
@@ -571,8 +571,8 @@ namespace Wyri.Objects
                 var o = (float)Math.Floor((1 - ((float)oxygen) / ((float)maxOxygen)) * 16);
                 var top = o;
                 var bottom = 16 - o;
-                var px = -24;
-                var py = -16;
+                var px = -8;
+                var py = -24;
 
                 sb.Draw(GameResources.Oxygen[0], Position + new Vector2(px, py), null, new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .001f);
                 sb.Draw(GameResources.Oxygen[1], Position + new Vector2(px, py + (int)o), new Rectangle(0, (int)top, 16, (int)bottom), new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .001f);

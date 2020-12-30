@@ -66,7 +66,7 @@ namespace Wyri.Objects.Levels.Effects
 
             DrawOffset = new Vector2(4);
 
-            Color = RND.Choose(Color.White, Color.Black, Color.Gray);
+            Color = RND.Choose(Color.White, Color.DarkGray, Color.Gray);
         }
 
         public override void Update()

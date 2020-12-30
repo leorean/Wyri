@@ -61,12 +61,12 @@ Year 10023:			*** Wyri arrives with time-machine ***
 Gear
 ^^^^
 
+* Grapple Glove
+	- Wall grab
 * Map
 	- Can open map
 * Compass
 	- Shows abilities & time machine parts on map
-* Grapple Glove
-	- Wall grab
 * Rocket Boots
 	- Double Jump
 * Gill Piece
