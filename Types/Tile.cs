@@ -9,12 +9,13 @@ namespace Wyri.Types
     {
         Default,        
         Platform,
-        Save,
+        /*Save,
         SpikeUp,
         SpikeDown,
         SpikeLeft,
         SpikeRight,
-        // ... etc.
+        Smoke,
+        // ... etc.*/
     }
 
     /// <summary>
@@ -35,6 +36,8 @@ namespace Wyri.Types
         
         public TileType Type { get; private set; }
 
+        public string typeData { get; private set; }
+
         public Tile(int id)
         {
             ID = id;
@@ -53,18 +56,6 @@ namespace Wyri.Types
                 string[] options = expression.Split(';');
                 foreach(var o in options)
                 {
-                    if (o == "S-")
-                        IsSolid = false;
-                    
-                    if (o == "V-")
-                        IsVisible = false;
-
-                    if (o == "P")
-                    {
-                        Type = TileType.Platform;
-                        IsSolid = false;
-                    }
-
                     if (o.StartsWith("A"))
                     {
                         string[] animationOptions = o.Remove(0, 1).Split('-');
@@ -72,39 +63,82 @@ namespace Wyri.Types
                         AnimationTimeout = int.Parse(animationOptions[1]);
                     }
 
-                    if (o == "SAVE")
+                    switch (o)
                     {
-                        Type = TileType.Save;
-                        IsVisible = false;
-                        IsSolid = false;
+                        case "S-":
+                            IsSolid = false;
+                            break;
+                        case "V-":
+                            IsVisible = false;
+                            break;
+                        case "P":
+                            Type = TileType.Platform;
+                            break;
+                        case "SB1":
+                            SwitchState = SwitchState.Switch1;
+                            break;
+                        case "SB2":
+                            SwitchState = SwitchState.Switch2;
+                            break;
+                        default:
+                            typeData = o;
+                            break;
                     }
 
-                    if (o == "SB1")
-                        SwitchState = SwitchState.Switch1;
+                    //if (o == "S-")
+                    //    IsSolid = false;
+                    
+                    //if (o == "V-")
+                    //    IsVisible = false;
 
-                    if (o == "SB2")
-                        SwitchState = SwitchState.Switch2;
+                    //if (o == "P")
+                    //{
+                    //    Type = TileType.Platform;
+                    //    IsSolid = false;
+                    //}
 
-                    if (o == "SPIKE_UP")
-                    {
-                        Type = TileType.SpikeUp;
-                        IsSolid = false;
-                    }
-                    if (o == "SPIKE_DOWN")
-                    {
-                        Type = TileType.SpikeDown;
-                        IsSolid = false;
-                    }
-                    if (o == "SPIKE_LEFT")
-                    {
-                        Type = TileType.SpikeLeft;
-                        IsSolid = false;
-                    }
-                    if (o == "SPIKE_RIGHT")
-                    {
-                        Type = TileType.SpikeRight;
-                        IsSolid = false;
-                    }
+                    
+
+                    //if (o == "SAVE")
+                    //{
+                    //    Type = TileType.Save;
+                    //    IsVisible = false;
+                    //    IsSolid = false;
+                    //}
+
+                    //if (o == "SB1")
+                    //    SwitchState = SwitchState.Switch1;
+
+                    //if (o == "SB2")
+                    //    SwitchState = SwitchState.Switch2;
+
+                    //if (o == "SPIKE_UP")
+                    //{
+                    //    Type = TileType.SpikeUp;
+                    //    IsSolid = false;
+                    //}
+                    //if (o == "SPIKE_DOWN")
+                    //{
+                    //    Type = TileType.SpikeDown;
+                    //    IsSolid = false;
+                    //}
+                    //if (o == "SPIKE_LEFT")
+                    //{
+                    //    Type = TileType.SpikeLeft;
+                    //    IsSolid = false;
+                    //}
+                    //if (o == "SPIKE_RIGHT")
+                    //{
+                    //    Type = TileType.SpikeRight;
+                    //    IsSolid = false;
+                    //}
+
+                    //if (o == "SMOKE")
+                    //{
+                    //    typeData = o;
+                    //    IsVisible = false;
+                    //    IsSolid = false;
+                    //}
                 }
             }
         }

@@ -2,31 +2,51 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Wyri.Main;
 using Wyri.Util;
 
 namespace Wyri.Objects.Levels.Effects
 {
     public class ElectricSparkParticle : Particle
     {
-        float yGrav = .1f;
+        readonly float yGrav = .06f;
 
-        public ElectricSparkParticle(ParticleEmitter emitter) : base(emitter)
+        bool bounced = false;
+
+        public ElectricSparkParticle(ParticleEmitter emitter) : base(emitter, 120)
         {
-            Texture = Primitives2D.Pixel;
-            LifeTime = 60;
-            XVel = -1 + RND.Next * 2;
-            YVel = -2 + RND.Next * 2;
-            Color = Color.Red;
+            Texture = Primitives2D.Pixel;            
+            XVel = -.5f + RND.Next * 1;
+            YVel = -0.5f + RND.Next * .5f;
+            //Color = new Color(134, 234, 255);
         }
 
         public override void Update()
         {
             base.Update();
 
+            //Alpha = LifeTime / (float)MaxLifeTime;
+
             YVel += yGrav;
 
             X += XVel;
             Y += YVel;
+
+            var t = Collisions.TileAt(X, Y + YVel, "FG");
+            if (t != null && t.IsSolid)
+            {
+                if (!bounced)
+                {
+                    XVel *= .7f;
+                    Y -= YVel;
+                    YVel *= -.5f;
+                    bounced = true;
+                }
+                else
+                {
+                    LifeTime = 0;
+                }
+            }
         }
     }
 
@@ -34,23 +54,33 @@ namespace Wyri.Objects.Levels.Effects
     {
         public ElectricSparkEmitter(Vector2 position) : base(position)
         {
-            SpawnTimeout = 5;
-            SpawnRate = 3;
+            SpawnTimeout = 0;
+            SpawnRate = 0;
+
+            ResetTimer();
+        }
+
+        void ResetTimer()
+        {
+            SpawnRate = 1 + RND.Int(2);
+            SpawnTimeout = 60 + RND.Int(30);
+            Active = true;
         }
 
         public override void Update()
         {
             base.Update();
 
-            if (Particles.Count == 0)
+            if (!Active && Particles.Count == 0)
             {
-
+                ResetTimer();
             }
         }
 
         public override void CreateParticle()
         {
             new ElectricSparkParticle(this);
+            Active = false;
         }
     }
 }

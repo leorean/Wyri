@@ -271,23 +271,26 @@ namespace Wyri.Main
                             if (t == null)
                                 continue;
 
-                            switch (t.Type)
+                            switch (t.typeData)
                             {
-                                case TileType.SpikeUp:
+                                case "SPIKE_UP":
                                     new SpikeUp(new Vector2(i * G.T, j * G.T), room);
                                     break;
-                                case TileType.SpikeDown:
+                                case "SPIKE_DOWN":
                                     new SpikeDown(new Vector2(i * G.T, j * G.T), room);
                                     break;
-                                case TileType.SpikeLeft:
+                                case "SPIKE_LEFT":
                                     new SpikeLeft(new Vector2(i * G.T, j * G.T), room);
                                     break;
-                                case TileType.SpikeRight:
+                                case "SPIKE_RIGHT":
                                     new SpikeRight(new Vector2(i * G.T, j * G.T), room);
                                     break;
-                                case TileType.Save:
+                                case "SAVE":
                                     new SavePoint(new Vector2((i - .5f) * G.T, (j - 1) * G.T), room);
-                                break;
+                                    break;
+                                case "SMOKE":
+                                    new Smoke(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), room);
+                                    break;
                             }
                         }
                     }

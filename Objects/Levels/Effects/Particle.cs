@@ -37,8 +37,9 @@ namespace Wyri.Objects.Levels.Effects
         }
 
         public int LifeTime;
+        public int MaxLifeTime;
 
-        public Particle(ParticleEmitter emitter)
+        public Particle(ParticleEmitter emitter, int maxLifeTime)
         {
             Color = Color.White;
 
@@ -52,6 +53,9 @@ namespace Wyri.Objects.Levels.Effects
 
             Texture = Primitives2D.Pixel;
             Depth = emitter.Depth;
+
+            MaxLifeTime = maxLifeTime;
+            LifeTime = MaxLifeTime;
         }
 
         ~Particle()
