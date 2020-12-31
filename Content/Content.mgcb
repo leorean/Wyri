@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:background.png
 
+#begin defaultshader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:defaultshader.fx
+
 #begin effects.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -97,6 +103,12 @@
 /processorParam:TextureFormat=Color
 /build:spinner.png
 
+#begin testshader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:testshader.fx
+
 #begin tiles.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -108,4 +120,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tiles.png
+
+#begin underwater.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/processorParam:Defines=
+/build:underwater.fx
 

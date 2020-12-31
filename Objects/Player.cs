@@ -152,6 +152,16 @@ namespace Wyri.Objects
             }
         }
 
+        private bool OnWallEdge()
+        {
+            var grid = MainGame.Map.LayerData["FG"];
+            float tx = M.Div(X - Math.Sign((int)Direction) * 4f, G.T);
+            float ty = M.Div(Y - 4, G.T);
+            var t = grid[(int)tx, (int)ty];
+
+            return t == null || !t.IsSolid;
+        }
+
         private bool OnWall()
         {
             if (inWater)
@@ -162,11 +172,11 @@ namespace Wyri.Objects
             float ty = M.Div(Y + 2, G.T);
             var t = grid[(int)tx, (int)ty];
 
-            float txg = M.Div(X, G.T);
-            float tyg = M.Div(Y + G.T + 2, G.T);
+            float txground = M.Div(X, G.T);
+            float tyground = M.Div(Y + G.T + 2, G.T);
 
-            var tg = grid[(int)txg, (int)tyg];
-            if (tg != null && tg.IsSolid)
+            var tground = grid[(int)txground, (int)tyground];
+            if (tground != null && tground.IsSolid)
                 return false;
 
             if (t != null && t.IsSolid)
@@ -447,9 +457,9 @@ namespace Wyri.Objects
                             yVel = -2f;
                         }
                         else
-                        {
-                            xVel = .5f * Math.Sign((int)Direction);
-                            yVel = -2.5f;
+                        {                            
+                            xVel = (OnWallEdge() ? 0 : .5f) * Math.Sign((int)Direction);
+                            yVel = -1.5f;
                         }
 
                         ResetJumps();
@@ -571,8 +581,10 @@ namespace Wyri.Objects
                 var o = (float)Math.Floor((1 - ((float)oxygen) / ((float)maxOxygen)) * 16);
                 var top = o;
                 var bottom = 16 - o;
-                var px = -8;
-                var py = -24;
+                //var px = -8;
+                //var py = -24;
+                var px = -16;
+                var py = -16;
 
                 sb.Draw(GameResources.Oxygen[0], Position + new Vector2(px, py), null, new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .001f);
                 sb.Draw(GameResources.Oxygen[1], Position + new Vector2(px, py + (int)o), new Rectangle(0, (int)top, 16, (int)bottom), new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .001f);

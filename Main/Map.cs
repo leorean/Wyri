@@ -195,7 +195,7 @@ namespace Wyri.Main
 
                     if (type == "effect")
                     {
-                        var effectType = data.ContainsKey("type") ? (int)data["type"] : -1;                        
+                        var effectType = data.ContainsKey("type") ? (int)data["type"] : -1;
                         switch (effectType)
                         {
                             case 0:
@@ -204,6 +204,10 @@ namespace Wyri.Main
                             default:
                                 break;
                         }
+                    }
+                    if (type == "displacement") // TODO: REMOVE!!!
+                    {
+                        new Displacement(new Vector2(x, y));
                     }
                 }
                 
@@ -290,7 +294,7 @@ namespace Wyri.Main
                                     break;
                                 case "SMOKE":
                                     new Smoke(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), room);
-                                    break;
+                                    break;                                
                             }
                         }
                     }
@@ -334,6 +338,20 @@ namespace Wyri.Main
             });            
         }
 
+        public static Texture2D Crop(Texture2D original, Rectangle rect)
+        {
+            //Color[] originalData = new Color[original.Width * original.Height];
+            //original.GetData(originalData);
+
+            Texture2D newTexture = new Texture2D(original.GraphicsDevice, rect.Width, rect.Height);
+            Color[] newTextureData = new Color[rect.Width * rect.Height];
+
+            original.GetData(0, rect, newTextureData, 0, newTextureData.Length);
+            newTexture.SetData(newTextureData);
+
+            return newTexture;
+        }
+
         public void Draw(SpriteBatch sb)
         {
             var camera = MainGame.Camera;
@@ -353,13 +371,15 @@ namespace Wyri.Main
             maxX = M.Div(maxX, G.T);
             maxY = M.Div(maxY, G.T);
 
-            foreach(var layer in LayerData)
+            //Grid<Texture2D> textureBuffer = new Grid<Texture2D>(16 * G.T, 9 * G.T);
+
+            foreach (var layer in LayerData)
             {
                 float depth = 0f;
                 if (layer.Key == "FG") depth = G.D_FG;
                 if (layer.Key == "WATER") depth = G.D_WATER;
                 if (layer.Key == "BG1") depth = G.D_BG1;
-                if (layer.Key == "BG2") depth = G.D_BG2;
+                if (layer.Key == "BG2") depth = G.D_BG2;                
 
                 for (int i = M.Div(camera.Room.X, G.T); i < M.Div(camera.Room.X + camera.Room.Width, G.T); i++)
                 {
@@ -394,13 +414,110 @@ namespace Wyri.Main
                                 tile.IsSolid = camera.Room.SwitchState ? true : false;
                             }
 
+                            //var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
+                            //sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
+
+                            // experimental:
+
                             var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
 
+                            //var newTexture = Crop(GameResources.Tiles.OriginalTexture, partRect);
                             sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
+
+                            //Color[] data = tex.GetPixels();
+                            //Color[] replaced = new Color[data.Length];
+                            //var newTexture = new Texture2D(tex.GraphicsDevice, tex.Width, tex.Height);
+
+                            //for (var i = 0; i < data.Length; i++)
+                            //{
+                            //    var n = (data[i] == c1) ? c2 : data[i];
+                            //    replaced[i] = n;
+                            //}
+
                         }
                     }
                 }
             }
         }
+
+        //public void DrawWater(SpriteBatch sb)
+        //{
+        //    var camera = MainGame.Camera;
+        //    if (camera == null || camera.Room == null)
+        //        return;
+
+        //    if (GameResources.Tiles == null)
+        //        throw new InvalidOperationException("The map cannot be drawn without a tileset!");
+
+        //    int minX = (int)Math.Max(camera.Position.X - camera.ViewWidth * .5f, 0f);
+        //    int maxX = (int)Math.Min(camera.Position.X + camera.ViewWidth * .5f + G.T, Width * G.T);
+        //    int minY = (int)Math.Max(camera.Position.Y - camera.ViewHeight * .5f, 0f);
+        //    int maxY = (int)Math.Min(camera.Position.Y + camera.ViewHeight * .5f + G.T, Height * G.T);
+
+        //    minX = M.Div(minX, G.T);
+        //    minY = M.Div(minY, G.T);
+        //    maxX = M.Div(maxX, G.T);
+        //    maxY = M.Div(maxY, G.T);
+
+        //    if (!LayerData.ContainsKey("WATER"))
+        //        return;
+
+        //    var layer = LayerData["WATER"];
+
+        //    float depth = G.D_WATER;
+            
+        //    for (int i = M.Div(camera.Room.X, G.T); i < M.Div(camera.Room.X + camera.Room.Width, G.T); i++)
+        //    {
+        //        for (int j = M.Div(camera.Room.Y, G.T); j < M.Div(camera.Room.Y + camera.Room.Height, G.T); j++)
+        //        {
+        //            var tile = layer[i, j];
+
+        //            if (tile == null)
+        //                continue;
+
+        //            //tile.UpdateAnimation();
+
+        //            if (i < minX || i >= maxX || j < minY || j >= maxY)
+        //                continue;
+
+        //            if (tile.IsVisible)
+        //            {
+        //                var tid = tile.ID;
+
+        //                var tix = (tid * G.T) % GameResources.Tiles.Width;
+        //                var tiy = M.Div(tid * G.T, GameResources.Tiles.Width) * G.T;
+
+        //                int switchOffset = 0;
+        //                if (tile.SwitchState == SwitchState.Switch1)
+        //                {
+        //                    switchOffset = camera.Room.SwitchState ? 1 : 0;
+        //                    tile.IsSolid = camera.Room.SwitchState ? false : true;
+        //                }
+        //                if (tile.SwitchState == SwitchState.Switch2)
+        //                {
+        //                    switchOffset = camera.Room.SwitchState ? -1 : 0;
+        //                    tile.IsSolid = camera.Room.SwitchState ? true : false;
+        //                }
+
+        //                var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
+
+        //                sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
+
+        //                //if (layer.Key == "WATER")
+        //                //{
+        //                //    var shaderBatch = new SpriteBatch(sb.GraphicsDevice);
+
+        //                //    //mBatch.Begin(sortMode, bstate, SamplerState.PointClamp, dstate, RasterizerState.CullNone, null, camera.GetViewTransformationMatrix());
+
+        //                //    shaderBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, GameResources.UnderWater, MainGame.Camera.GetViewTransformationMatrix());
+        //                //    GameResources.UnderWater.CurrentTechnique.Passes[0].Apply();
+
+        //                //    shaderBatch.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), Color.White);
+        //                //    shaderBatch.End();
+        //                //}
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

@@ -179,12 +179,15 @@ namespace Wyri
 
                 if (InputController.IsMousePressed(KeyState.Holding))
                 {
-                    Player.Position = Camera.ToVirtual(Mouse.GetState().Position.ToVector2());
+                    if (Player != null)
+                        Player.Position = Camera.ToVirtual(Mouse.GetState().Position.ToVector2());
                 }        
             }
 
             base.Update(gameTime);
         }
+
+        public static RenderTarget2D LastBuffer { get; private set; }
 
         protected override void Draw(GameTime gameTime)
         {
@@ -194,16 +197,19 @@ namespace Wyri
 
             // ++++ begin draw ++++
 
-            GraphicsDevice.Clear(Color.Black);
+            //LastBuffer = new RenderTarget2D(GraphicsDevice, 256, 144);
+            //GraphicsDevice.SetRenderTarget(LastBuffer);
 
+            GraphicsDevice.Clear(Color.Black);
             Camera.ResolutionRenderer.SetupDraw();
+
+            SpriteBatch.BeginCamera(Camera, BlendState.NonPremultiplied, DepthStencilState.None);
             
             // actual object drawing etc.
 
-            SpriteBatch.BeginCamera(Camera, BlendState.NonPremultiplied, DepthStencilState.None);
-
             if (!isLoading)
             {
+                
                 Map.Draw(SpriteBatch);
                 ObjectController.Draw(SpriteBatch);
 
@@ -234,6 +240,38 @@ namespace Wyri
             }
 
             SpriteBatch.End();
+
+            //int w = GraphicsDevice.PresentationParameters.BackBufferWidth;
+            //int h = GraphicsDevice.PresentationParameters.BackBufferHeight;
+            //int[] backBuffer = new int[w * h];
+            //GraphicsDevice.GetBackBufferData(backBuffer);
+            //LastBuffer = new RenderTarget2D(GraphicsDevice, w, h);
+            //LastBuffer.SetData(backBuffer);
+
+            //GraphicsDevice.SetRenderTarget(null);
+
+            //int w = GraphicsDevice.PresentationParameters.BackBufferWidth;
+            //int h = GraphicsDevice.PresentationParameters.BackBufferHeight;
+            //var sb = new SpriteBatch(GraphicsDevice);
+            //sb.Begin();
+            //sb.Draw(LastBuffer, new Rectangle(0, 0, w, h));
+            //sb.End();
+
+            /*
+              How to water-shader:
+              1) Draw background on background batch
+              2) Draw every tile that is beneath water layer on waterBatch
+              3) Draw everything that is above water layer on foreground batch
+             */
+
+            //var shaderBatch = new SpriteBatch(GraphicsDevice);
+            ////mBatch.Begin(sortMode, bstate, SamplerState.PointClamp, dstate, RasterizerState.CullNone, null, camera.GetViewTransformationMatrix());
+            ////shaderBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, GameResources.UnderWater, Camera.GetViewTransformationMatrix());
+            //shaderBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, GameResources.UnderWater, Camera.GetViewTransformationMatrix());
+            //GameResources.UnderWater.CurrentTechnique.Passes[0].Apply();
+            //Map.DrawWater(shaderBatch);
+            ////shaderBatch.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), Color.White);
+            //shaderBatch.End();
         }
     }
 }
