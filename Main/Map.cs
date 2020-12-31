@@ -289,6 +289,9 @@ namespace Wyri.Main
                                 case "SPIKE_RIGHT":
                                     new SpikeRight(new Vector2(i * G.T, j * G.T), room);
                                     break;
+                                case "SPIKE_CORNER":
+                                    new SpikeCorner(new Vector2(i * G.T, j * G.T), room);
+                                    break;
                                 case "SAVE":
                                     new SavePoint(new Vector2((i - .5f) * G.T, (j - 1) * G.T), room);
                                     break;

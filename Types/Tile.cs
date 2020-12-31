@@ -61,6 +61,7 @@ namespace Wyri.Types
                         string[] animationOptions = o.Remove(0, 1).Split('-');
                         AnimationLength = int.Parse(animationOptions[0]);
                         AnimationTimeout = int.Parse(animationOptions[1]);
+                        continue;
                     }
 
                     switch (o)
@@ -85,61 +86,6 @@ namespace Wyri.Types
                             typeData = o;
                             break;
                     }
-
-                    //if (o == "S-")
-                    //    IsSolid = false;
-                    
-                    //if (o == "V-")
-                    //    IsVisible = false;
-
-                    //if (o == "P")
-                    //{
-                    //    Type = TileType.Platform;
-                    //    IsSolid = false;
-                    //}
-
-                    
-
-                    //if (o == "SAVE")
-                    //{
-                    //    Type = TileType.Save;
-                    //    IsVisible = false;
-                    //    IsSolid = false;
-                    //}
-
-                    //if (o == "SB1")
-                    //    SwitchState = SwitchState.Switch1;
-
-                    //if (o == "SB2")
-                    //    SwitchState = SwitchState.Switch2;
-
-                    //if (o == "SPIKE_UP")
-                    //{
-                    //    Type = TileType.SpikeUp;
-                    //    IsSolid = false;
-                    //}
-                    //if (o == "SPIKE_DOWN")
-                    //{
-                    //    Type = TileType.SpikeDown;
-                    //    IsSolid = false;
-                    //}
-                    //if (o == "SPIKE_LEFT")
-                    //{
-                    //    Type = TileType.SpikeLeft;
-                    //    IsSolid = false;
-                    //}
-                    //if (o == "SPIKE_RIGHT")
-                    //{
-                    //    Type = TileType.SpikeRight;
-                    //    IsSolid = false;
-                    //}
-
-                    //if (o == "SMOKE")
-                    //{
-                    //    typeData = o;
-                    //    IsVisible = false;
-                    //    IsSolid = false;
-                    //}
                 }
             }
         }
