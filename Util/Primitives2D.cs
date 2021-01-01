@@ -35,6 +35,11 @@ namespace Wyri
             sb.Draw(Pixel, new Vector2(x, y), null, col, 0, new Vector2(.5f), 1f, SpriteEffects.None, depth);
         }
 
+        public static void DrawLine(this SpriteBatch sb, Vector2 p1, Vector2 p2, Color col, float depth = 1f)
+        {
+            sb.DrawLine(p1.X, p1.Y, p2.X, p2.Y, col, depth);
+        }
+
         //draws a line 
         public static void DrawLine(this SpriteBatch sb, float x1, float y1, float x2, float y2, Color col, float depth = 1f)
         {

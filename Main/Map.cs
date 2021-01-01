@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using Wyri.Objects;
 using Wyri.Objects.Levels;
 using Wyri.Objects.Levels.Effects;
+using Wyri.Objects.Levels.Enemies;
 using Wyri.Types;
 
 namespace Wyri.Main
@@ -297,7 +298,10 @@ namespace Wyri.Main
                                     break;
                                 case "SMOKE":
                                     new Smoke(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), room);
-                                    break;                                
+                                    break;
+                                case "E1":
+                                    new Enemy1(new Vector2((i + .5f) * G.T, j * G.T), room);
+                                    break;
                             }
                         }
                     }
