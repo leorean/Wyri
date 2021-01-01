@@ -20,6 +20,7 @@ namespace Wyri.Main
         public static TextureSet Smoke { get; private set; }
         public static TextureSet Oxygen { get; private set; }
         public static TextureSet Enemy1 { get; private set; }
+        public static TextureSet Crosshair { get; private set; }
 
         public static void Init(ContentManager content)
         {
@@ -32,6 +33,7 @@ namespace Wyri.Main
             Smoke = content.LoadTextureSet("smoke", 8, 8);
             Oxygen = content.LoadTextureSet("oxygen", 16, 16);
             Enemy1 = content.LoadTextureSet("enemy1", 16, 16);
+            Crosshair = content.LoadTextureSet("crosshair", 8, 8);
 
             //UnderWater = content.Load<Effect>("testshader");
             //UnderWater.Parameters["fAmplitude"].SetValue(0.01f);

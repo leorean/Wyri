@@ -233,13 +233,12 @@ namespace Wyri.Main
         public Map() { }
 
         private void CreateAllRooms()
-        {
+        {            
             var camera = MainGame.Camera;
+            Room room;
 
             try
             {
-                Room room;
-
                 foreach (var data in ObjectData)
                 {
                     if (data["name"].ToString() != "room")
@@ -307,19 +306,20 @@ namespace Wyri.Main
                     }
                 }
 
-                // load rooms of standard size when there is none
-                for (var i = 0; i < Width * G.T; i += camera.ViewWidth)
-                {
-                    for (var j = 0; j < Height * G.T; j += camera.ViewHeight)
-                    {
-                        var c = Collisions.CollisionPoint<Room>(i + G.T, j + G.T);
-                        if (c.Count == 0)
-                        {
-                            room = new Room(i, j, camera.ViewWidth, camera.ViewHeight);
-                            Rooms.Add(room);
-                        }
-                    }
-                }
+                //// load rooms of standard size when there is none
+                //for (var i = 0; i < Width * G.T; i += camera.ViewWidth)
+                //{
+                //    for (var j = 0; j < Height * G.T; j += camera.ViewHeight)
+                //    {
+                //        var c = Collisions.CollisionPoint<Room>(i + G.T, j + G.T);
+                //        if (c.Count == 0)
+                //        {
+                //            room = new Room(i, j, camera.ViewWidth, camera.ViewHeight);
+                //            Rooms.Add(room);
+                //        }
+                //    }
+                //}
+
 
             }            
             catch (Exception e)
