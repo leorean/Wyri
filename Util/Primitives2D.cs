@@ -32,7 +32,7 @@ namespace Wyri
         public static void DrawPixel(this SpriteBatch sb, float x, float y, Color col, float depth = 1f)
         {
             Setup(sb.GraphicsDevice);
-            sb.Draw(Pixel, new Vector2(x, y), null, col, 0, new Vector2(.5f), 1f, SpriteEffects.None, depth);
+            sb.Draw(Pixel, new Vector2(x, y), null, col, 0, Vector2.Zero/*new Vector2(.5f)*/, 1f, SpriteEffects.None, depth);
         }
 
         public static void DrawPixel(this SpriteBatch sb, Vector2 vec, Color col, float depth = 1f) => DrawPixel(sb, vec.X, vec.Y, col, depth);

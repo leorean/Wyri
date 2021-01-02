@@ -22,7 +22,7 @@ namespace Wyri.Main
         public static TextureSet Enemy1 { get; private set; }
         public static TextureSet Crosshair { get; private set; }
         public static TextureSet Projectiles { get; private set; }
-        public static TextureSet Map { get; private set; }
+        public static Texture2D Map { get; private set; }
 
         public static void Init(ContentManager content)
         {
@@ -37,7 +37,7 @@ namespace Wyri.Main
             Enemy1 = content.LoadTextureSet("enemy1", 16, 16);
             Crosshair = content.LoadTextureSet("crosshair", 8, 8);
             Projectiles = content.LoadTextureSet("projectiles", 8, 8);
-            Map = content.LoadTextureSet("map", 4, 4);
+            Map = content.Load<Texture2D>("map");
 
             //UnderWater = content.Load<Effect>("testshader");
             //UnderWater.Parameters["fAmplitude"].SetValue(0.01f);

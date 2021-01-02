@@ -327,9 +327,11 @@ namespace Wyri.Main
 
             // +++ draw map +++
 
+            // TODO: REMOVE
+
             var rmW = (int)((double)Width / (double)camera.ViewWidth * (double)G.T);
             var rmH = (int)((double)Height / (double)camera.ViewHeight * (double)G.T);
-            RoomMap.Clear();
+            RoomMap = new Grid<string>(rmW, rmH);
 
             for (var i = 0; i < rmW; i ++)
             {

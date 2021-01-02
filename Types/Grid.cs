@@ -37,12 +37,6 @@ namespace Wyri.Types
             return t;
         }
 
-        public void Clear()
-        {
-            for (int i = 0; i < data.Length; i++)
-                data[i] = default;
-        }
-
         public T this[int i]
         {
             get

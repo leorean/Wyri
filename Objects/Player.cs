@@ -205,7 +205,10 @@ namespace Wyri.Objects
                     foreach(var e in effects)
                         e.Destroy();
                 }
-
+                if (!MainGame.RoomsVisited.Contains(room))
+                {
+                    MainGame.RoomsVisited.Add(room);
+                }
                 MainGame.Camera.Room = room;                
             }
         }
