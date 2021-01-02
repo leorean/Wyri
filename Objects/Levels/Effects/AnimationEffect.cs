@@ -17,17 +17,9 @@ namespace Wyri.Objects.Levels.Effects
 
         public AnimationEffect(Vector2 position, int type, Room room) : base(position, new RectF(0, 0, 16, 16), room)
         {
-            switch (type)
-            {
-                case 0:
-                    animation = new Animation(GameResources.Effects, 0, 7, .3f, false);
-                    break;
-                case 1:
-                    animation = new Animation(GameResources.Effects, 8, 7, .4f, false);
-                    break;
-                default:
-                    break;
-            }
+            if (type == 00) animation = new Animation(GameResources.Effects, 00, 7, .3f, false);
+            if (type == 01) animation = new Animation(GameResources.Effects, 08, 7, .4f, false);
+            if (type == 02) animation = new Animation(GameResources.Effects, 16, 8, .3f, false);
         }
 
         public override void Update()

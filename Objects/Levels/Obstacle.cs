@@ -16,7 +16,7 @@ namespace Wyri.Objects.Levels
 
         public override void Draw(SpriteBatch sb)
         {
-            //sb.DrawRectangle(Position + BBox, Color.Red, false, .8f);            
+            //sb.DrawRectangle(Position + BBox, Color.Red, false, .8f);
         }
         public override void Update() { }        
     }

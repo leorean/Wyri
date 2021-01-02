@@ -162,7 +162,7 @@ namespace Wyri
             return grid[tx, ty];
         }
 
-        public static bool CollisionSolidTile(this SpatialObject o, float x, float y)
+        public static bool CollisionSolidTile(this SpatialObject o, float offX, float offY)
         {
             var grid = MainGame.Map.LayerData["FG"];
 
@@ -175,7 +175,7 @@ namespace Wyri
                         continue;
 
                     var tileRect = new RectF(i * G.T, j * G.T, G.T, G.T);
-                    if ((o.BBox + new Vector2(o.X + x, o.Y + y)).Intersects(tileRect))
+                    if ((o.BBox + new Vector2(o.X + offX, o.Y + offY)).Intersects(tileRect))
                         return true;
                 }
             }
