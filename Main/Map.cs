@@ -46,6 +46,7 @@ namespace Wyri.Main
         private List<Dictionary<string, object>> ObjectData { get; set; } = new List<Dictionary<string, object>>();
 
         public List<Room> Rooms { get; } = new List<Room>();
+        public Grid<string> RoomMap = new Grid<string>();
 
         public async Task LoadMapContentAsync(string name)
         {
@@ -206,10 +207,6 @@ namespace Wyri.Main
                                 break;
                         }
                     }
-                    if (type == "displacement") // TODO: REMOVE!!!
-                    {
-                        new Displacement(new Vector2(x, y));
-                    }
                 }
                 
                 if (loadSuccess)
@@ -327,6 +324,24 @@ namespace Wyri.Main
                 Debug.WriteLine("Unable to initialize room from data: " + e.Message);
                 throw;
             }
+
+            // +++ draw map +++
+
+            var rmW = (int)((double)Width / (double)camera.ViewWidth * (double)G.T);
+            var rmH = (int)((double)Height / (double)camera.ViewHeight * (double)G.T);
+            RoomMap.Clear();
+
+            for (var i = 0; i < rmW; i ++)
+            {
+                for (var j = 0; j < rmH; j ++)
+                {
+                    var r = Collisions.CollisionPoint<Room>(i * camera.ViewWidth + G.T, j * camera.ViewHeight + G.T).FirstOrDefault();
+                    if (r != null)
+                    {
+                        RoomMap[i, j] = r.ID;
+                    }
+                }
+            }
         }
 
         public async Task UnloadAsync()
@@ -421,26 +436,8 @@ namespace Wyri.Main
                                 tile.IsSolid = camera.Room.SwitchState ? true : false;
                             }
 
-                            //var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
-                            //sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
-
-                            // experimental:
-
                             var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
-
-                            //var newTexture = Crop(GameResources.Tiles.OriginalTexture, partRect);
                             sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
-
-                            //Color[] data = tex.GetPixels();
-                            //Color[] replaced = new Color[data.Length];
-                            //var newTexture = new Texture2D(tex.GraphicsDevice, tex.Width, tex.Height);
-
-                            //for (var i = 0; i < data.Length; i++)
-                            //{
-                            //    var n = (data[i] == c1) ? c2 : data[i];
-                            //    replaced[i] = n;
-                            //}
-
                         }
                     }
                 }

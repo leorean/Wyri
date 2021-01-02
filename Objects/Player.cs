@@ -201,7 +201,7 @@ namespace Wyri.Objects
             {
                 if (room != MainGame.Camera.Room)
                 {
-                    var effects = ObjectController.FindAll<AnimationEffect>();
+                    var effects = ObjectController.FindAll<IDestroyOnRoomChange>();
                     foreach(var e in effects)
                         e.Destroy();
                 }

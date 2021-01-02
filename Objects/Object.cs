@@ -5,7 +5,16 @@ using System.Text;
 
 namespace Wyri.Objects
 {
-    public abstract class Object
+    public interface IObject
+    {
+        bool IsActive { get; set; }
+        bool IsVisible { get; set; }
+        void Update();
+        void Draw(SpriteBatch sb);
+        void Destroy();
+    }
+
+    public abstract class Object : IObject
     {
         public Object()
         {

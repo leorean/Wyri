@@ -9,6 +9,16 @@ namespace Wyri.Objects
 {
     public abstract class SpatialObject : Object
     {
+        public string ID
+        {
+            get
+            {
+                return $"{GetType().Name}_{Math.Floor(originalPosition.X)}_{Math.Floor(originalPosition.Y)}";
+            }
+        }
+
+        private Vector2 originalPosition;
+
         public Vector2 Position { get; set; }
         public RectF BBox { get; set; }
 
@@ -31,8 +41,9 @@ namespace Wyri.Objects
 
         public SpatialObject(Vector2 position, RectF boundingBox)
         {
+            originalPosition = position;
             Position = position;
-            BBox = boundingBox;            
+            BBox = boundingBox;        
         }
     }
 }

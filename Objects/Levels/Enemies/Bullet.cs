@@ -6,10 +6,11 @@ using System.Security.Cryptography;
 using System.Text;
 using Wyri.Main;
 using Wyri.Objects.Levels.Effects;
+using Wyri.Types;
 
 namespace Wyri.Objects.Levels.Enemies
 {
-    public class Bullet : Obstacle
+    public class Bullet : Obstacle, IDestroyOnRoomChange
     {
         float speed = 0;
         public float Angle { get; set; } = 0;

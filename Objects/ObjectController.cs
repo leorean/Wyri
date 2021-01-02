@@ -53,7 +53,7 @@ namespace Wyri.Objects
             }            
         }
 
-        public static void SetAllActive<T>(bool active) where T: Object
+        public static void SetAllActive<T>(bool active) where T: IObject
         {
             for (int i = 0; i < objects.Count; i++)
             {
@@ -87,7 +87,7 @@ namespace Wyri.Objects
             }
         }
 
-        public static List<T> FindAll<T>() where T: Object
+        public static List<T> FindAll<T>() where T: IObject
         {
             List<T> found = new List<T>();
 
@@ -100,7 +100,7 @@ namespace Wyri.Objects
             return found;
         }
 
-        public static List<T> FindActive<T>() where T : Object
+        public static List<T> FindActive<T>() where T : IObject
         {
             List<T> found = new List<T>();
 

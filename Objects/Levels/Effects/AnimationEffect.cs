@@ -9,7 +9,7 @@ using Wyri.Types;
 
 namespace Wyri.Objects.Levels.Effects
 {
-    public class AnimationEffect : RoomObject
+    public class AnimationEffect : RoomObject, IDestroyOnRoomChange
     {
         private Animation animation;
 

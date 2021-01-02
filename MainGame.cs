@@ -239,6 +239,11 @@ namespace Wyri
                 }
             }
 
+            if (InputController.IsKeyPressed(Keys.Tab, KeyState.Holding))
+            {
+
+            }
+
             SpriteBatch.End();
 
             //int w = GraphicsDevice.PresentationParameters.BackBufferWidth;
