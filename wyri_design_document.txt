@@ -79,7 +79,7 @@ Gear
 Biomes/Places
 ^^^^^^^^^^^^^
 
-* The dragon's foot
+* Sunken city
 * The rift
 
 Objects

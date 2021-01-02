@@ -25,7 +25,7 @@ namespace Wyri.Objects.Levels.Enemies
 
         Vector2 target;
         Vector2 newTarget;
-        float distance = 144;
+        float distance = 80;
         float lineAlpha, hairAlpha;
 
         enum State
@@ -55,7 +55,10 @@ namespace Wyri.Objects.Levels.Enemies
             base.Update();
 
             var ang = M.VectorToAngle(MainGame.Player.Center - Center + offvec);            
-            var rc = this.RayCast(MainGame.Player, ang, 1, distance);
+            var rc = this.RayCast(MainGame.Player, ang, 1, 255);
+            bool inRange = M.Euclidean(Center, MainGame.Player.Center) <= distance;
+
+            rc = (rc.Item1, Math.Min(rc.Item2, distance));
 
             if (MainGame.Player.State == PlayerState.Dead)
             {
@@ -69,7 +72,7 @@ namespace Wyri.Objects.Levels.Enemies
                     lineAlpha = 0;
                     prepareShootTimeout = maxPrepareShootTimeout;
                     crossHairTimeout = maxCrossHairTimeout;
-                    if (rc.Item1)
+                    if (rc.Item1 && inRange)
                     {                        
                         rayCast = rc;
                         angle = ang;
@@ -79,7 +82,7 @@ namespace Wyri.Objects.Levels.Enemies
                 case State.Target:
                     rayCast = rc;
                     target = Center + new Vector2(M.LengthDirX(angle) * rayCast.Item2, M.LengthDirY(angle) * rayCast.Item2);
-                    if (!rc.Item1)
+                    if (!rc.Item1 || !inRange)
                     {
                         newTarget = target;
 
@@ -88,7 +91,7 @@ namespace Wyri.Objects.Levels.Enemies
                             state = State.Idle;
                     }
                     else
-                    {                        
+                    {      
                         prepareShootTimeout = Math.Max(prepareShootTimeout - 1, 0);                        
                         angle = ang;
                         tDistortionDist = (float)prepareShootTimeout / (float)maxPrepareShootTimeout * 4;
@@ -126,7 +129,7 @@ namespace Wyri.Objects.Levels.Enemies
                             bullet.Angle = M.VectorToAngle(newTarget - Center);
 
                             shots = Math.Max(shots - 1 , 0);
-                            shotTimeout = 20;
+                            shotTimeout = 10;
                         }
                     }
                     else
@@ -139,7 +142,9 @@ namespace Wyri.Objects.Levels.Enemies
 
         public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(GameResources.Enemy1[0], Position, null, Color.White, 0, new Vector2(8), Vector2.One, SpriteEffects.None, G.D_ENEMY);
+            int frame = state == State.Idle ? 0 : 1;
+
+            sb.Draw(GameResources.Enemy1[frame], Position, null, Color.White, 0, new Vector2(8), Vector2.One, SpriteEffects.None, G.D_ENEMY);
 
             var rs = 1f - (float)prepareShootTimeout / (float)maxPrepareShootTimeout;
 
@@ -153,9 +158,10 @@ namespace Wyri.Objects.Levels.Enemies
             var hairColor = new Color(Color.White, hairAlpha);
 
             if (state != State.Idle)
-            {                
-                
+            {
+
                 sb.DrawLine(Center, newTarget, color, G.D_EFFECT);
+                sb.DrawRectangle(newTarget + new RectF(-1.5f, -1.5f, 3, 3), new Color(color, 2 * lineAlpha), false, G.D_EFFECT);
 
                 if (state != State.Target)
                 {

@@ -27,6 +27,11 @@ namespace Wyri.Objects.Levels.Enemies
             var xVel = M.LengthDirX(Angle) * speed;
             var yVel = M.LengthDirY(Angle) * speed;
             
+            if (!(Position + BBox + new Vector2(xVel,yVel)).Intersects(Room.Position + Room.BBox))
+            {
+                Destroy();
+            }
+
             if (this.CollisionSolidTile(xVel * .5f, yVel * .5f))
             {
                 new AnimationEffect(Position, 2, Room);
