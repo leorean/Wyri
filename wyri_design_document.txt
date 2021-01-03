@@ -81,12 +81,3 @@ Biomes/Places
 
 * Sunken city
 * The rift
-
-Objects
-^^^^^^^
-
-* block
-* platform
-* spikes (^,v,<,>)
-* switch
-* switch block

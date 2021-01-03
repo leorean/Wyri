@@ -23,9 +23,7 @@ namespace Wyri
         public static Map Map;
         public static Camera Camera;
         public static Player Player;
-        public static List<Room> RoomsVisited;
-
-        public static SaveGame SaveGame = new SaveGame();
+        public static SaveGame SaveGame = new SaveGame();        
 
         public Size ViewSize { get; private set; }
         private float scale;
@@ -51,8 +49,7 @@ namespace Wyri
             IsMouseVisible = true;
             Window.AllowUserResizing = true;
 
-            Map = new Map();
-            RoomsVisited = new List<Room>();
+            Map = new Map();            
         }
 
         protected override void Initialize()
@@ -100,6 +97,8 @@ namespace Wyri
 
         public void Reload()
         {
+            SaveGame = new SaveGame();
+
             isLoading = true;
             fadeInAlpha = 1;
 
@@ -232,7 +231,6 @@ namespace Wyri
             }
             else
             {
-                //if (Player == null || Player.State != PlayerState.Dead)
                 if (!issueReloading)
                 {
                     fadeInAlpha = Math.Max(fadeInAlpha - .025f, 0);
@@ -247,9 +245,11 @@ namespace Wyri
                 }
             }
 
+            // show map
             if (InputController.IsKeyPressed(Keys.W, KeyState.Holding))
             {
-                MapDisplay.Draw(SpriteBatch);
+                if (Player != null && Player.Abilities.HasFlag(PlayerAbility.MAP))
+                    MapDisplay.Draw(SpriteBatch);
             }
 
             SpriteBatch.End();

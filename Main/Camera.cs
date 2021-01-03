@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Wyri.Objects;
 using Wyri.Objects.Levels;
+using Wyri.Types;
 
 namespace Wyri.Main
 {
@@ -179,6 +180,8 @@ namespace Wyri.Main
         public int Weather { get; set; } = 0;
         public float Darkness { get; set; } = 0;
 
+        float flashAlpha = 0;
+
         public Camera(ResolutionRenderer resolutionRenderer)
         {
             ResolutionRenderer = resolutionRenderer;
@@ -300,6 +303,17 @@ namespace Wyri.Main
             {
                 sb.Draw(GameResources.Background[Background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
             }
+
+            if (flashAlpha > 0)
+            {
+                sb.DrawRectangle(new RectF(ViewX, ViewY, ViewWidth, ViewHeight), new Color(Color.White, flashAlpha), true, G.D_EFFECT);
+                flashAlpha = Math.Max(flashAlpha - .03f, 0);
+            }
+        }
+
+        public void Flash()
+        {
+            flashAlpha = 1.3f;
         }
     }
 }

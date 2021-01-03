@@ -30,6 +30,9 @@ namespace Wyri.Main
             var cam = MainGame.Camera;
             var player = MainGame.Player;
 
+            if (map == null || cam == null || player == null)
+                return;
+
             var rmW = (int)((double)map.Width / (double)cam.ViewWidth * (double)G.T);
             var rmH = (int)((double)map.Height / (double)cam.ViewHeight * (double)G.T);
 
@@ -54,7 +57,7 @@ namespace Wyri.Main
                     var d = depth;
                     Color bgCol;
                     Color fgCol;
-                    if (MainGame.RoomsVisited.Contains(r))
+                    if (MainGame.SaveGame.VisitedRooms.Contains(r.ID))
                     {
                         bgCol = visitedFill;
                         fgCol = visitedGrid;

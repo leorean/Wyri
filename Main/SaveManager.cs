@@ -19,6 +19,8 @@ namespace Wyri.Main
         public int Background;
         public int Weather;
         public float Darkness;
+        public List<string> VisitedRooms = new List<string>();
+        public List<string> Items = new List<string>();
     }
 
     public static class BinarySerializer

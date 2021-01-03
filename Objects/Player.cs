@@ -99,8 +99,8 @@ namespace Wyri.Objects
         float getUpTimer = 2 * 60;
         bool somethingPressedOnce = false;
 
-        int oxygen;
-        int maxOxygen = 4 * 60;
+        const int maxOxygen = 4 * 60;
+        int oxygen = maxOxygen;
         float oxygenAlpha = 0;
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
@@ -116,6 +116,7 @@ namespace Wyri.Objects
 
             //Abilities |= PlayerAbility.DOUBLE_JUMP;
             Abilities |= PlayerAbility.WALL_GRAB;
+            Abilities |= PlayerAbility.MAP;
         }
 
 
@@ -164,7 +165,7 @@ namespace Wyri.Objects
 
         private bool OnWall()
         {
-            if (inWater)
+            if (inWater || onGround)
                 return false;
 
             var grid = MainGame.Map.LayerData["FG"];
@@ -205,9 +206,9 @@ namespace Wyri.Objects
                     foreach(var e in effects)
                         e.Destroy();
                 }
-                if (!MainGame.RoomsVisited.Contains(room))
+                if (!MainGame.SaveGame.VisitedRooms.Contains(room.ID))
                 {
-                    MainGame.RoomsVisited.Add(room);
+                    MainGame.SaveGame.VisitedRooms.Add(room.ID);
                 }
                 MainGame.Camera.Room = room;                
             }
@@ -304,6 +305,12 @@ namespace Wyri.Objects
                 if (savePoint != null)
                 {
                     savePoint.SaveHere();
+                }
+
+                var item = this.CollisionBounds<Item>().FirstOrDefault();
+                if (item != null)
+                {
+                    item.Take();
                 }
 
                 if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
