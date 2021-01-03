@@ -97,8 +97,6 @@ namespace Wyri
 
         public void Reload()
         {
-            SaveGame = new SaveGame();
-
             isLoading = true;
             fadeInAlpha = 1;
 

@@ -41,6 +41,10 @@ namespace Wyri.Objects.Levels
                 eff.Delay = i * 12;
             }
 
+            if (Type == 0) MainGame.Player.Abilities |= PlayerAbility.WALL_GRAB;
+            if (Type == 1) MainGame.Player.Abilities |= PlayerAbility.MAP;
+            if (Type == 2) MainGame.Player.Abilities |= PlayerAbility.COMPASS;
+
             Destroy();
         }
 

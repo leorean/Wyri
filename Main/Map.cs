@@ -51,6 +51,8 @@ namespace Wyri.Main
         {
             await Task.Run(() =>
             {
+                MainGame.SaveGame = new SaveGame();
+                var loadSuccess = SaveManager.Load(ref MainGame.SaveGame);
 
                 XmlDocument xmlRoot = new XmlDocument();
 
@@ -172,8 +174,6 @@ namespace Wyri.Main
                 // create rooms
                 CreateAllRooms();
 
-                var loadSuccess = SaveManager.Load(ref MainGame.SaveGame);
-
                 foreach (var data in ObjectData)
                 {
                     var x = (int)data["x"];
@@ -212,7 +212,7 @@ namespace Wyri.Main
                 {
                     MainGame.Player = new Player(MainGame.SaveGame.Position);
                     MainGame.Player.Abilities = MainGame.SaveGame.Abilities;
-
+                    
                     MainGame.Player.Direction = MainGame.SaveGame.Direction;
                     MainGame.Camera.Background = MainGame.SaveGame.Background;
                     MainGame.Camera.Weather = MainGame.SaveGame.Weather;

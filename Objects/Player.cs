@@ -115,8 +115,8 @@ namespace Wyri.Objects
             oxygen = maxOxygen;
 
             //Abilities |= PlayerAbility.DOUBLE_JUMP;
-            Abilities |= PlayerAbility.WALL_GRAB;
-            Abilities |= PlayerAbility.MAP;
+            //Abilities |= PlayerAbility.WALL_GRAB;
+            //Abilities |= PlayerAbility.MAP;
         }
 
 
