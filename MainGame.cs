@@ -36,6 +36,8 @@ namespace Wyri
         private static bool issueReloading;
         private float fadeInAlpha;
 
+        public static int Ticks { get; private set; }
+
         public MainGame()
         {
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -188,6 +190,8 @@ namespace Wyri
                 }        
             }
 
+            Ticks = (Ticks + 1) % 9000;
+
             base.Update(gameTime);
         }
 
@@ -245,61 +249,7 @@ namespace Wyri
 
             if (InputController.IsKeyPressed(Keys.W, KeyState.Holding))
             {
-                var xo = Camera.ViewX + 8;
-                var yo = Camera.ViewY + 8;
-
-                Color bgFill = new Color(22, 22, 29);
-                Color bgGrid = new Color(24, 24, 31);
-                Color unvisitedFill = new Color(105, 106, 106);
-                Color unvisitedGrid = new Color(131, 140, 145);
-                Color visitedFill = new Color(121, 215, 255);
-                Color visitedGrid = new Color(255, 255, 255);
-
-                List<Room> drawn = new List<Room>();
-
-                var rmW = (int)((double)Map.Width / (double)Camera.ViewWidth * (double)G.T);
-                var rmH = (int)((double)Map.Height / (double)Camera.ViewHeight * (double)G.T);
-
-                var sizeX = 5;
-                var sizeY = 3;
-                var depth = .9f;
-
-                for (var i = 0; i < rmW; i++)
-                {
-                    for (var j = 0; j < rmH; j++)
-                    {                        
-                        var bgCol = bgFill;
-                        var fgCol = bgGrid;
-                        //SpriteBatch.DrawRectangle(new RectF(xo + i * sizeX, yo + j * sizeY, sizeX, sizeY), bgCol, true, depth - .0004f);
-                        //SpriteBatch.DrawRectangle(new RectF(xo + i * sizeX, yo + j * sizeY, sizeX, sizeY), fgCol, false, depth - .0003f);
-                        SpriteBatch.Draw(GameResources.Map, new Vector2(xo + i * (sizeX), yo + j * (sizeY)), null, new Color(Color.White, .85f), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth - .0003f);
-
-                        var r = Collisions.CollisionPoint<Room>(i * Camera.ViewWidth + G.T, j * Camera.ViewHeight + G.T).FirstOrDefault();
-                        if (r == null || drawn.Contains(r))
-                            continue;
-
-                        drawn.Add(r);
-
-                        var w = sizeX * r.Width / (float)Camera.ViewWidth;
-                        var h = sizeY * r.Height / (float)Camera.ViewHeight;
-
-                        var d = depth - .0001f;
-                        if (RoomsVisited.Contains(r))
-                        {
-                            bgCol = visitedFill;
-                            fgCol = visitedGrid;
-                            d = depth;
-                        }
-                        else
-                        {
-                            bgCol = unvisitedFill;
-                            fgCol = unvisitedGrid;
-                        }
-
-                        SpriteBatch.DrawRectangle(new RectF(xo + i * sizeX, yo + j * sizeY, w, h), bgCol, true, d - .0001f);
-                        SpriteBatch.DrawRectangle(new RectF(xo + i * sizeX, yo + j * sizeY, w, h), fgCol, false, d);
-                    }
-                }
+                MapDisplay.Draw(SpriteBatch);
             }
 
             SpriteBatch.End();

@@ -46,8 +46,7 @@ namespace Wyri.Main
         private List<Dictionary<string, object>> ObjectData { get; set; } = new List<Dictionary<string, object>>();
 
         public List<Room> Rooms { get; } = new List<Room>();
-        public Grid<string> RoomMap = new Grid<string>();
-
+        
         public async Task LoadMapContentAsync(string name)
         {
             await Task.Run(() =>
@@ -329,21 +328,21 @@ namespace Wyri.Main
 
             // TODO: REMOVE
 
-            var rmW = (int)((double)Width / (double)camera.ViewWidth * (double)G.T);
-            var rmH = (int)((double)Height / (double)camera.ViewHeight * (double)G.T);
-            RoomMap = new Grid<string>(rmW, rmH);
+            //var rmW = (int)((double)Width / (double)camera.ViewWidth * (double)G.T);
+            //var rmH = (int)((double)Height / (double)camera.ViewHeight * (double)G.T);
+            //RoomMap = new Grid<string>(rmW, rmH);
 
-            for (var i = 0; i < rmW; i ++)
-            {
-                for (var j = 0; j < rmH; j ++)
-                {
-                    var r = Collisions.CollisionPoint<Room>(i * camera.ViewWidth + G.T, j * camera.ViewHeight + G.T).FirstOrDefault();
-                    if (r != null)
-                    {
-                        RoomMap[i, j] = r.ID;
-                    }
-                }
-            }
+            //for (var i = 0; i < rmW; i ++)
+            //{
+            //    for (var j = 0; j < rmH; j ++)
+            //    {
+            //        var r = Collisions.CollisionPoint<Room>(i * camera.ViewWidth + G.T, j * camera.ViewHeight + G.T).FirstOrDefault();
+            //        if (r != null)
+            //        {
+            //            RoomMap[i, j] = r.ID;
+            //        }
+            //    }
+            //}
         }
 
         public async Task UnloadAsync()
