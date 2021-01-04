@@ -307,12 +307,18 @@ namespace Wyri.Main
                 var vy = ViewY;
                 var minYcam = ry;
                 var maxYcam = ry + rh - vh;
-                var po = 0f;
+                var posY = vy;
                 if (minYcam != maxYcam)
                 {
-                    po = -vh * ((vy - minYcam) / (maxYcam - minYcam));
+                    posY = vy + -vh * ((vy - minYcam) / (maxYcam - minYcam));
                 }
-                sb.Draw(GameResources.Background[Background], new Vector2(ViewX, ViewY) + new Vector2(0, po), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
+
+                var px = (Position.X * .5f) % 256;
+                for (var i = -1; i < 2; i++)
+                {
+                    var posX = Position.X - ViewWidth * .5f + i * ViewWidth - px;
+                    sb.Draw(GameResources.Background[Background], new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
+                }
             }
 
             if (flashAlpha > 0)
