@@ -330,7 +330,7 @@ namespace Wyri.Main
 
         public void Flash()
         {
-            flashAlpha = 1.3f;
+            flashAlpha = 1.1f;
         }
     }
 }

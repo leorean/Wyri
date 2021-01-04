@@ -10,6 +10,7 @@ using Wyri.Main;
 using Wyri.Objects.Levels;
 using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
+using Wyri.Util;
 
 namespace Wyri.Objects
 {
@@ -20,7 +21,8 @@ namespace Wyri.Objects
         Jump,
         Climb,
         Dead,
-        StandUp
+        StandUp,
+        GotItem
     }
 
     public enum PlayerDirection
@@ -103,6 +105,12 @@ namespace Wyri.Objects
         int oxygen = maxOxygen;
         float oxygenAlpha = 0;
 
+        int gotItemTimer;
+        const int maxGotItemTimer = 90;
+        Item gotItem;
+
+        bool controlPlayer = true;
+
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
             AnimationState.Add(PlayerState.Idle, new Animation(GameResources.Player, 0, 4, .1f));
@@ -111,6 +119,7 @@ namespace Wyri.Objects
             AnimationState.Add(PlayerState.Climb, new Animation(GameResources.Player, 24, 4, .1f));
             AnimationState.Add(PlayerState.Dead, new Animation(GameResources.Player, 32, 8, .2f, false));
             AnimationState.Add(PlayerState.StandUp, new Animation(GameResources.Player, 40, 8, .15f, false));
+            AnimationState.Add(PlayerState.GotItem, new Animation(GameResources.Player, 48, 1, 0, false));
 
             oxygen = maxOxygen;
 
@@ -218,19 +227,19 @@ namespace Wyri.Objects
         {
             // input
 
-            var kLeft = InputController.IsKeyPressed(Keys.Left);
-            var kRight = InputController.IsKeyPressed(Keys.Right);
-            var kLeftPressed = InputController.IsKeyPressed(Keys.Left, KeyState.Pressed);
-            var kRightPressed = InputController.IsKeyPressed(Keys.Right, KeyState.Pressed);
-            var kLeftReleased = InputController.IsKeyPressed(Keys.Left, KeyState.Released);
-            var kRightReleased = InputController.IsKeyPressed(Keys.Right, KeyState.Released);
-            var kUp = InputController.IsKeyPressed(Keys.Up);
-            var kDown = InputController.IsKeyPressed(Keys.Down);
-            var kUpPressed = InputController.IsKeyPressed(Keys.Up, KeyState.Pressed);
-            var kDownPressed = InputController.IsKeyPressed(Keys.Down, KeyState.Pressed);
-            var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed);
-            var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding);
-            var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released);
+            var kLeft = InputController.IsKeyPressed(Keys.Left) && controlPlayer;
+            var kRight = InputController.IsKeyPressed(Keys.Right) && controlPlayer;
+            var kLeftPressed = InputController.IsKeyPressed(Keys.Left, KeyState.Pressed) && controlPlayer;
+            var kRightPressed = InputController.IsKeyPressed(Keys.Right, KeyState.Pressed) && controlPlayer;
+            var kLeftReleased = InputController.IsKeyPressed(Keys.Left, KeyState.Released) && controlPlayer;
+            var kRightReleased = InputController.IsKeyPressed(Keys.Right, KeyState.Released) && controlPlayer;
+            var kUp = InputController.IsKeyPressed(Keys.Up) && controlPlayer;
+            var kDown = InputController.IsKeyPressed(Keys.Down) && controlPlayer;
+            var kUpPressed = InputController.IsKeyPressed(Keys.Up, KeyState.Pressed) && controlPlayer;
+            var kDownPressed = InputController.IsKeyPressed(Keys.Down, KeyState.Pressed) && controlPlayer;
+            var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed) && controlPlayer;
+            var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding) && controlPlayer;
+            var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && controlPlayer;
 
             if (InputController.IsKeyPressed(Keys.K, KeyState.Pressed))
             {
@@ -308,9 +317,14 @@ namespace Wyri.Objects
                 }
 
                 var item = this.CollisionBounds<Item>().FirstOrDefault();
-                if (item != null)
+                if (item != null && !item.IsTaken)
                 {
-                    item.Take();
+                    gotItem = item;                    
+                    gotItemTimer = maxGotItemTimer;
+                    State = PlayerState.GotItem;                    
+                    gotItem.Take();
+                    controlPlayer = false;
+                    return;
                 }
 
                 if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
@@ -335,7 +349,7 @@ namespace Wyri.Objects
                     oxygen = Math.Min(oxygen + 2, maxOxygen);
                 }
 
-                if (State != PlayerState.Climb)
+                if (State != PlayerState.Climb && State != PlayerState.GotItem)
                 {
 
                     if (kLeft && !kRight)
@@ -527,6 +541,27 @@ namespace Wyri.Objects
                     ResetJumps();
                 }
 
+                if (State == PlayerState.GotItem && gotItem != null)
+                {
+                    xVel *= .5f;
+                    gotItem.Position = Position + new Vector2(0, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
+                    gotItemTimer = Math.Max(gotItemTimer - 1, 0);
+                    if (gotItemTimer == 0)
+                    {
+                        MainGame.Camera.Flash();
+                        MainGame.SaveGame.Items.Add(gotItem.ID);
+                        for (var i = 0; i < 8; i++)
+                        {
+                            var eff = new AnimationEffect(new Vector2(gotItem.Center.X - 8 + RND.Next * 16, gotItem.Center.Y - 8 + RND.Next * 16), 0, gotItem.Room);
+                            eff.Delay = i * 8;
+                        }
+                        gotItem.Destroy();
+                        gotItem = null;
+                        State = PlayerState.Idle;
+                        controlPlayer = true;
+                    }
+                }
+
                 // movement & collision
 
                 yVel += yGrav;
@@ -563,8 +598,8 @@ namespace Wyri.Objects
                     yVel = 0;
                 }
             }
-            else // player is dead
-            {
+            else
+            {                
                 if (State == PlayerState.Dead)
                 {
                     depth = G.D_PLAYER_DEAD;
