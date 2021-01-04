@@ -301,7 +301,18 @@ namespace Wyri.Main
         {
             if (Room != null)
             {
-                sb.Draw(GameResources.Background[Background], new Vector2(ViewX, ViewY), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
+                var rh = (float)Room.Height;
+                var vh = (float)ViewHeight;
+                var ry = Room.Y;
+                var vy = ViewY;
+                var minYcam = ry;
+                var maxYcam = ry + rh - vh;
+                var po = 0f;
+                if (minYcam != maxYcam)
+                {
+                    po = -vh * ((vy - minYcam) / (maxYcam - minYcam));
+                }
+                sb.Draw(GameResources.Background[Background], new Vector2(ViewX, ViewY) + new Vector2(0, po), null, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_BACKGROUND);
             }
 
             if (flashAlpha > 0)

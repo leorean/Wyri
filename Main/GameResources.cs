@@ -29,7 +29,7 @@ namespace Wyri.Main
         {
             Player = content.LoadTextureSet("player", 16, 16);
             Tiles = content.LoadTextureSet("tiles", 8, 8);
-            Background = content.LoadTextureSet("background", 256, 144);
+            Background = content.LoadTextureSet("background", 256, 288);
             Spinner = content.LoadTextureSet("spinner", 16, 16);
             Save = content.LoadTextureSet("save", 16, 16);
             Effects = content.LoadTextureSet("effects", 16, 16);
