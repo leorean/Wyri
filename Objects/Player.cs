@@ -105,8 +105,10 @@ namespace Wyri.Objects
         int oxygen = maxOxygen;
         float oxygenAlpha = 0;
 
+        int gotItemPostTimer;
         int gotItemTimer;
-        const int maxGotItemTimer = 90;
+        const int maxGotItemTimer = 45;
+        const int maxGotItemPostTimer = 90;
         Item gotItem;
 
         bool controlPlayer = true;
@@ -319,9 +321,11 @@ namespace Wyri.Objects
                 var item = this.CollisionBounds<Item>().FirstOrDefault();
                 if (item != null && !item.IsTaken)
                 {
+                    yVel = 0;
                     gotItem = item;                    
                     gotItemTimer = maxGotItemTimer;
-                    State = PlayerState.GotItem;                    
+                    gotItemPostTimer = maxGotItemPostTimer;
+                    State = PlayerState.GotItem;
                     gotItem.Take();
                     controlPlayer = false;
                     return;
@@ -541,25 +545,35 @@ namespace Wyri.Objects
                     ResetJumps();
                 }
 
-                if (State == PlayerState.GotItem && gotItem != null)
+                if (State == PlayerState.GotItem)
                 {
                     xVel *= .5f;
-                    gotItem.Position = Position + new Vector2(0, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
-                    gotItemTimer = Math.Max(gotItemTimer - 1, 0);
-                    if (gotItemTimer == 0)
+                    if (gotItem != null)
                     {
-                        MainGame.Camera.Flash();
-                        MainGame.SaveGame.Items.Add(gotItem.ID);
-                        for (var i = 0; i < 8; i++)
+                        gotItem.Position = Position + new Vector2(0, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
+                        gotItemTimer = Math.Max(gotItemTimer - 1, 0);
+                        if (gotItemTimer == 0)
                         {
-                            var eff = new AnimationEffect(new Vector2(gotItem.Center.X - 8 + RND.Next * 16, gotItem.Center.Y - 8 + RND.Next * 16), 0, gotItem.Room);
-                            eff.Delay = i * 8;
+                            MainGame.Camera.Flash();
+                            MainGame.SaveGame.Items.Add(gotItem.ID);
+                            for (var i = 0; i < 8; i++)
+                            {
+                                var eff = new AnimationEffect(new Vector2(gotItem.Center.X - 8 + RND.Next * 16, gotItem.Center.Y - 8 + RND.Next * 16), 0, gotItem.Room);
+                                eff.Delay = i * 8;
+                            }
+                            gotItem.Destroy();
+                            gotItem = null;                            
                         }
-                        gotItem.Destroy();
-                        gotItem = null;
-                        State = PlayerState.Idle;
-                        controlPlayer = true;
                     }
+                    else
+                    {
+                        gotItemPostTimer = Math.Max(gotItemPostTimer - 1, 0);
+                        if (gotItemPostTimer == 0)
+                        {
+                            State = PlayerState.Idle;
+                            controlPlayer = true;
+                        }
+                    }                    
                 }
 
                 // movement & collision

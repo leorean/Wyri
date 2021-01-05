@@ -32,13 +32,6 @@ namespace Wyri.Objects.Levels
             if (IsTaken)
                 return;
             IsTaken = true;
-            //MainGame.SaveGame.Items.Add(ID);
-            
-            /*for (var i = 0; i < 15; i++)
-            {
-                var eff = new AnimationEffect(new Vector2(Center.X - 8 + RND.Next * 16, Center.Y - 8 + RND.Next * 16), 0, Room);
-                eff.Delay = i * 8;
-            }*/
 
             if (Type == 0) MainGame.Player.Abilities |= PlayerAbility.WALL_GRAB;
             if (Type == 1) MainGame.Player.Abilities |= PlayerAbility.MAP;

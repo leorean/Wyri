@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Wyri.Main;
@@ -31,6 +32,13 @@ namespace Wyri.Objects.Levels.Enemies
             if (!(Position + BBox + new Vector2(xVel,yVel)).Intersects(Room.Position + Room.BBox))
             {
                 Destroy();
+            }
+
+            var triggerBlock = this.CollisionPoint<TriggerBlock>(X + xVel, Y + yVel).FirstOrDefault();
+            if (triggerBlock != null)
+            {
+                triggerBlock.On = !triggerBlock.On;
+                Room.SwitchState = !Room.SwitchState;
             }
 
             if (this.CollisionSolidTile(xVel * .5f, yVel * .5f))

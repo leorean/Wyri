@@ -300,6 +300,9 @@ namespace Wyri.Main
                                 case "I1":
                                     new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 0, room);
                                     break;
+                                case "TB1":
+                                    var tb = new TriggerBlock(new Vector2(i * G.T, j * G.T), t.ID, false, room);
+                                    break;
                             }
                         }
                     }
@@ -429,19 +432,22 @@ namespace Wyri.Main
                             var tiy = M.Div(tid * G.T, GameResources.Tiles.Width) * G.T;
 
                             int switchOffset = 0;
+                            float d = depth;
                             if(tile.SwitchState == SwitchState.Switch1)
                             {
                                 switchOffset = camera.Room.SwitchState ? 1 : 0;
                                 tile.IsSolid = camera.Room.SwitchState ? false : true;
+                                if (!tile.IsSolid) d = G.D_BG1;
                             }
                             if (tile.SwitchState == SwitchState.Switch2)
                             {
                                 switchOffset = camera.Room.SwitchState ? -1 : 0;
                                 tile.IsSolid = camera.Room.SwitchState ? true : false;
+                                if (!tile.IsSolid) d = G.D_BG1;
                             }
 
                             var partRect = new Rectangle(tix + G.T * tile.AnimationFrame + switchOffset * G.T, tiy, G.T, G.T);
-                            sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, depth);
+                            sb.Draw(GameResources.Tiles.OriginalTexture, new Vector2(i * G.T, j * G.T), partRect, Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, d);
                         }
                     }
                 }

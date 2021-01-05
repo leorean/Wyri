@@ -306,11 +306,11 @@ namespace Wyri.Main
                 var ry = Room.Y;
                 var vy = ViewY;
                 var minYcam = ry;
-                var maxYcam = ry + rh - vh;
+                var maxYcam = ry + 1.5f * rh - .5f * vh;
                 var posY = vy;
                 if (minYcam != maxYcam)
                 {
-                    posY = vy + -vh * ((vy - minYcam) / (maxYcam - minYcam));
+                    posY = vy - vh * ((vy - minYcam) / (maxYcam - minYcam));
                 }
 
                 var px = (Position.X * .5f) % 256;
