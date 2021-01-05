@@ -59,7 +59,7 @@ namespace Wyri.Objects.Levels.Effects
             //Scale = new Vector2(1.5f + RND.Next * 1f);
 
             Position = emitter.Position + new Vector2(-2 + RND.Int(4), 0);
-            Depth = G.D_BG1 - .01f;
+            Depth = G.D_BG1 + .01f;
 
             XVel = -.2f + RND.Next * .4f;
             YVel = -.4f;
@@ -92,7 +92,7 @@ namespace Wyri.Objects.Levels.Effects
 
     public class SmokeEmitter : ParticleEmitter
     {
-        public SmokeEmitter(Vector2 position) : base(position)
+        public SmokeEmitter(Vector2 position, Room room) : base(position, room)
         {
             SpawnRate = 1;
             SpawnTimeout = 10;
@@ -104,26 +104,26 @@ namespace Wyri.Objects.Levels.Effects
         }
     }
 
-    public class Smoke : RoomObject
-    {
-        private SmokeEmitter emitter;
-        public Smoke(Vector2 position, Room room) : base(position, new RectF(), room)
-        {
-            emitter = new SmokeEmitter(position);
-        }
+    //public class Smoke : RoomObject
+    //{
+    //    private SmokeEmitter emitter;
+    //    public Smoke(Vector2 position, Room room) : base(position, new RectF(), room)
+    //    {
+    //        emitter = new SmokeEmitter(position);
+    //    }
 
-        public override void Destroy()
-        {
-            emitter.Destroy();
-            base.Destroy();
-        }
+    //    public override void Destroy()
+    //    {
+    //        emitter.Destroy();
+    //        base.Destroy();
+    //    }
 
-        public override void Draw(SpriteBatch sb)
-        {            
-        }
+    //    public override void Draw(SpriteBatch sb)
+    //    {            
+    //    }
 
-        public override void Update()
-        {            
-        }
-    }
+    //    public override void Update()
+    //    {            
+    //    }
+    //}
 }

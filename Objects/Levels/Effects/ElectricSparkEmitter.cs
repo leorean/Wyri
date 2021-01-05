@@ -52,7 +52,7 @@ namespace Wyri.Objects.Levels.Effects
 
     public class ElectricSparkEmitter : ParticleEmitter
     {
-        public ElectricSparkEmitter(Vector2 position) : base(position)
+        public ElectricSparkEmitter(Vector2 position, Room room) : base(position, room)
         {
             SpawnTimeout = 0;
             SpawnRate = 0;

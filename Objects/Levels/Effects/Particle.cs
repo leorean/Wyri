@@ -82,7 +82,7 @@ namespace Wyri.Objects.Levels.Effects
 
     // ++++ Emitter ++++
 
-    public abstract class ParticleEmitter : SpatialObject
+    public abstract class ParticleEmitter : RoomObject
     {
         public List<Particle> Particles { get; protected set; } = new List<Particle>();
         public bool Active { get; set; } = true;
@@ -92,7 +92,7 @@ namespace Wyri.Objects.Levels.Effects
 
         protected int currentSpawnTimeout = 0;
 
-        public ParticleEmitter(Vector2 position) : base(position, new Types.RectF(0, 0, 0, 0))
+        public ParticleEmitter(Vector2 position, Room room) : base(position, new Types.RectF(0, 0, 0, 0), room)
         {            
         }
 

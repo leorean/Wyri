@@ -289,12 +289,17 @@ namespace Wyri.Main
                 if (Target is Player player)
                 {
                     offX = Math.Sign((int)player.Direction) * 32;
-                    if (Math.Abs(player.YVel) > 1)
-                        offY = -Math.Sign(player.YVel) * 24;
+                    /*if (player.State == PlayerState.Jump)
+                    {
+                        if (player.YVel < -1)
+                            offY = -16;
+                        if (player.YVel > 1)
+                            offY = 16;
+                    }
                     else
-                        offY = -16;
+                        offY = -16;*/
 
-                    delta = 1f - M.Clamp(M.Euclidean(new Vector2(0, targetPosition.Y), new Vector2(0, Position.Y + offY)) / 60f, 0f, 1f);
+                    delta = 1f - M.Clamp(M.Euclidean(new Vector2(0, targetPosition.Y), new Vector2(0, Position.Y)) / 60f, 0f, 1f);
                 }
                 
                 Position += new Vector2((targetPosition.X - Position.X + offX) / (1 + amp), (targetPosition.Y - Position.Y + offY) / (1 + delta * amp));

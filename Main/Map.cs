@@ -194,18 +194,18 @@ namespace Wyri.Main
                         }                        
                     }
 
-                    if (type == "effect")
-                    {
-                        var effectType = data.ContainsKey("type") ? (int)data["type"] : -1;
-                        switch (effectType)
-                        {
-                            case 0:
-                                new ElectricSparkEmitter(new Vector2(x + 4, y + 4));
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                    //if (type == "effect")
+                    //{
+                    //    var effectType = data.ContainsKey("type") ? (int)data["type"] : -1;
+                    //    switch (effectType)
+                    //    {
+                    //        case 0:
+                    //            new ElectricSparkEmitter(new Vector2(x + 4, y + 4));
+                    //            break;
+                    //        default:
+                    //            break;
+                    //    }
+                    //}
                 }
                 
                 if (loadSuccess)
@@ -292,7 +292,10 @@ namespace Wyri.Main
                                     new SavePoint(new Vector2((i - .5f) * G.T, (j - 1) * G.T), room);
                                     break;
                                 case "SMOKE":
-                                    new Smoke(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), room);
+                                    new SmokeEmitter(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), room);
+                                    break;
+                                case "SPARK":
+                                    new ElectricSparkEmitter(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), room);
                                     break;
                                 case "E1":
                                     new Enemy1(new Vector2((i + .5f) * G.T, j * G.T), room);
