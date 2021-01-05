@@ -182,6 +182,8 @@ namespace Wyri.Main
 
         float flashAlpha = 0;
 
+        Vector2 targetPosition;
+
         public Camera(ResolutionRenderer resolutionRenderer)
         {
             ResolutionRenderer = resolutionRenderer;
@@ -276,9 +278,26 @@ namespace Wyri.Main
 
         public void Update()
         {
+            var delta = 1f;
+            var amp = 40f;
             if (Target != null)
             {
-                Position = Target.Position;
+                targetPosition = Target.Position;
+                var offX = 0f;
+                var offY = 0f;
+                
+                if (Target is Player player)
+                {
+                    offX = Math.Sign((int)player.Direction) * 32;
+                    if (Math.Abs(player.YVel) > 1)
+                        offY = -Math.Sign(player.YVel) * 24;
+                    else
+                        offY = -16;
+
+                    delta = 1f - M.Clamp(M.Euclidean(new Vector2(0, targetPosition.Y), new Vector2(0, Position.Y + offY)) / 60f, 0f, 1f);
+                }
+                
+                Position += new Vector2((targetPosition.X - Position.X + offX) / (1 + amp), (targetPosition.Y - Position.Y + offY) / (1 + delta * amp));
             }
 
             if (Room != null)

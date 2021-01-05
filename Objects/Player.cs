@@ -81,6 +81,9 @@ namespace Wyri.Objects
 
         private float xVel, yVel, yGrav, xMax, yMax;
 
+        public float XVel => xVel;
+        public float YVel => yVel;
+
         private bool onGround, inWater;
 
         private int jumps;
@@ -213,6 +216,7 @@ namespace Wyri.Objects
             {
                 if (room != MainGame.Camera.Room)
                 {
+                    MainGame.Camera.Position = Position;
                     var effects = ObjectController.FindAll<IDestroyOnRoomChange>();
                     foreach(var e in effects)
                         e.Destroy();

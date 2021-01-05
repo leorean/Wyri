@@ -34,7 +34,7 @@ namespace Wyri.Objects.Levels.Enemies
                 Destroy();
             }
 
-            var triggerBlock = this.CollisionPoint<TriggerBlock>(X + .5f * xVel, Y + .5f * yVel).FirstOrDefault();
+            var triggerBlock = this.CollisionPoint<TriggerBlock>(X + .75f * xVel, Y + .75f * yVel).FirstOrDefault();
             if (triggerBlock != null)
             {
                 triggerBlock.On = !triggerBlock.On;
