@@ -34,14 +34,14 @@ namespace Wyri.Objects.Levels.Enemies
                 Destroy();
             }
 
-            var triggerBlock = this.CollisionPoint<TriggerBlock>(X + xVel, Y + yVel).FirstOrDefault();
+            var triggerBlock = this.CollisionPoint<TriggerBlock>(X + .5f * xVel, Y + .5f * yVel).FirstOrDefault();
             if (triggerBlock != null)
             {
                 triggerBlock.On = !triggerBlock.On;
                 Room.SwitchState = !Room.SwitchState;
             }
 
-            if (this.CollisionSolidTile(xVel * .5f, yVel * .5f))
+            if (this.CollisionSolidTile(xVel * .5f, yVel * .5f) || triggerBlock != null)
             {
                 new AnimationEffect(Position, 2, Room);
                 Destroy();
