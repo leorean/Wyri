@@ -26,15 +26,16 @@ namespace Wyri.Objects.Levels.Enemies
         private float t;
         private float animSpd;
         private float xVel;
-        float s, maxAnimSpd;
+        float s, maxAnimSpd, animAmpl;
 
         int waitTimer;
         bool changeDirection;
 
-        public Enemy2(Vector2 position, Room room) : base(position, new RectF(-8, -8, 16, 16), room)
+        public Enemy2(Vector2 position, Room room) : base(position, new RectF(-6, -4, 12, 10), room)
         {            
-            state = State.Walk;
-            direction = Direction.Right;
+            state = State.Idle;
+            direction = RND.Choose(Direction.Left, Direction.Right);
+            waitTimer = 30 + RND.Int(60);
         }
 
         public override void Update()
@@ -43,8 +44,16 @@ namespace Wyri.Objects.Levels.Enemies
 
             waitTimer = Math.Max(waitTimer - 1, 0);
 
+            var rc = this.RayCast(MainGame.Player, (direction == Direction.Left) ? 180 : 0, 1, 48);
+
+            if (rc.Item1)
+            {
+                state = State.Run;
+            }
+
             if (state == State.Idle)
             {
+                animAmpl = 1;
                 maxAnimSpd = 2;
                 animSpd = .75f;
                 xVel = Math.Sign(xVel) * Math.Max(Math.Abs(xVel) - .025f, 0);
@@ -65,9 +74,10 @@ namespace Wyri.Objects.Levels.Enemies
             }
             else if (state == State.Walk)
             {
+                animAmpl = 1;
                 maxAnimSpd = .5f;
                 animSpd = Math.Min(animSpd + .02f, maxAnimSpd);
-                xVel = Math.Sign((int)direction) * Math.Min(Math.Abs(xVel) + .01f, animSpd);
+                xVel = Math.Sign((int)direction) * Math.Min(Math.Abs(xVel) + .01f, .35f);
                 if (waitTimer == 0)
                 {
                     waitTimer = 60 + RND.Int(90);
@@ -76,10 +86,11 @@ namespace Wyri.Objects.Levels.Enemies
             }
             else if (state == State.Run)
             {
+                animAmpl = 2;
                 waitTimer = 2 * 60;
-                maxAnimSpd = 2;
-                animSpd = Math.Min(animSpd + .1f, maxAnimSpd);
-                xVel = Math.Sign((int)direction) * animSpd;
+                maxAnimSpd = 3;
+                animSpd = maxAnimSpd;
+                xVel = Math.Sign((int)direction) * Math.Min(Math.Abs(xVel) + .05f, 1.25f);
             }
 
             s = animSpd / maxAnimSpd;
@@ -99,12 +110,14 @@ namespace Wyri.Objects.Levels.Enemies
                 }                
             }            
 
-            t = (t + .2f * s);
+            t = (t + .2f * s * animAmpl);
             if (t >= 90000) t = 0;
         }
 
         public override void Draw(SpriteBatch sb)
         {
+            //sb.DrawRectangle(Position + BBox, Color.Red, false, 1);
+
             var i = (int)direction;
 
             var headOffset = new Vector2(0, M.Sin((t + 1) % (float)(2 * Math.PI)) + 2);
@@ -123,7 +136,7 @@ namespace Wyri.Objects.Levels.Enemies
             var leg3Angle = M.DegToRad(-2 + M.Sin(leg3) * 2) * Math.Sign((int)direction);
             var leg4Angle = M.DegToRad(-1 + M.Sin(leg4) * 4) * Math.Sign((int)direction);
             // body
-            sb.Draw(GameResources.Enemy2[0], Position + i * new Vector2(M.Sin(body) * .5f, M.Cos(body)) * s, null, Color.White, bodyAngle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY);
+            sb.Draw(GameResources.Enemy2[0], Position + i * new Vector2(M.Sin(body) * .5f, M.Cos(body) * .5f) * s, null, Color.White, bodyAngle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY);
             // head
             sb.Draw(GameResources.Enemy2[1], Position + new Vector2(i * 5, -5) + i * new Vector2(M.Sin(head) * .3f, M.Cos(head) * .4f) * s + headOffset, null, Color.White, 0, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY + .00002f);
 
