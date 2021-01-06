@@ -300,6 +300,9 @@ namespace Wyri.Main
                                 case "E1":
                                     new Enemy1(new Vector2((i + .5f) * G.T, j * G.T), room);
                                     break;
+                                case "E2":
+                                    new Enemy2(new Vector2((i + .5f) * G.T, j * G.T), room);
+                                    break;
                                 case "I1":
                                     new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 0, room);
                                     break;

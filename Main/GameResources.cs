@@ -20,6 +20,7 @@ namespace Wyri.Main
         public static TextureSet Smoke { get; private set; }
         public static TextureSet Oxygen { get; private set; }
         public static TextureSet Enemy1 { get; private set; }
+        public static TextureSet Enemy2 { get; private set; }
         public static TextureSet Crosshair { get; private set; }
         public static TextureSet Projectiles { get; private set; }
         public static Texture2D Map { get; private set; }
@@ -36,6 +37,7 @@ namespace Wyri.Main
             Smoke = content.LoadTextureSet("smoke", 8, 8);
             Oxygen = content.LoadTextureSet("oxygen", 16, 16);
             Enemy1 = content.LoadTextureSet("enemy1", 16, 16);
+            Enemy2 = content.LoadTextureSet("enemy2", 16, 16);
             Crosshair = content.LoadTextureSet("crosshair", 8, 8);
             Projectiles = content.LoadTextureSet("projectiles", 8, 8);
             Map = content.Load<Texture2D>("map");

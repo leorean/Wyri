@@ -7,6 +7,10 @@ namespace Wyri
 {
     public static class M
     {
+        public static float Sin(float x) => (float)Math.Sin(x);
+        
+        public static float Cos(float x) => (float)Math.Cos(x);
+
         public static int Div(double v1, double v2)
         {
             return Floor(v1 / v2);

@@ -36,8 +36,11 @@ namespace Wyri.Objects.Levels.Enemies
             Shoot
         }
 
+        float frame;
         int shots;
         int shotTimeout;
+
+        Vector2 center;
 
         State state;
         
@@ -54,9 +57,11 @@ namespace Wyri.Objects.Levels.Enemies
         {
             base.Update();
 
-            var ang = M.VectorToAngle(MainGame.Player.Center - Center + offvec);            
+            center = Center + new Vector2(-.5f, -1.5f);
+
+            var ang = M.VectorToAngle(MainGame.Player.Center - center + offvec);            
             var rc = this.RayCast(MainGame.Player, ang, 1, 255);
-            bool inRange = M.Euclidean(Center, MainGame.Player.Center) <= distance;
+            bool inRange = M.Euclidean(center, MainGame.Player.Center) <= distance;
 
             rc = (rc.Item1, Math.Min(rc.Item2, distance));
 
@@ -68,6 +73,7 @@ namespace Wyri.Objects.Levels.Enemies
             switch (state)
             {
                 case State.Idle:
+                    frame = Math.Max(frame - .2f, 0);
                     hairAlpha = 3;
                     lineAlpha = 0;
                     prepareShootTimeout = maxPrepareShootTimeout;
@@ -80,8 +86,9 @@ namespace Wyri.Objects.Levels.Enemies
                     }
                     break;
                 case State.Target:
+                    frame = Math.Min(frame + .2f, 3.9f);
                     rayCast = rc;
-                    target = Center + new Vector2(M.LengthDirX(angle) * rayCast.Item2, M.LengthDirY(angle) * rayCast.Item2);
+                    target = center + new Vector2(M.LengthDirX(angle) * rayCast.Item2, M.LengthDirY(angle) * rayCast.Item2);
                     if (!rc.Item1 || !inRange)
                     {
                         newTarget = target;
@@ -125,8 +132,8 @@ namespace Wyri.Objects.Levels.Enemies
                         shotTimeout = Math.Max(shotTimeout - 1, 0);
                         if (shotTimeout == 0)
                         {
-                            var bullet = new Bullet(Center, Room);
-                            bullet.Angle = M.VectorToAngle(newTarget - Center);
+                            var bullet = new Bullet(center, Room);
+                            bullet.Angle = M.VectorToAngle(newTarget - center);
 
                             shots = Math.Max(shots - 1 , 0);
                             shotTimeout = 10;
@@ -142,9 +149,7 @@ namespace Wyri.Objects.Levels.Enemies
 
         public override void Draw(SpriteBatch sb)
         {
-            int frame = state == State.Idle ? 0 : 1;
-
-            sb.Draw(GameResources.Enemy1[frame], Position, null, Color.White, 0, new Vector2(8), Vector2.One, SpriteEffects.None, G.D_ENEMY);
+            sb.Draw(GameResources.Enemy1[(int)Math.Floor(frame)], Position, null, Color.White, 0, new Vector2(8), Vector2.One, SpriteEffects.None, G.D_ENEMY);
 
             var rs = 1f - (float)prepareShootTimeout / (float)maxPrepareShootTimeout;
 
@@ -160,7 +165,7 @@ namespace Wyri.Objects.Levels.Enemies
             if (state != State.Idle)
             {
 
-                sb.DrawLine(Center, newTarget, color, G.D_EFFECT);
+                sb.DrawLine(center, newTarget, color, G.D_EFFECT);
                 sb.DrawRectangle(newTarget + new RectF(-1.5f, -1.5f, 3, 3), new Color(color, 2 * lineAlpha), false, G.D_EFFECT);
 
                 if (state != State.Target)

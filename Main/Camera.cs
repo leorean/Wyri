@@ -302,7 +302,7 @@ namespace Wyri.Main
                     delta = 1f - M.Clamp(M.Euclidean(new Vector2(0, targetPosition.Y), new Vector2(0, Position.Y)) / 60f, 0f, 1f);
                 }
                 
-                Position += new Vector2((targetPosition.X - Position.X + offX) / (1 + amp), (targetPosition.Y - Position.Y + offY) / (1 + delta * amp));
+                Position += new Vector2((targetPosition.X - Position.X + offX) / 60f, (targetPosition.Y - Position.Y + offY) / (1 + delta * amp));
             }
 
             if (Room != null)
