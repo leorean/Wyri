@@ -162,17 +162,28 @@ namespace Wyri
             return grid[tx, ty];
         }
 
-        public static bool CollisionSolidTile(this SpatialObject o, float offX, float offY)
+        public static bool CollisionSolidTile(this SpatialObject o, float offX, float offY, bool includePlatformTiles = false)
         {
             var grid = MainGame.Map.LayerData["FG"];
 
-            for (float i = M.Div(o.Left, G.T) - G.T; i < M.Div(o.Right, G.T) + G.T; i++)
+            for (float i = M.Div(o.Left + offX, G.T) - G.T; i < M.Div(o.Right + offX, G.T) + G.T; i++)
             {
-                for (float j = M.Div(o.Top, G.T) - G.T; j < M.Div(o.Bottom, G.T) + G.T; j++)
+                for (float j = M.Div(o.Top + offX, G.T) - G.T; j < M.Div(o.Bottom + offX, G.T) + G.T; j++)
                 {
                     var t = grid[(int)i, (int)j];
-                    if (t == null || !t.IsSolid)
+                    if (t == null)
                         continue;
+
+                    if (includePlatformTiles)
+                    {
+                        if (t.Type != TileType.Platform && !t.IsSolid)
+                            continue;
+                    }
+                    else
+                    {
+                        if (!t.IsSolid)
+                            continue;
+                    }
 
                     var tileRect = new RectF(i * G.T, j * G.T, G.T, G.T);
                     if ((o.BBox + new Vector2(o.X + offX, o.Y + offY)).Intersects(tileRect))
