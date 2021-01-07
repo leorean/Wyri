@@ -125,39 +125,39 @@ namespace Wyri.Objects.Levels.Enemies
 
             var body = -(t + .5f) % (float)(2 * Math.PI);
             var head = -(t) % (float)(2 * Math.PI);
-            var leg1 = (t + 1) % (float)(2 * Math.PI);
-            var leg2 = (t + 3) % (float)(2 * Math.PI);
-            var leg3 = (t + 4) % (float)(2 * Math.PI);
-            var leg4 = (t + 2) % (float)(2 * Math.PI);
+            var leg1 = (t + 1 * i) % (float)(2 * Math.PI);
+            var leg2 = (t + 3 * i) % (float)(2 * Math.PI);
+            var leg3 = (t + 4 * i) % (float)(2 * Math.PI);
+            var leg4 = (t + 2 * i) % (float)(2 * Math.PI);
 
-            var bodyAngle = M.DegToRad(-1 + M.Sin(body) * 2) * Math.Sign((int)direction);
-            var leg1Angle = M.DegToRad(-1 + M.Sin(leg1) * 4) * Math.Sign((int)direction);
-            var leg2Angle = M.DegToRad(-1 + M.Sin(leg2) * 4) * Math.Sign((int)direction);
-            var leg3Angle = M.DegToRad(-2 + M.Sin(leg3) * 2) * Math.Sign((int)direction);
-            var leg4Angle = M.DegToRad(-1 + M.Sin(leg4) * 4) * Math.Sign((int)direction);
+            var bodyAngle = M.DegToRad(-1 + M.Sin(body) * 2) * i;
+            var leg1Angle = M.DegToRad(-1 + M.Sin(leg1) * 4) * i;
+            var leg2Angle = M.DegToRad(-1 + M.Sin(leg2) * 4) * i;
+            var leg3Angle = M.DegToRad(-2 + M.Sin(leg3) * 2) * i;
+            var leg4Angle = M.DegToRad(-1 + M.Sin(leg4) * 4) * i;
             // body
-            sb.Draw(GameResources.Enemy2[0], Position + i * new Vector2(M.Sin(body) * .5f, M.Cos(body) * .5f) * s, null, Color.White, bodyAngle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY);
+            sb.Draw(GameResources.Enemy2[0], Position + new Vector2(i * -1, 0) + i * new Vector2(M.Sin(body) * .5f, M.Cos(body) * .5f) * s, null, Color.White, bodyAngle, new Vector2(8), new Vector2(i, 1), SpriteEffects.None, G.D_ENEMY);
             // head
-            sb.Draw(GameResources.Enemy2[1], Position + new Vector2(i * 5, -5) + i * new Vector2(M.Sin(head) * .3f, M.Cos(head) * .4f) * s + headOffset, null, Color.White, 0, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY + .00002f);
+            sb.Draw(GameResources.Enemy2[1], Position + new Vector2(i * 5, -5) + i * new Vector2(M.Sin(head) * .3f, M.Cos(head) * .4f) * s + headOffset, null, Color.White, 0, new Vector2(8), new Vector2(i, 1), SpriteEffects.None, G.D_ENEMY + .00002f);
 
-            var leg1Pos = new Vector2(i * 7, 1) + i * new Vector2(M.Sin(leg1) * -i, M.Cos(leg1) * 1.5f) * s + legOffset;
-            var leg2Pos = new Vector2(i * 0, 1) + i * new Vector2(M.Sin(leg2) * -i, M.Cos(leg2) * 1.5f) * s + legOffset;
-            var leg3Pos = new Vector2(i * -7, 1) + i * new Vector2(M.Sin(leg3) * -i * .2f, M.Cos(leg3) * 1.5f) * s + legOffset;
-            var leg4Pos = i * new Vector2(M.Sin(leg4) * -i, M.Cos(leg4) * 1.5f) * s + legOffset;
+            var leg1Pos = new Vector2(i * 7, 1) + new Vector2(M.Sin(leg1) * -i * .5f, M.Cos(leg1) * 1.5f) * s + legOffset;
+            var leg2Pos = new Vector2(i * 0, 1) +  new Vector2(M.Sin(leg2) * -i * .5f, M.Cos(leg2) * 1.5f) * s + legOffset;
+            var leg3Pos = new Vector2(i * -7, 1) + new Vector2(M.Sin(leg3) * -i *.2f, M.Cos(leg3) * 1.5f) * s + legOffset;
+            var leg4Pos = new Vector2(i, 0) + new Vector2(M.Sin(leg4) * -i, M.Cos(leg4) * 1.5f) * s + legOffset;
             
             leg1Pos = new Vector2(leg1Pos.X, Math.Min(leg1Pos.Y, .5f));
             leg2Pos = new Vector2(leg2Pos.X, Math.Min(leg2Pos.Y, .5f));
             leg3Pos = new Vector2(leg3Pos.X, Math.Min(leg3Pos.Y, .5f));
             leg4Pos = new Vector2(leg4Pos.X, Math.Min(leg4Pos.Y, .5f));
 
-            // front right leg = leg1
-            sb.Draw(GameResources.Enemy2[2], Position + leg1Pos, null, Color.White, leg1Angle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY - .00001f);
-            // front left leg = leg2
-            sb.Draw(GameResources.Enemy2[2], Position + leg2Pos, null, Color.White, leg2Angle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY + .00001f);
+            // front left leg = leg1
+            sb.Draw(GameResources.Enemy2[4], Position + leg1Pos, null, Color.White, leg1Angle, new Vector2(8), new Vector2(i, 1), SpriteEffects.None, G.D_ENEMY - .00001f);
+            // front right leg = leg2
+            sb.Draw(GameResources.Enemy2[2], Position + leg2Pos, null, Color.White, leg2Angle, new Vector2(8), new Vector2(i, 1), SpriteEffects.None, G.D_ENEMY + .00001f);
             // back left leg = leg3
-            sb.Draw(GameResources.Enemy2[3], Position + leg3Pos, null, Color.White, leg3Angle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY + .00001f);
+            sb.Draw(GameResources.Enemy2[3], Position + leg3Pos, null, Color.White, leg3Angle, new Vector2(8), new Vector2(i, 1), SpriteEffects.None, G.D_ENEMY + .00001f);
             // back right leg = leg4
-            sb.Draw(GameResources.Enemy2[4], Position + new Vector2(i * -3, 1) + leg4Pos, null, Color.White, leg4Angle, new Vector2(8), new Vector2((int)direction, 1), SpriteEffects.None, G.D_ENEMY - .00001f);
+            sb.Draw(GameResources.Enemy2[5], Position + new Vector2(i * -3, 1) + leg4Pos, null, Color.White, leg4Angle, new Vector2(8), new Vector2(i, 1), SpriteEffects.None, G.D_ENEMY - .00001f);
 
             base.Draw(sb);
         }
