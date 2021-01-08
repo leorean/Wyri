@@ -278,8 +278,10 @@ namespace Wyri.Main
 
         public void Update()
         {
-            var delta = 1f;
-            var amp = 40f;
+            var ampX = 40f;
+            var ampY = 40f;
+            var deltaX = 1f;
+            var deltaY = 1f;
             if (Target != null)
             {
                 targetPosition = Target.Position;
@@ -289,20 +291,13 @@ namespace Wyri.Main
                 if (Target is Player player)
                 {
                     offX = Math.Sign((int)player.Direction) * 16;
-                    /*if (player.State == PlayerState.Jump)
-                    {
-                        if (player.YVel < -1)
-                            offY = -16;
-                        if (player.YVel > 1)
-                            offY = 16;
-                    }
-                    else
-                        offY = -16;*/
-
-                    delta = 1f - M.Clamp(M.Euclidean(new Vector2(0, targetPosition.Y), new Vector2(0, Position.Y)) / 60f, 0f, 1f);
+                    deltaX = 1 - Math.Min(Math.Abs(player.XVel) / 3f, 1);
+                    deltaY = 1 - Math.Min(Math.Abs(player.YVel) / 3f, 1);
+                    ampX = 5 + Math.Max(40 * deltaX, 1);
+                    ampY = 5 + Math.Max(40 * deltaY, 1);
                 }
-                
-                Position += new Vector2((targetPosition.X - Position.X + offX) / 60f, (targetPosition.Y - Position.Y + offY) / (1 + delta * amp));
+
+                Position += new Vector2((targetPosition.X - Position.X + offX) / ampX, (targetPosition.Y - Position.Y + offY) / ampY);
             }
 
             if (Room != null)
@@ -330,11 +325,13 @@ namespace Wyri.Main
                 var ry = Room.Y;
                 var vy = ViewY;
                 var minYcam = ry;
-                var maxYcam = ry + 1.5f * rh - .5f * vh;
+                var maxYcam = ry + rh + .5f * vh;
                 var posY = vy;
+                var fac = 1f;
                 if (minYcam != maxYcam)
                 {
-                    posY = vy - vh * ((vy - minYcam) / (maxYcam - minYcam));
+                    fac = ((vy - minYcam) / (maxYcam - minYcam)) * 1.5f;
+                    posY = ViewY - .5f * vh * fac;
                 }
 
                 var px = (Position.X * .5f) % 256;

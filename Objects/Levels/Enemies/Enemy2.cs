@@ -44,7 +44,7 @@ namespace Wyri.Objects.Levels.Enemies
 
             waitTimer = Math.Max(waitTimer - 1, 0);
 
-            var seenPlayer = this.RayCast(MainGame.Player, M.VectorToAngle(MainGame.Player.Center - Position), 1, 80).Item1;
+            var seenPlayer = this.RayCast(MainGame.Player, M.VectorToAngle(MainGame.Player.Center - Position), 1, 80).Item1 && MainGame.Player.State != PlayerState.Dead;
             if (seenPlayer)
             {
                 if ((direction == Direction.Left && MainGame.Player.X < X) ||
