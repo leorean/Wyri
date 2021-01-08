@@ -52,8 +52,8 @@ namespace Wyri.Objects.Levels.Enemies
                 {
                     if (MainGame.Player.Bottom >= Top - 16 && MainGame.Player.Top <= Bottom + 8)
                     {
-                        if (state == State.Walk)
-                            state = State.Run;
+                        //if (state == State.Walk)
+                        state = State.Run;
                     }
                 }
             }
@@ -119,9 +119,9 @@ namespace Wyri.Objects.Levels.Enemies
                 maxAnimSpd = 3;
                 animSpd = maxAnimSpd;
                 if (direction == Direction.Left)
-                    xVel = Math.Max(xVel - .05f, -1.5f);
+                    xVel = Math.Max(xVel - .07f, -2f);
                 if (direction == Direction.Right)
-                    xVel = Math.Min(xVel + .05f, 1.5f);
+                    xVel = Math.Min(xVel + .07f, 2f);
             }
 
             s = animSpd / maxAnimSpd;
@@ -136,7 +136,7 @@ namespace Wyri.Objects.Levels.Enemies
                 //xVel = Math.Sign((int)direction) * Math.Max(Math.Abs(xVel) - .175f, 0);
                 xVel = 0;
 
-                if (Math.Abs(xVel) == 0)
+                if (waitTimer < 30)
                 {
                     changeDirection = true;
                     animSpd = 0;

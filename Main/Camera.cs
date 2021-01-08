@@ -288,7 +288,7 @@ namespace Wyri.Main
                 
                 if (Target is Player player)
                 {
-                    offX = Math.Sign((int)player.Direction) * 32;
+                    offX = Math.Sign((int)player.Direction) * 16;
                     /*if (player.State == PlayerState.Jump)
                     {
                         if (player.YVel < -1)
