@@ -290,14 +290,16 @@ namespace Wyri.Main
                 
                 if (Target is Player player)
                 {
-                    offX = Math.Sign((int)player.Direction) * 16;
-                    deltaX = 1 - Math.Min(Math.Abs(player.XVel) / 3f, 1);
-                    deltaY = 1 - Math.Min(Math.Abs(player.YVel) / 3f, 1);
-                    ampX = 5 + Math.Max(40 * deltaX, 1);
-                    ampY = 5 + Math.Max(40 * deltaY, 1);
+                    offX = Math.Sign((int)player.Direction) * 32;
+                    deltaX = 1 - Math.Min(Math.Abs(Position.X - player.X) / 48f, 1);
+                    deltaY = 1 - Math.Min(Math.Abs(Position.Y - player.Y) / 48f, 1);
+                    ampX = 20 + Math.Max(80 * deltaX, 1);
+                    ampY = 20 + Math.Max(80 * deltaY, 1);
                 }
 
-                Position += new Vector2((targetPosition.X - Position.X + offX) / ampX, (targetPosition.Y - Position.Y + offY) / ampY);
+                Logger.Log(deltaX);
+
+                Position += new Vector2((targetPosition.X - Position.X + offX) / ampX, (targetPosition.Y - Position.Y + offY) / ampY);                
             }
 
             if (Room != null)

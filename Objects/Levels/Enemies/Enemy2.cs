@@ -126,7 +126,7 @@ namespace Wyri.Objects.Levels.Enemies
 
             s = animSpd / maxAnimSpd;
 
-            var groundTile = this.CollisionSolidTile((int)direction * 16, BBox.h, true);
+            var groundTile = this.CollisionSolidTile(Math.Sign(xVel) * 16, BBox.h, true);
             if (!this.CollisionSolidTile(xVel + Math.Sign(xVel) * 4, 0) && groundTile)
             {
                 X += xVel;
