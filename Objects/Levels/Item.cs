@@ -33,9 +33,10 @@ namespace Wyri.Objects.Levels
                 return;
             IsTaken = true;
 
-            if (Type == 0) MainGame.Player.Abilities |= PlayerAbility.WALL_GRAB;
-            if (Type == 1) MainGame.Player.Abilities |= PlayerAbility.MAP;
-            if (Type == 2) MainGame.Player.Abilities |= PlayerAbility.COMPASS;
+            if (Type == 0) MainGame.SaveGame.Collected++;
+            if (Type == 1) MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
+            if (Type == 2) MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
+            if (Type == 3) MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
         }
 
         public override void Update()

@@ -73,7 +73,7 @@ namespace Wyri.Objects
             }
         }
 
-        public PlayerAbility Abilities { get; set; } = PlayerAbility.NONE;
+        public PlayerAbility Abilities => MainGame.SaveGame.Abilities;
 
         public PlayerDirection Direction { get; set; } = PlayerDirection.Right;
 

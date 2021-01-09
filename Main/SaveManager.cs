@@ -21,6 +21,7 @@ namespace Wyri.Main
         public float Darkness;
         public List<string> VisitedRooms = new List<string>();
         public List<string> Items = new List<string>();
+        public int Collected;
     }
 
     public static class BinarySerializer

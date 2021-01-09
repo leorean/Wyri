@@ -210,10 +210,9 @@ namespace Wyri.Main
                 
                 if (loadSuccess)
                 {
-                    MainGame.Player = new Player(MainGame.SaveGame.Position);
-                    MainGame.Player.Abilities = MainGame.SaveGame.Abilities;
-                    
+                    MainGame.Player = new Player(MainGame.SaveGame.Position);                    
                     MainGame.Player.Direction = MainGame.SaveGame.Direction;
+
                     MainGame.Camera.Background = MainGame.SaveGame.Background;
                     MainGame.Camera.Weather = MainGame.SaveGame.Weather;
                     MainGame.Camera.Darkness = MainGame.SaveGame.Darkness;
