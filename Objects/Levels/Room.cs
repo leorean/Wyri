@@ -12,6 +12,7 @@ namespace Wyri.Objects.Levels
     public class Room : SpatialObject, IStayActive
     {
         readonly List<Object> objects;
+        public List<Object> Objects => objects.ToList();
 
         public int Width => (int)BBox.w;
         public int Height => (int)BBox.h;
@@ -20,7 +21,6 @@ namespace Wyri.Objects.Levels
         public int Background { get; set; } = -1;
         public int Weather { get; set; } = -1;
         public float Darkness { get; set; } = -1;
-
 
         public Room(int x, int y, int width, int height) : base(new Vector2(x, y), new RectF(0, 0, width, height))
         {

@@ -81,6 +81,17 @@ namespace Wyri.Main
                     {
                         sb.DrawPixel(new Vector2(xo + ppx, yo + ppy), Color.Red, d);
                     }
+
+                    // items
+                    Item item = r.Objects.Where(x => x is Item).FirstOrDefault() as Item;
+                    if (item != null)
+                    {
+                        var itemx = (item.X / (float)(map.Width)) * sizeX * rmW / (float)G.T;
+                        var itemy = (item.Y / (float)(map.Height)) * sizeY * rmH / (float)G.T;
+
+                        sb.DrawPixel(new Vector2(xo + itemx, yo + itemy), Color.Yellow, d);
+                        //sb.DrawPixel(new Vector2(xo + i * sizeX + 2, yo + j * sizeY + 2), Color.Yellow, d);
+                    }                    
                 }
             }
 

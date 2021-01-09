@@ -33,25 +33,26 @@ namespace Wyri.Objects.Levels
                 return;
             IsTaken = true;
 
-            var gotColor = new Color(255, 215, 0);
-
+            var gc = "ffd700";
+            var gs = 5;
+            
             switch (Type)
             {
                 case 0:
                     MainGame.SaveGame.Collected++;
-                    Text = "[color:ffd700,center:true,spd:6]Got a time crystal!|Wow....";
+                    Text = $"[color:{gc},center:true,spd:{gs}]Got a time crystal!";
                     break;
                 case 1:
                     MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
-                    Text = "";//new List<(string, bool)> { ("Got the grappling gloves!", true), ("Use the arrow keys to hold onto\nwalls or slide down.", false) };
+                    Text = $"[color:{gc},center:true,spd:{gs}]Got the grappling gloves!|Use the arrow keys to hold onto\nwalls or slide down.";
                     break;
                 case 2:
                     MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
-                    Text = "";//new List<(string, bool)> { ("Got the map sensor!", true), ("Press 'W' to view the map.", false) };
+                    Text = $"[color:{gc},center:true,spd:{gs}]Got the map sensor!|Press 'W' to view the map.";
                     break;
                 case 3:
                     MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
-                    Text = "";//new List<(string, bool)> { ("Got the compass!", true) , ("The map now displays all remaining items.", false) };
+                    Text = $"[color:{gc},center:true,spd:{gs}]Got the compass!|The map now displays all remaining items.";
                     break;
                 default:
                     throw new NotImplementedException("Type not implemented!");

@@ -246,7 +246,7 @@ namespace Wyri
             // show map
             if (InputController.IsKeyPressed(Keys.W, KeyState.Holding))
             {
-                if (Player != null && Player.Abilities.HasFlag(PlayerAbility.MAP))
+                if (Player != null && Player.ControlsEnabled && Player.Abilities.HasFlag(PlayerAbility.MAP))
                     MapDisplay.Draw(SpriteBatch);
             }
 

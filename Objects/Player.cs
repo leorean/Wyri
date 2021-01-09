@@ -111,10 +111,11 @@ namespace Wyri.Objects
         int gotItemPostTimer;
         int gotItemTimer;
         const int maxGotItemTimer = 45;
-        const int maxGotItemPostTimer = 90;
+        const int maxGotItemPostTimer = 90;        
         Item gotItem;
+        private MessageBox itemMsgBox;
 
-        bool controlPlayer = true;
+        public bool ControlsEnabled { get; set; } = true;
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
@@ -233,19 +234,19 @@ namespace Wyri.Objects
         {
             // input
 
-            var kLeft = InputController.IsKeyPressed(Keys.Left) && controlPlayer;
-            var kRight = InputController.IsKeyPressed(Keys.Right) && controlPlayer;
-            var kLeftPressed = InputController.IsKeyPressed(Keys.Left, KeyState.Pressed) && controlPlayer;
-            var kRightPressed = InputController.IsKeyPressed(Keys.Right, KeyState.Pressed) && controlPlayer;
-            var kLeftReleased = InputController.IsKeyPressed(Keys.Left, KeyState.Released) && controlPlayer;
-            var kRightReleased = InputController.IsKeyPressed(Keys.Right, KeyState.Released) && controlPlayer;
-            var kUp = InputController.IsKeyPressed(Keys.Up) && controlPlayer;
-            var kDown = InputController.IsKeyPressed(Keys.Down) && controlPlayer;
-            var kUpPressed = InputController.IsKeyPressed(Keys.Up, KeyState.Pressed) && controlPlayer;
-            var kDownPressed = InputController.IsKeyPressed(Keys.Down, KeyState.Pressed) && controlPlayer;
-            var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed) && controlPlayer;
-            var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding) && controlPlayer;
-            var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && controlPlayer;
+            var kLeft = InputController.IsKeyPressed(Keys.Left) && ControlsEnabled;
+            var kRight = InputController.IsKeyPressed(Keys.Right) && ControlsEnabled;
+            var kLeftPressed = InputController.IsKeyPressed(Keys.Left, KeyState.Pressed) && ControlsEnabled;
+            var kRightPressed = InputController.IsKeyPressed(Keys.Right, KeyState.Pressed) && ControlsEnabled;
+            var kLeftReleased = InputController.IsKeyPressed(Keys.Left, KeyState.Released) && ControlsEnabled;
+            var kRightReleased = InputController.IsKeyPressed(Keys.Right, KeyState.Released) && ControlsEnabled;
+            var kUp = InputController.IsKeyPressed(Keys.Up) && ControlsEnabled;
+            var kDown = InputController.IsKeyPressed(Keys.Down) && ControlsEnabled;
+            var kUpPressed = InputController.IsKeyPressed(Keys.Up, KeyState.Pressed) && ControlsEnabled;
+            var kDownPressed = InputController.IsKeyPressed(Keys.Down, KeyState.Pressed) && ControlsEnabled;
+            var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed) && ControlsEnabled;
+            var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding) && ControlsEnabled;
+            var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && ControlsEnabled;
 
             if (InputController.IsKeyPressed(Keys.K, KeyState.Pressed))
             {
@@ -331,7 +332,7 @@ namespace Wyri.Objects
                     gotItemPostTimer = maxGotItemPostTimer;
                     State = PlayerState.GotItem;
                     gotItem.Take();
-                    controlPlayer = false;
+                    ControlsEnabled = false;
                     return;
                 }
 
@@ -556,22 +557,24 @@ namespace Wyri.Objects
                     {
                         gotItem.Position = Position + new Vector2(.5f * (int)Direction, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
                         gotItemTimer = Math.Max(gotItemTimer - 1, 0);
-                        if (gotItemTimer == 0)
+                        if (gotItemTimer == 0 && itemMsgBox == null)
                         {
-                            MainGame.Camera.Flash();
-                            MainGame.SaveGame.Items.Add(gotItem.ID);
-                            for (var i = 0; i < 8; i++)
+                            itemMsgBox = new MessageBox(16, 16, gotItem.Text);                            
+                            itemMsgBox.OnFinished += () =>
                             {
-                                var eff = new AnimationEffect(new Vector2(gotItem.Center.X - 8 + RND.Next * 16, gotItem.Center.Y - 8 + RND.Next * 16), 0, gotItem.Room);
-                                eff.Delay = i * 8;
-                            }
-
-                            var msgBox = new MessageBox(16, 16, gotItem.Text);
-                            controlPlayer = false;
-                            msgBox.OnFinished += () => { controlPlayer = true; };
-
-                            gotItem.Destroy();
-                            gotItem = null;                            
+                                ControlsEnabled = true;
+                                state = PlayerState.Idle;
+                                MainGame.Camera.Flash();
+                                MainGame.SaveGame.Items.Add(gotItem.ID);
+                                for (var i = 0; i < 8; i++)
+                                {
+                                    var eff = new AnimationEffect(new Vector2(gotItem.Center.X - 8 + RND.Next * 16, gotItem.Center.Y - 8 + RND.Next * 16), 0, gotItem.Room);
+                                    eff.Delay = i * 8;
+                                }
+                                gotItem.Destroy();
+                                gotItem = null;
+                                itemMsgBox = null;
+                            };
                         }
                     }
                     else
@@ -579,7 +582,7 @@ namespace Wyri.Objects
                         gotItemPostTimer = Math.Max(gotItemPostTimer - 1, 0);
                         if (gotItemPostTimer == 0)
                         {
-                            State = PlayerState.Idle;
+                            //State = PlayerState.Idle;
                         }
                     }                    
                 }

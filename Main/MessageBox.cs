@@ -30,9 +30,10 @@ namespace Wyri.Main
         List<(string, bool, Color, int)> texts;
         float scale;
 
+        int ticks;
+
         int i;
         int length;
-
         int page = 0;
 
         public Action OnFinished;
@@ -146,10 +147,15 @@ namespace Wyri.Main
                     ty = .5f * (48 - GameResources.Font.MeasureString(t).Y * .25f) - 4;
                 }
                 sb.DrawString(GameResources.Font, t, new Vector2(x + 2 + tx, y + 2 + ty), texts[page].Item3, 0, Vector2.Zero, .25f, SpriteEffects.None, G.D_UI + .0001f);
-                if (i == length)
-                {   
-                    float a = Math.Abs((float)Math.Sin(MainGame.Ticks * .04f) % (float)(2 * Math.PI)) * 2;
-                    sb.Draw(GameResources.MessageBox, new Vector2(x + 128 - 24, y + 40), new Rectangle(0, 48, 16, 16), new Color(Color.White, a), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_UI + .0001f);
+                if (i == length && length > 0)
+                {
+                    ticks = (ticks + 1) % 9000;
+                    float a = (float)Math.Sin(ticks * .04f) % (float)(2 * Math.PI) * 2;
+                    sb.Draw(GameResources.MessageBox, new Vector2(x + 128 - 24, y + 40 + a), new Rectangle(0, 48, 16, 16), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_UI + .0001f);
+                }
+                else
+                {
+                    ticks = 0;
                 }
             }
         }
