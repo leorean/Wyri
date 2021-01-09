@@ -11,6 +11,9 @@ namespace Wyri.Main
     {
         public static Effect UnderWater { get; private set; }
 
+        public static SpriteFont Font { get; private set; }
+        public static Texture2D MessageBox { get; private set; }
+
         public static TextureSet Tiles { get; private set; }
         public static TextureSet Player { get; private set; }
         public static TextureSet Background { get; private set; }
@@ -28,6 +31,8 @@ namespace Wyri.Main
 
         public static void Init(ContentManager content)
         {
+            Font = content.Load<SpriteFont>("font");
+            MessageBox = content.Load<Texture2D>("messagebox");
             Player = content.LoadTextureSet("player", 16, 16);
             Tiles = content.LoadTextureSet("tiles", 8, 8);
             Background = content.LoadTextureSet("background", 256, 216);

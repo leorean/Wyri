@@ -17,6 +17,8 @@ namespace Wyri.Objects.Levels
 
         int effectTimeout;
 
+        public string Text { get; private set; }
+
         public Item(Vector2 position, int type, Room room) : base(position, new Types.RectF(-4, -4, 8, 8), room)
         {
             Type = type;
@@ -33,10 +35,33 @@ namespace Wyri.Objects.Levels
                 return;
             IsTaken = true;
 
+            switch (Type)
+            {
+                case 0:
+                    MainGame.SaveGame.Collected++;
+                    Text = "Found a time crystal!";
+                    break;
+                case 1:
+                    MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
+                    Text = "Got the grappling gloves!\nNow you can hold onto walls!";
+                    break;
+                case 2:
+                    MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
+                    break;
+                case 3:
+                    MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
+                    break;
+                default:
+                    throw new NotImplementedException("Type not implemented!");
+            }
+
             if (Type == 0) MainGame.SaveGame.Collected++;
             if (Type == 1) MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
             if (Type == 2) MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
             if (Type == 3) MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
+
+            Text = "Got my awesome item!\n Wow it is so awesome.";
+
         }
 
         public override void Update()

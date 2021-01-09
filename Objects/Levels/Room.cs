@@ -9,7 +9,7 @@ using Wyri.Types;
 
 namespace Wyri.Objects.Levels
 {
-    public class Room : SpatialObject
+    public class Room : SpatialObject, IStayActive
     {
         readonly List<Object> objects;
 

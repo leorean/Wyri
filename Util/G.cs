@@ -8,6 +8,8 @@ namespace Wyri
     {
         public const int T = 8;
 
+        public const float D_UI = .95f;
+
         public const float D_PLAYER_DEAD = .91f;
         public const float D_FADE = .9f;
 

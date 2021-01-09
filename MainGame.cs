@@ -145,8 +145,7 @@ namespace Wyri
                 InputController.Update();
 
                 ObjectController.SetAllActive<Object>(false);
-                ObjectController.SetAllActive<Player>(true);
-                ObjectController.SetAllActive<Room>(true);
+                ObjectController.SetAllActive<IStayActive>(true); // room, player, messagebox, etc.                
                 if (Camera.Room != null)
                 ObjectController.SetRegionActive<SpatialObject>(Camera.Room.X, Camera.Room.Y, Camera.Room.Width, Camera.Room.Height, true);
 

@@ -6,4 +6,6 @@ using Wyri.Objects;
 namespace Wyri.Types
 {
     public interface IDestroyOnRoomChange : IObject { }
+
+    public interface IStayActive : IObject { }
 }

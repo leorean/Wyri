@@ -53,7 +53,7 @@ namespace Wyri.Objects
         public static PlayerDirection Reverse(this PlayerDirection dir) => (PlayerDirection)(-(int)dir);
     }
 
-    public class Player : SpatialObject
+    public class Player : SpatialObject, IStayActive
     {
         private PlayerState state = PlayerState.Idle;
         public PlayerState State
@@ -565,6 +565,11 @@ namespace Wyri.Objects
                                 var eff = new AnimationEffect(new Vector2(gotItem.Center.X - 8 + RND.Next * 16, gotItem.Center.Y - 8 + RND.Next * 16), 0, gotItem.Room);
                                 eff.Delay = i * 8;
                             }
+
+                            var msgBox = new MessageBox(gotItem.Text, 16, 16);
+                            controlPlayer = false;
+                            msgBox.OnFinished += () => { controlPlayer = true; };
+
                             gotItem.Destroy();
                             gotItem = null;                            
                         }
@@ -575,7 +580,6 @@ namespace Wyri.Objects
                         if (gotItemPostTimer == 0)
                         {
                             State = PlayerState.Idle;
-                            controlPlayer = true;
                         }
                     }                    
                 }
