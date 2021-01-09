@@ -14,9 +14,7 @@ namespace Wyri.Objects.Levels
         public int Type { get; }
         public bool IsTaken { get; private set; }
         float t;
-
         int effectTimeout;
-
         public string Text { get; private set; }
 
         public Item(Vector2 position, int type, Room room) : base(position, new Types.RectF(-4, -4, 8, 8), room)
@@ -35,21 +33,25 @@ namespace Wyri.Objects.Levels
                 return;
             IsTaken = true;
 
+            var gotColor = new Color(255, 215, 0);
+
             switch (Type)
             {
                 case 0:
                     MainGame.SaveGame.Collected++;
-                    Text = "Found a time crystal!";
+                    Text = "[color:ffd700,center:true,spd:6]Got a time crystal!|Wow....";
                     break;
                 case 1:
                     MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
-                    Text = "Got the grappling gloves!\nNow you can hold onto walls!";
+                    Text = "";//new List<(string, bool)> { ("Got the grappling gloves!", true), ("Use the arrow keys to hold onto\nwalls or slide down.", false) };
                     break;
                 case 2:
                     MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
+                    Text = "";//new List<(string, bool)> { ("Got the map sensor!", true), ("Press 'W' to view the map.", false) };
                     break;
                 case 3:
                     MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
+                    Text = "";//new List<(string, bool)> { ("Got the compass!", true) , ("The map now displays all remaining items.", false) };
                     break;
                 default:
                     throw new NotImplementedException("Type not implemented!");
@@ -59,9 +61,6 @@ namespace Wyri.Objects.Levels
             if (Type == 1) MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
             if (Type == 2) MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
             if (Type == 3) MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
-
-            Text = "Got my awesome item!\n Wow it is so awesome.";
-
         }
 
         public override void Update()

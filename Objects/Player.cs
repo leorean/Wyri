@@ -554,7 +554,7 @@ namespace Wyri.Objects
                     xVel *= .5f;
                     if (gotItem != null)
                     {
-                        gotItem.Position = Position + new Vector2(0, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
+                        gotItem.Position = Position + new Vector2(.5f * (int)Direction, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
                         gotItemTimer = Math.Max(gotItemTimer - 1, 0);
                         if (gotItemTimer == 0)
                         {
@@ -566,7 +566,7 @@ namespace Wyri.Objects
                                 eff.Delay = i * 8;
                             }
 
-                            var msgBox = new MessageBox(gotItem.Text, 16, 16);
+                            var msgBox = new MessageBox(16, 16, gotItem.Text);
                             controlPlayer = false;
                             msgBox.OnFinished += () => { controlPlayer = true; };
 
