@@ -343,9 +343,13 @@ namespace Wyri.Objects
                     {
                         oxygen = Math.Max(oxygen - 1, 0);
                         if (oxygen == 0)
-                        {
-                            State = PlayerState.Dead;
-                            return;
+                        {                            
+                            ControlsEnabled = false;
+                            if (onGround)
+                            {
+                                State = PlayerState.Dead;
+                                return;
+                            }
                         }
                     }
                     else
