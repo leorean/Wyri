@@ -35,7 +35,7 @@ Celtic A-1800 - a mechoid
 ========
 
 Wyri worked as a scientist on his time-machine and started his experiment in the year 2162.
-When the experiment failed, he was transported to the year 10023.
+When the experiment failed, he was transported to the year 102023.
 
 Timeline
 ^^^^^^^^
@@ -49,10 +49,10 @@ Year 2150: 			Teleportation to Jupiter established
 Year 2157: 			First contact with alien lifeforms (non-carbon-based)
 Year 2162: 			*** Wyri uses his time-machine ***
 Year 3089 - 3099:	Humans abandon earth and migrate to Mars & Jupiter
-Year 3100: 			Meteor 'Apophis' hits earth
-Year 3100 - 8420: 	Impact-induced ice-age
+Year 3100: 			Asteroid 'Apophis II' hits earth
+Year 3100 - 3134:	Impact-winter
 Year 6780:			Teleportation capsule reached Alpha-Centauri 127 (establishes teleportation from Jupiter)
-Year 10023:			*** Wyri arrives with time-machine ***
+Year 102023:			*** Wyri arrives with time-machine ***
 
 ==============
 | Game Scope |

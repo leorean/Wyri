@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Wyri.Types;
+using Wyri.Util;
 
 namespace Wyri.Main
 {
@@ -28,6 +30,9 @@ namespace Wyri.Main
         public static TextureSet Projectiles { get; private set; }
         public static Texture2D Map { get; private set; }
         public static TextureSet Items { get; private set; }
+
+        public static readonly Color CollectabledisplayColor = Colors.FromHex("00ffe5");
+        public static readonly Color ItemDisplayColor = Colors.FromHex("ffd700"); 
 
         public static void Init(ContentManager content)
         {

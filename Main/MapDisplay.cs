@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Wyri.Objects;
 using Wyri.Objects.Levels;
 using Wyri.Types;
+using Wyri.Util;
 
 namespace Wyri.Main
 {
@@ -82,16 +84,21 @@ namespace Wyri.Main
                         sb.DrawPixel(new Vector2(xo + ppx, yo + ppy), Color.Red, d);
                     }
 
-                    // items
-                    Item item = r.Objects.Where(x => x is Item).FirstOrDefault() as Item;
-                    if (item != null)
+                    if (player.Abilities.HasFlag(PlayerAbility.COMPASS))
                     {
-                        var itemx = (item.X / (float)(map.Width)) * sizeX * rmW / (float)G.T;
-                        var itemy = (item.Y / (float)(map.Height)) * sizeY * rmH / (float)G.T;
+                        // items
+                        Item item = r.Objects.Where(x => x is Item).FirstOrDefault() as Item;
+                        if (item != null)
+                        {
+                            var itemx = (item.X / (float)(map.Width)) * sizeX * rmW / (float)G.T;
+                            var itemy = (item.Y / (float)(map.Height)) * sizeY * rmH / (float)G.T;
 
-                        sb.DrawPixel(new Vector2(xo + itemx, yo + itemy), Color.Yellow, d);
-                        //sb.DrawPixel(new Vector2(xo + i * sizeX + 2, yo + j * sizeY + 2), Color.Yellow, d);
-                    }                    
+                            var itemCol = item.Type == 0 ? GameResources.CollectabledisplayColor : GameResources.ItemDisplayColor;
+                            itemCol = (MainGame.Ticks % 60 > 55) ? Color.White : itemCol;
+
+                            sb.DrawPixel(new Vector2(xo + itemx, yo + itemy), itemCol, d);                            
+                        }
+                    }
                 }
             }
 

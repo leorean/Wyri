@@ -33,35 +33,31 @@ namespace Wyri.Objects.Levels
                 return;
             IsTaken = true;
 
-            var gc = "ffd700";
+            var gc1 = GameResources.CollectabledisplayColor.ToHex();
+            var gc2 = GameResources.ItemDisplayColor.ToHex();
             var gs = 5;
             
             switch (Type)
             {
                 case 0:
                     MainGame.SaveGame.Collected++;
-                    Text = $"[color:{gc},center:true,spd:{gs}]Got a time crystal!";
+                    Text = $"[color:{gc1},center:true,spd:{gs}]Got a time splinter!";
                     break;
                 case 1:
                     MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
-                    Text = $"[color:{gc},center:true,spd:{gs}]Got the grappling gloves!|Use the arrow keys to hold onto\nwalls or slide down.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the grappling gloves!|Use the arrow keys to hold onto\nwalls or slide down.";
                     break;
                 case 2:
                     MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
-                    Text = $"[color:{gc},center:true,spd:{gs}]Got the map sensor!|Press 'W' to view the map.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the map sensor!|Press 'W' to view the map.";
                     break;
                 case 3:
                     MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
-                    Text = $"[color:{gc},center:true,spd:{gs}]Got the compass!|The map now displays all remaining items.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the compass module!|The map now displays item locations.";
                     break;
                 default:
                     throw new NotImplementedException("Type not implemented!");
             }
-
-            if (Type == 0) MainGame.SaveGame.Collected++;
-            if (Type == 1) MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
-            if (Type == 2) MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
-            if (Type == 3) MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
         }
 
         public override void Update()

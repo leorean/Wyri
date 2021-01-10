@@ -187,7 +187,7 @@ namespace Wyri
                 }        
             }
 
-            Ticks = (Ticks + 1) % 9000;
+            Ticks = (Ticks + 1) % 900000;
 
             base.Update(gameTime);
         }
