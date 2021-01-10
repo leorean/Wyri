@@ -276,28 +276,23 @@ namespace Wyri.Main
             ResolutionRenderer = null;
         }
 
+        Vector2 targetVel;
+        float offX;
+
         public void Update()
         {
-            var ampX = 40f;
-            var ampY = 40f;
-            var deltaX = 1f;
-            var deltaY = 1f;
             if (Target != null)
             {
-                targetPosition = Target.Position;
-                var offX = 0f;
-                var offY = 0f;
-                
+                targetPosition = Target.Position;                
                 if (Target is Player player)
                 {
-                    offX = Math.Sign((int)player.Direction) * 32;
-                    deltaX = 1 - Math.Min(Math.Abs(Position.X - player.X - offX) / 64f, 1);
-                    deltaY = 1 - Math.Min(Math.Abs(Position.Y - player.Y) / 48f, 1);
-                    ampX = 20 + Math.Max(240 * deltaX, 1);
-                    ampY = 20 + Math.Max(80 * deltaY, 1);
+                    var delta = (player.X - Position.X) / 64f;
+                    delta = Math.Sign(delta) * Math.Min(Math.Abs(delta), .5f);
+                    offX += 2f * delta;
+                    offX = M.Clamp(offX, -48, 48);
                 }
-
-                Position += new Vector2((targetPosition.X - Position.X + offX) / ampX, (targetPosition.Y - Position.Y + offY) / ampY);                
+                targetVel = new Vector2((targetPosition.X - Position.X + offX) / 12f, (targetPosition.Y - Position.Y) / 12f);
+                Position += targetVel;                
             }
 
             if (Room != null)

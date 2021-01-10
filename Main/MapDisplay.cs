@@ -21,10 +21,10 @@ namespace Wyri.Main
         {
             Color bgFill = new Color(22, 22, 29);
             Color bgGrid = new Color(24, 24, 31);
-            Color unvisitedFill = new Color(105, 106, 106);
-            Color unvisitedGrid = new Color(131, 140, 145);
-            Color visitedFill = new Color(121, 215, 255);
-            Color visitedGrid = new Color(255, 255, 255);
+            Color unvisitedFill = Colors.FromHex("205469");
+            Color unvisitedGrid = Colors.FromHex("27a4a6");
+            Color visitedFill = Colors.FromHex("34d2d5");
+            Color visitedGrid = Colors.FromHex("b7feff");
 
             List<Room> drawn = new List<Room>();
 
