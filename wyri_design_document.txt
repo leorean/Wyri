@@ -52,7 +52,7 @@ Year 3089 - 3099:	Humans abandon earth and migrate to Mars & Jupiter
 Year 3100: 			Asteroid 'Apophis II' hits earth
 Year 3100 - 3134:	Impact-winter
 Year 6780:			Teleportation capsule reached Alpha-Centauri 127 (establishes teleportation from Jupiter)
-Year 102023:			*** Wyri arrives with time-machine ***
+Year 102023:		*** Wyri arrives with time-machine ***
 
 ==============
 | Game Scope |
@@ -79,5 +79,6 @@ Gear
 Biomes/Places
 ^^^^^^^^^^^^^
 
-* Sunken city
+* The Fallow Grounds
+* Sunken Metropolis
 * The rift
