@@ -107,6 +107,10 @@ namespace Wyri.Main
                         {
                             var objProperties = new Dictionary<string, object>();
 
+                            // text etc will be ignored
+                            if (objectNode.Attributes.GetNamedItem("type") == null)
+                                continue;
+
                             var objName = objectNode.Attributes["type"].Value;
                             int x = int.Parse(objectNode.Attributes["x"].Value);
                             int y = int.Parse(objectNode.Attributes["y"].Value);
