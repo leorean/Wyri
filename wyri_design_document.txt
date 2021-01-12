@@ -71,8 +71,8 @@ Gear
 	- Double Jump
 * Gill Piece
 	- Can swim & dive
-* Power Core
-	- Can levitate
+* Rocket Boots
+	- Can hover
 * Pulsator
 	- Can toggle switch-blocks
 
