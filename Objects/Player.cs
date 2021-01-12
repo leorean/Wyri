@@ -22,7 +22,8 @@ namespace Wyri.Objects
         Climb,
         Dead,
         StandUp,
-        GotItem
+        GotItem,
+        Hover
     }
 
     public enum PlayerDirection
@@ -42,7 +43,7 @@ namespace Wyri.Objects
         SWIM = 1,
         DOUBLE_JUMP = 2,
         WALL_GRAB = 4,
-        LEVITATE = 8,
+        JETPACK = 8,
         MAP = 16,
         COMPASS = 32,
         TOGGLE_BLOCKS = 64
@@ -115,6 +116,13 @@ namespace Wyri.Objects
         Item gotItem;
         private MessageBox itemMsgBox;
 
+        private int grabTimer;
+
+        private int hoverPower;
+        const float maxHoverPower = 120;
+        private int hoverTimeout;
+        private float hoverAlpha;
+
         public bool ControlsEnabled { get; set; } = true;
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
@@ -126,6 +134,7 @@ namespace Wyri.Objects
             AnimationState.Add(PlayerState.Dead, new Animation(GameResources.Player, 32, 8, .2f, false));
             AnimationState.Add(PlayerState.StandUp, new Animation(GameResources.Player, 40, 8, .15f, false));
             AnimationState.Add(PlayerState.GotItem, new Animation(GameResources.Player, 48, 1, 0, false));
+            AnimationState.Add(PlayerState.Hover, new Animation(GameResources.Player, 56, 1, 0, false));
 
             oxygen = maxOxygen;
 
@@ -208,8 +217,7 @@ namespace Wyri.Objects
             jumpPowerTimer = maxJumpPowerTimer;            
         }
 
-        private int grabTimer;
-
+        
         public void SetCameraRoom()
         {
             var room = Collisions.CollisionPoint<Room>(X, Y).FirstOrDefault();
@@ -375,7 +383,8 @@ namespace Wyri.Objects
                         }
                         else
                         {
-                            State = PlayerState.Jump;
+                            if (state != PlayerState.Hover)
+                                State = PlayerState.Jump;
                             if (xVel > -1.2f)
                                 xVel = Math.Max(xVel - .06f, -1.2f);
                         }
@@ -390,7 +399,8 @@ namespace Wyri.Objects
                         }
                         else
                         {
-                            State = PlayerState.Jump;
+                            if (state != PlayerState.Hover)
+                                State = PlayerState.Jump;
                             if (xVel < 1.2f)
                                 xVel = Math.Min(xVel + .06f, 1.2f);
                         }
@@ -419,8 +429,11 @@ namespace Wyri.Objects
                     if (yVel < 0 && AnimationState[State].Frame >= 2)
                         AnimationState[State].Frame = 2;
                     if (yVel >= 0 && AnimationState[State].Frame < 3)
-                        AnimationState[State].Frame = 3;
+                        AnimationState[State].Frame = 3;                    
+                }
 
+                if (State == PlayerState.Jump || State == PlayerState.Hover)
+                {
                     if (Abilities.HasFlag(PlayerAbility.WALL_GRAB))
                     {
                         if (OnWall() && ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)))
@@ -429,6 +442,7 @@ namespace Wyri.Objects
                         }
                     }
                 }
+
 
                 yGrav = inWater ? yGravWater : yGravAir;
                 xMax = inWater ? xVelMaxWater : xVelMaxAir;
@@ -460,7 +474,8 @@ namespace Wyri.Objects
                         grabTimer = 20;
 
                     if (!OnWall() || grabTimer == 0)
-                    {                        
+                    {
+                        ResetJumps();
                         State = PlayerState.Jump;
                         AnimationState[State].Frame = 2;
                     }
@@ -533,21 +548,52 @@ namespace Wyri.Objects
                 }
                 else
                 {
-                    if (kJumpReleased)// && !jumpFromClimb)
+                    if (kJumpReleased)
                     {
                         jumps = Math.Max(jumps - 1, 0);
                         jumpPowerTimer = maxJumpPowerTimer;
-
-                        /*if (jumps > 1)
-                        {
-                                                       
-                        }
-                        else
-                        {                            
-                            jumpPowerTimer = maxJumpPowerTimer;
-                        }*/
                     }
                 }
+
+                if (State == PlayerState.Jump && jumps == 0 && Abilities.HasFlag(PlayerAbility.JETPACK))
+                {
+                    if (kJumpPressed)
+                    {
+                        yVel = -yGrav;
+                        State = PlayerState.Hover;
+                    }
+                }
+
+                if (state == PlayerState.Hover)
+                {
+                    yGrav = 0;
+                    if (kUp)
+                    {
+                        yVel = Math.Max(yVel - .05f, -1.5f);
+                    } else if (kDown)
+                    {
+                        yVel = Math.Min(yVel + .05f, 1.5f);
+                    } else
+                    {
+                        if (yVel > 0) yVel -= .1f;
+                        if (yVel < 0) yVel += .1f;
+                    }
+                    
+                    hoverTimeout = 60;
+                    hoverPower = Math.Max(hoverPower - 1, 0);
+
+                    if (kJumpReleased || hoverPower == 0)
+                        state = PlayerState.Jump;
+                }
+                else
+                {
+                    hoverTimeout = Math.Max(hoverTimeout - 1, 0);
+                    if (hoverTimeout == 0)
+                    {
+                        hoverPower = (int)Math.Min(hoverPower + 2, maxHoverPower);
+                    }
+                }
+
 
                 if (inWater)
                 {
@@ -665,9 +711,30 @@ namespace Wyri.Objects
                 if (o > 1 && o < 15)
                 {
                     sb.Draw(GameResources.Oxygen[2], Position + new Vector2(px, py + o), null, new Color(Color.White, oxygenAlpha), 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_FG + .002f);
-                }                
-            } 
+                }
+            }
             
+            if (Abilities.HasFlag(PlayerAbility.JETPACK))
+            {
+                if (hoverPower < maxHoverPower)
+                {
+                    hoverAlpha = Math.Min(hoverAlpha + .05f, 2);
+                }
+                else
+                {
+                    hoverAlpha = Math.Max(hoverAlpha - .1f, 0);
+                }
+
+                if (hoverAlpha > 0)
+                {
+                    Vector2 off = new Vector2(-.5f);
+                    float p = hoverPower / maxHoverPower;
+                    sb.DrawLine(Position + new Vector2(-6, -10) + off, Position + new Vector2(-6 + 12, -10) + off, new Color(Color.Black, hoverAlpha), G.D_FG + .001f);
+                    if (p > 0)
+                        sb.DrawLine(Position + new Vector2(-6, -10) + off, Position + new Vector2(-6 + 12 * p, -10) + off, new Color(Color.Yellow, hoverAlpha), G.D_FG + .002f);
+                }
+            }
+
             //sb.DrawRectangle(Position + BBox, Color.White, false, G.D_PLAYER + .001f);
             //sb.DrawPixel(X, Y, Color.Red, G.D_PLAYER + .001f);
             //sb.DrawPixel(Center.X, Center.Y, Color.GreenYellow, G.D_PLAYER + .001f);
