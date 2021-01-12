@@ -87,6 +87,7 @@ namespace Wyri.Objects
 
         private bool onGround, inWater;
 
+        bool jumped;
         private int jumps;
         private int maxJumps;
         private float jumpPowerTimer = 10;
@@ -119,11 +120,14 @@ namespace Wyri.Objects
         private int grabTimer;
 
         private int hoverPower;
-        const float maxHoverPower = 120;
+        const float maxHoverPower = 60;
         private int hoverTimeout;
         private float hoverAlpha;
 
         public bool ControlsEnabled { get; set; } = true;
+
+        private int leftTimer, rightTimer;
+        const int maxDirectionGrabTimer = 25;
 
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
@@ -255,6 +259,13 @@ namespace Wyri.Objects
             var kJumpPressed = InputController.IsKeyPressed(Keys.A, KeyState.Pressed) && ControlsEnabled;
             var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding) && ControlsEnabled;
             var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && ControlsEnabled;
+            var kAction = InputController.IsKeyPressed(Keys.S, KeyState.Holding) && ControlsEnabled;
+
+            leftTimer = Math.Max(leftTimer - 1, 0);
+            rightTimer = Math.Max(rightTimer - 1, 0);
+
+            if (kLeftPressed) leftTimer = maxDirectionGrabTimer;
+            if (kRightPressed) rightTimer = maxDirectionGrabTimer;
 
             if (InputController.IsKeyPressed(Keys.K, KeyState.Pressed))
             {
@@ -436,7 +447,7 @@ namespace Wyri.Objects
                 {
                     if (Abilities.HasFlag(PlayerAbility.WALL_GRAB))
                     {
-                        if (OnWall() && ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)))
+                        if (OnWall() && ((leftTimer > 0 && Direction == PlayerDirection.Left) || (rightTimer > 0 && Direction == PlayerDirection.Right)))
                         {
                             State = PlayerState.Climb;
                         }
@@ -467,11 +478,15 @@ namespace Wyri.Objects
                 }
 
                 if (State == PlayerState.Climb)
-                {
-                    if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown && !kJumpHolding)
+                {                    
+                    if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown)
                         grabTimer = Math.Max(grabTimer - 1, 0);
                     else
+                    {
                         grabTimer = 20;
+                        leftTimer = maxDirectionGrabTimer;
+                        rightTimer = maxDirectionGrabTimer;
+                    }
 
                     if (!OnWall() || grabTimer == 0)
                     {
@@ -527,7 +542,8 @@ namespace Wyri.Objects
                 if (kJumpPressed && jumps == 1 && Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
                     new AnimationEffect(new Vector2(X, Bottom), 1, MainGame.Camera.Room);
 
-                var jumped = false;
+                if (kJumpReleased)
+                    jumped = false;
 
                 if (kJumpHolding)
                 {
@@ -548,41 +564,57 @@ namespace Wyri.Objects
                 }
                 else
                 {
-                    if (kJumpReleased)
+                    if (kJumpReleased && !OnWall())
                     {
                         jumps = Math.Max(jumps - 1, 0);
                         jumpPowerTimer = maxJumpPowerTimer;
                     }
                 }
 
-                if (State == PlayerState.Jump && jumps == 0 && Abilities.HasFlag(PlayerAbility.JETPACK))
+                if (Abilities.HasFlag(PlayerAbility.JETPACK))
                 {
-                    if (kJumpPressed)
+                    if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && kAction && !kJumpHolding)
                     {
-                        yVel = -yGrav;
-                        State = PlayerState.Hover;
+                        if (!inWater)
+                        {
+                            if (hoverPower > 0 && yVel >= 0)
+                            {
+                                yVel = onGround ? -1.3f : -yGrav;
+                                Y += onGround ? -1.8f : 0;
+                                State = PlayerState.Hover;
+                            }
+                        }
                     }
                 }
 
                 if (state == PlayerState.Hover)
                 {
+                    if (hoverPower % 3 == 0)
+                    {
+                        var o = (hoverPower % 6 == 0) ? -3 : 3;                        
+                        var eff = new AnimationEffect(new Vector2(X + o, Bottom), 3, MainGame.Camera.Room);
+                        eff.Depth = depth - .0001f;
+                        eff.XVel = -xVel * .1f;
+                        eff.YVel = .5f + .5f * yVel;
+                    }
+
                     yGrav = 0;
                     if (kUp)
                     {
-                        yVel = Math.Max(yVel - .05f, -1.5f);
+                        yVel = Math.Max(yVel - .03f, -1.5f);
                     } else if (kDown)
                     {
-                        yVel = Math.Min(yVel + .05f, 1.5f);
+                        yVel = Math.Min(yVel + .03f, 1.5f);
                     } else
-                    {
-                        if (yVel > 0) yVel -= .1f;
+                    {                        
                         if (yVel < 0) yVel += .1f;
+                        if (yVel > 0) yVel -= .1f;
                     }
                     
                     hoverTimeout = 60;
                     hoverPower = Math.Max(hoverPower - 1, 0);
 
-                    if (kJumpReleased || hoverPower == 0)
+                    if (!kAction || kJumpHolding || hoverPower == 0)
                         state = PlayerState.Jump;
                 }
                 else
@@ -630,10 +662,6 @@ namespace Wyri.Objects
                     else
                     {
                         gotItemPostTimer = Math.Max(gotItemPostTimer - 1, 0);
-                        if (gotItemPostTimer == 0)
-                        {
-                            //State = PlayerState.Idle;
-                        }
                     }                    
                 }
 
@@ -644,10 +672,7 @@ namespace Wyri.Objects
                 xVel = Math.Sign(xVel) * Math.Min(Math.Abs(xVel), xMax);
                 yVel = Math.Sign(yVel) * Math.Min(Math.Abs(yVel), yMax);
 
-                //var tcolx = CollisionExtensions.TileAt(X + xVel, Y);
-                //var tcoly = CollisionExtensions.TileAt(X, Y + yVel);
-
-                if (!this.CollisionSolidTile(xVel, 0))// || (tcolx != null && !tcolx.IsOn))
+                if (!this.CollisionSolidTile(xVel, 0))
                 {
                     X += xVel;
                 }
@@ -655,7 +680,7 @@ namespace Wyri.Objects
                 {
                     xVel = 0;
                 }
-                if (!this.CollisionSolidTile(0, yVel))// || (tcoly != null && !tcoly.IsOn))
+                if (!this.CollisionSolidTile(0, yVel))
                 {
                     Y += yVel;
                 }
@@ -714,7 +739,7 @@ namespace Wyri.Objects
                 }
             }
             
-            if (Abilities.HasFlag(PlayerAbility.JETPACK))
+            if (Abilities.HasFlag(PlayerAbility.JETPACK) && State != PlayerState.Dead)
             {
                 if (hoverPower < maxHoverPower)
                 {
@@ -729,9 +754,9 @@ namespace Wyri.Objects
                 {
                     Vector2 off = new Vector2(-.5f);
                     float p = hoverPower / maxHoverPower;
-                    sb.DrawLine(Position + new Vector2(-6, -10) + off, Position + new Vector2(-6 + 12, -10) + off, new Color(Color.Black, hoverAlpha), G.D_FG + .001f);
+                    sb.DrawLine(Position + new Vector2(-6, -10) + off, Position + new Vector2(-6 + 12, -10) + off, new Color(Color.Black, hoverAlpha * .25f), G.D_FG + .001f);
                     if (p > 0)
-                        sb.DrawLine(Position + new Vector2(-6, -10) + off, Position + new Vector2(-6 + 12 * p, -10) + off, new Color(Color.Yellow, hoverAlpha), G.D_FG + .002f);
+                        sb.DrawLine(Position + new Vector2(-6, -10) + off, Position + new Vector2(-6 + 12 * p, -10) + off, new Color(Color.White, hoverAlpha * p), G.D_FG + .002f);
                 }
             }
 

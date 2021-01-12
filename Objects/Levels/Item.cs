@@ -45,7 +45,7 @@ namespace Wyri.Objects.Levels
                     break;
                 case 1:
                     MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the grappling gloves!|Use the arrow keys to hold onto\nwalls or slide down.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the grappling gloves!|Use the arrow keys to hold onto\nwalls.\nUse them also to jump off or slide\ndown.";
                     break;
                 case 2:
                     MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
@@ -57,11 +57,11 @@ namespace Wyri.Objects.Levels
                     break;
                 case 4:
                     MainGame.SaveGame.Abilities |= PlayerAbility.DOUBLE_JUMP;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the rocket boots!|Now you can perform a jump in mid-\nair.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the rocket boots!|Now you can perform a jump in\nmid-air.";
                     break;
                 case 5:
                     MainGame.SaveGame.Abilities |= PlayerAbility.JETPACK;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the jet pack!|Now you can hover, yay.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]Got the jet pack!|Press 'S' to hover.";
                     break;
                 default:
                     throw new NotImplementedException("Type not implemented!");

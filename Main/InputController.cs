@@ -31,7 +31,7 @@ namespace Wyri
                 case KeyState.Released:
                     return !currentKeyState.IsKeyDown(key) && prevKeyState.IsKeyDown(key);
                 case KeyState.Holding:
-                    return currentKeyState.IsKeyDown(key) && prevKeyState.IsKeyDown(key);
+                    return currentKeyState.IsKeyDown(key);
                 default: return false;
             }
         }
