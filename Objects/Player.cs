@@ -260,6 +260,7 @@ namespace Wyri.Objects
             var kJumpHolding = InputController.IsKeyPressed(Keys.A, KeyState.Holding) && ControlsEnabled;
             var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && ControlsEnabled;
             var kAction = InputController.IsKeyPressed(Keys.S, KeyState.Holding) && ControlsEnabled;
+            var kActionPressed = InputController.IsKeyPressed(Keys.S, KeyState.Pressed) && ControlsEnabled;
 
             leftTimer = Math.Max(leftTimer - 1, 0);
             rightTimer = Math.Max(rightTimer - 1, 0);
@@ -447,7 +448,8 @@ namespace Wyri.Objects
                 {
                     if (Abilities.HasFlag(PlayerAbility.WALL_GRAB))
                     {
-                        if (OnWall() && ((leftTimer > 0 && Direction == PlayerDirection.Left) || (rightTimer > 0 && Direction == PlayerDirection.Right)))
+                        //if (OnWall() && ((leftTimer > 0 && Direction == PlayerDirection.Left) || (rightTimer > 0 && Direction == PlayerDirection.Right)))
+                        if (OnWall() && ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kJumpHolding)
                         {
                             State = PlayerState.Climb;
                         }
@@ -479,7 +481,7 @@ namespace Wyri.Objects
 
                 if (State == PlayerState.Climb)
                 {                    
-                    if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown)
+                    if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown && !kAction)
                         grabTimer = Math.Max(grabTimer - 1, 0);
                     else
                     {
@@ -575,12 +577,13 @@ namespace Wyri.Objects
                 {
                     if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && kAction && !kJumpHolding)
                     {
-                        if (!inWater)
+                        if (!inWater && !onGround)
                         {
                             if (hoverPower > 0 && yVel >= 0)
                             {
-                                yVel = onGround ? -1.3f : -yGrav;
-                                Y += onGround ? -1.8f : 0;
+                                //yVel = onGround ? -1.3f : -yGrav;
+                                //Y += onGround ? -1.8f : 0;
+                                yVel = -yGrav;
                                 State = PlayerState.Hover;
                             }
                         }

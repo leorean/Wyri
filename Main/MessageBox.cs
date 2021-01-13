@@ -175,8 +175,8 @@ namespace Wyri.Main
                 if (curLine == textLines.Length)
                 {
                     ticks = (ticks + 1) % 9000;
-                    float a = (float)Math.Sin(ticks * .04f) % (float)(2 * Math.PI) * 2;
-                    sb.Draw(GameResources.MessageBox, new Vector2(x + 128 - 24, y + 40 + a), new Rectangle(0, 48, 16, 16), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_UI + .0001f);
+                    float a = (float)Math.Sin(ticks * .04f) % (float)(2 * Math.PI) * 1.5f;
+                    sb.Draw(GameResources.MessageBox, new Vector2(x + 128 - 24, y + 42 + a), new Rectangle(0, 48, 16, 16), Color.White, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, G.D_UI + .0001f);
                 }
                 else
                 {
