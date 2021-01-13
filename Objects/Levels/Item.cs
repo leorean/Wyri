@@ -41,27 +41,27 @@ namespace Wyri.Objects.Levels
             {
                 case 0:
                     MainGame.SaveGame.Collected++;
-                    Text = $"[color:{gc1},center:true,spd:{gs}]GOT A TIME SPLINTER!";
+                    Text = $"[color:{gc1},center:true,spd:{gs}]GOT A ~TIME SPLINTER~!";
                     break;
                 case 1:
                     MainGame.SaveGame.Abilities |= PlayerAbility.WALL_GRAB;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE GECKO GLOVES!|You can now perform wall jumps!\nPress and hold *LEFT* or *RIGHT* while jumping\ntowards a wall.\nPress *DOWN* to slide down walls.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~GECKO GLOVES~!|[color:{gc2}]You can now perform wall jumps!\nPress and hold ~LEFT~ or ~RIGHT~ while jumping\ntowards a wall.\nPress ~DOWN~ to slide down walls.";
                     break;
                 case 2:
                     MainGame.SaveGame.Abilities |= PlayerAbility.MAP;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE MAP SENSOR!|Press *W* to view the map.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~MAP SENSOR~!|[color:{gc2}]Press ~W~ to view the map.";
                     break;
                 case 3:
                     MainGame.SaveGame.Abilities |= PlayerAbility.COMPASS;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE COMPASS MODULE!|The map now displays item locations.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~COMPASS MODULE~!|The map now displays item locations.";
                     break;
                 case 4:
                     MainGame.SaveGame.Abilities |= PlayerAbility.DOUBLE_JUMP;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE SPARK BOOTS!|Now you can perform a jump in mid-air.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~SPARK BOOTS~!|Now you can perform a jump in mid-air.";
                     break;
                 case 5:
                     MainGame.SaveGame.Abilities |= PlayerAbility.JETPACK;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE JET PACK!|Press and hold *S* to hover.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~JET PACK~!|Press and hold ~S~ to hover.";
                     break;
                 default:
                     throw new NotImplementedException("Type not implemented!");

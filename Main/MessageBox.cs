@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Wyri.Types;
@@ -27,26 +28,27 @@ namespace Wyri.Main
         float x => _x + offx;
         float y => _y + offy;
 
-        List<(string, bool, Color, int)> texts;
+        List<(string[], bool, Color, int, Dictionary<int, List<int>>)> textPages;
         float scale;
 
         int ticks;
 
-        int i;
-        int length;
-        int page = 0;
-
+        int index;
+        List<int> length;
+        int curLine;
+        int page;
+        
         public Action OnFinished;
 
         public MessageBox(float x, float y, string input)
         {
-            texts = new List<(string, bool, Color, int)>();
+            textPages = new List<(string[], bool, Color, int, Dictionary<int, List<int>>)>();
 
             var rows = input.Split('|');
 
             foreach(var row in rows)
             {
-                string text = "";
+                string text;
                 bool center = false;
                 Color color = Color.White;
                 int spd = 3;
@@ -81,7 +83,23 @@ namespace Wyri.Main
                     text = row;
                 }
 
-                texts.Add((text, center, color, spd));
+                var colorMap = new Dictionary<int, List<int>>();
+                var lines = text.Split('\n');
+                for (int l = 0; l < lines.Length; l++)
+                {
+                    List<int> colorMapForLine = new List<int>();
+                    for (int i = 0; i < lines[l].Length; i++)
+                    {
+                        if (lines[l][i] == '~')
+                        {
+                            colorMapForLine.Add(i - colorMapForLine.Count);
+                        }                        
+                    }
+                    colorMap.Add(l, colorMapForLine);
+                    lines[l] = lines[l].Replace("~", "");
+                }
+
+                textPages.Add((lines, center, color, spd, colorMap));
             }
 
             offx = x;
@@ -98,18 +116,34 @@ namespace Wyri.Main
                         state = State.Showing;
                     break;
                 case State.Showing:
+                    
+                    length = new List<int>();
+                    for(var i = 0; i < textPages[page].Item1.Length; i++)
+                    {
+                        length.Add(textPages[page].Item1[i].Length);
+                    }
 
-                    length = texts[page].Item1.Length;
+                    if (curLine < textPages[page].Item1.Length)
+                    {
 
-                    if ((MainGame.Ticks % texts[page].Item4) == 0)
-                        i = Math.Min(i + 1, length);
-                    if (i == length)
+                        if (index >= textPages[page].Item1[curLine].Length)
+                        {
+                            curLine++;
+                            index = 0;                        
+                        }
+
+                        if ((MainGame.Ticks % textPages[page].Item4) == 0)
+                            index = Math.Min(index + 1, textPages[page].Item1[curLine].Length);
+                    }
+                    
+                    if (curLine == textPages[page].Item1.Length)
                     {
                         if (InputController.IsKeyPressed(Keys.A, KeyState.Pressed) || InputController.IsKeyPressed(Keys.S, KeyState.Pressed))
                         {
-                            if (page < texts.Count - 1)
+                            if (page < textPages.Count - 1)
                             {
-                                i = 0;
+                                curLine = 0;
+                                index = 0;
                                 page++;
                             }
                             else
@@ -136,18 +170,9 @@ namespace Wyri.Main
             sb.Draw(GameResources.MessageBox, new Vector2(x, y) + drawOffset, new Rectangle(0, 0, 224, 48), Color.White, 0, drawOffset, new Vector2(scale), SpriteEffects.None, G.D_UI);
             if (state == State.Showing)
             {
-                var text = texts[page].Item1;
-                var t = text.Substring(0, i);
+                var textLines = textPages[page].Item1;
 
-                var tx = 0f;
-                var ty = 0f;
-                if (texts[page].Item2)
-                {
-                    tx = .5f * (224 - GameResources.Font.MeasureString(t).X * .25f) - 4;
-                    ty = .5f * (48 - GameResources.Font.MeasureString(t).Y * .25f) - 4;
-                }
-                sb.DrawString(GameResources.Font, t, new Vector2(x + 2 + tx, y + 2 + ty), texts[page].Item3, 0, Vector2.Zero, .25f, SpriteEffects.None, G.D_UI + .0001f);
-                if (i == length && length > 0)
+                if (curLine == textLines.Length)
                 {
                     ticks = (ticks + 1) % 9000;
                     float a = (float)Math.Sin(ticks * .04f) % (float)(2 * Math.PI) * 2;
@@ -156,6 +181,47 @@ namespace Wyri.Main
                 else
                 {
                     ticks = 0;
+                }
+
+                for (int l = 0; l <= curLine; l++)
+                {
+                    if (l == textLines.Length && l > 0)
+                        continue;
+
+                    var curIndex = l == curLine ? index : textLines[l].Length;
+                    var t = textLines[l].Substring(0, curIndex);
+
+                    var tx = 0f;
+                    var ty = 0f;
+
+                    var yoff = GameResources.Font.MeasureString(t).Y * .25f * l;
+
+                    if (textPages[page].Item2)
+                    {
+                        tx = .5f * (224 - GameResources.Font.MeasureString(t).X * .25f) - 4;
+                        ty = .5f * (48 - GameResources.Font.MeasureString(t).Y * .25f) - 4;
+                    }
+
+                    bool inColorMode = false;
+                    List<int> cm = textPages[page].Item5[l].ToList();
+
+                    for (var i = 0; i < t.Length; i++)
+                    {
+                        var chr = t.Substring(i, 1);
+                        if (cm.Count > 0)
+                        {
+                            if (i == cm.First())
+                            {
+                                inColorMode = !inColorMode;
+                                cm.RemoveAt(0);
+                            }
+                        }
+
+                        var col = inColorMode ? textPages[page].Item3 : Color.White;
+
+                        var blub = GameResources.Font.MeasureString(t.Substring(0, i)).X * .25f;
+                        sb.DrawString(GameResources.Font, chr, new Vector2(x + 2 + tx + blub, y + 2 + ty + yoff), col, 0, Vector2.Zero, .25f, SpriteEffects.None, G.D_UI + .0001f);
+                    }
                 }
             }
         }
