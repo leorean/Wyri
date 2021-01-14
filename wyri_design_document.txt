@@ -61,19 +61,21 @@ Year 102023:		*** Wyri arrives with time-machine ***
 Gear
 ^^^^
 
-* Grapple Glove
+* Gecko Glove
 	- Wall grab
 * Map
 	- Can open map
 * Compass
 	- Shows abilities & time machine parts on map
-* Rocket Boots
+* Spark Boots
 	- Double Jump
 * Gill Piece
 	- Can swim & dive
-* Rocket Boots
+* Jet Pack
 	- Can hover
-* Pulsator
+* Drill
+	- Can drill through certain blocks
+* Pulsator?
 	- Can toggle switch-blocks
 
 Biomes/Places
