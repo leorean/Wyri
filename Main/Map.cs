@@ -324,6 +324,12 @@ namespace Wyri.Main
                                 case "I6":
                                     new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 5, room);
                                     break;
+                                case "I7":
+                                    new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 6, room);
+                                    break;
+                                case "I8":
+                                    new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 7, room);
+                                    break;
                                 case "TB1":
                                     var tb = new TriggerBlock(new Vector2(i * G.T, j * G.T), t.ID, false, room);
                                     break;

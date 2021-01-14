@@ -40,13 +40,13 @@ namespace Wyri.Objects
     public enum PlayerAbility
     {
         NONE = 0,
-        SWIM = 1,
+        DIVE = 1,
         DOUBLE_JUMP = 2,
         WALL_GRAB = 4,
         JETPACK = 8,
         MAP = 16,
         COMPASS = 32,
-        TOGGLE_BLOCKS = 64
+        DRILL = 64
     }
 
     public static class PlayerExtensions
@@ -356,7 +356,7 @@ namespace Wyri.Objects
                     return;
                 }
 
-                if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
+                if (inWater && !Abilities.HasFlag(PlayerAbility.DIVE))
                 {
                     var underWater = Collisions.TileAt(X, Y - 4, "WATER") != null;
                     if (underWater)
