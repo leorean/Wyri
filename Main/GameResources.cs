@@ -30,6 +30,7 @@ namespace Wyri.Main
         public static TextureSet Projectiles { get; private set; }
         public static Texture2D Map { get; private set; }
         public static TextureSet Items { get; private set; }
+        public static TextureSet Drill { get; private set; }
 
         public static readonly Color CollectabledisplayColor = Colors.FromHex("00ffe5");
         public static readonly Color ItemDisplayColor = Colors.FromHex("ffd700"); 
@@ -52,6 +53,7 @@ namespace Wyri.Main
             Projectiles = content.LoadTextureSet("projectiles", 8, 8);
             Map = content.Load<Texture2D>("map");
             Items = content.LoadTextureSet("items", 16, 16);
+            Drill = content.LoadTextureSet("drill", 16, 16);
 
             //UnderWater = content.Load<Effect>("testshader");
             //UnderWater.Parameters["fAmplitude"].SetValue(0.01f);

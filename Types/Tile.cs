@@ -9,13 +9,7 @@ namespace Wyri.Types
     {
         Default,        
         Platform,
-        /*Save,
-        SpikeUp,
-        SpikeDown,
-        SpikeLeft,
-        SpikeRight,
-        Smoke,
-        // ... etc.*/
+        DestroyBlock
     }
 
     /// <summary>
@@ -75,6 +69,9 @@ namespace Wyri.Types
                         case "P":
                             Type = TileType.Platform;
                             IsSolid = false;
+                            break;
+                        case "D":
+                            Type = TileType.DestroyBlock;
                             break;
                         case "SB1":
                             SwitchState = SwitchState.Switch1;

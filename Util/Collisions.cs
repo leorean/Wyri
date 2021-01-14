@@ -193,5 +193,29 @@ namespace Wyri
 
             return false;
         }
+
+        public static List<Tile> CollisionTiles(this SpatialObject o, float offX, float offY)
+        {
+
+            List<Tile> tiles = new List<Tile>();
+
+            var grid = MainGame.Map.LayerData["FG"];
+
+            for (float i = M.Div(o.Left + offX, G.T) - G.T; i < M.Div(o.Right + offX, G.T) + G.T; i++)
+            {
+                for (float j = M.Div(o.Top + offX, G.T) - G.T; j < M.Div(o.Bottom + offX, G.T) + G.T; j++)
+                {
+                    var t = grid[(int)i, (int)j];
+                    if (t == null || !t.IsSolid)
+                        continue;
+
+                    var tileRect = new RectF(i * G.T, j * G.T, G.T, G.T);
+                    if ((o.BBox + new Vector2(o.X + offX, o.Y + offY)).Intersects(tileRect))
+                        tiles.Add(t);
+                }
+            }
+
+            return tiles;
+        }
     }
 }

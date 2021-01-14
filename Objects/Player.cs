@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -80,10 +81,10 @@ namespace Wyri.Objects
 
         public Dictionary<PlayerState, Animation> AnimationState { get; } = new Dictionary<PlayerState, Animation>();
 
-        private float xVel, yVel, yGrav, xMax, yMax;
+        private float yGrav, xMax, yMax;
 
-        public float XVel => xVel;
-        public float YVel => yVel;
+        public float XVel { get; set; }
+        public float YVel { get; set; }
 
         private bool onGround, inWater;
 
@@ -129,6 +130,8 @@ namespace Wyri.Objects
         private int leftTimer, rightTimer;
         const int maxDirectionGrabTimer = 25;
 
+        private Drill drill;
+        
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
             AnimationState.Add(PlayerState.Idle, new Animation(GameResources.Player, 0, 4, .1f));
@@ -150,7 +153,7 @@ namespace Wyri.Objects
 
         private void HandlePlatforms()
         {
-            if (yVel < -yGrav)
+            if (YVel < -yGrav)
                 return;
 
             var grid = MainGame.Map.LayerData["FG"];
@@ -159,7 +162,7 @@ namespace Wyri.Objects
             {
 
                 float tx = M.Div(X, G.T) + i;
-                float ty = M.Div(Y + G.T + yVel, G.T);
+                float ty = M.Div(Y + G.T + YVel, G.T);
 
                 var t = grid[(int)tx, (int)ty];
                 if (t == null || t.Type != TileType.Platform)
@@ -173,7 +176,7 @@ namespace Wyri.Objects
 
                 if (Bottom > ty - 4 && Bottom < ty + 1)
                 {
-                    yVel = -yGrav;
+                    YVel = -yGrav;
                     Y = ty - G.T;
                     onGround = true;
                     return;
@@ -261,6 +264,8 @@ namespace Wyri.Objects
             var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && ControlsEnabled;
             var kAction = InputController.IsKeyPressed(Keys.S, KeyState.Holding) && ControlsEnabled;
             var kActionPressed = InputController.IsKeyPressed(Keys.S, KeyState.Pressed) && ControlsEnabled;
+            var kAction2 = InputController.IsKeyPressed(Keys.D, KeyState.Holding) && ControlsEnabled;
+            var kAction2Pressed = InputController.IsKeyPressed(Keys.D, KeyState.Pressed) && ControlsEnabled;
 
             leftTimer = Math.Max(leftTimer - 1, 0);
             rightTimer = Math.Max(rightTimer - 1, 0);
@@ -346,7 +351,7 @@ namespace Wyri.Objects
                 var item = this.CollisionBounds<Item>().FirstOrDefault();
                 if (item != null && !item.IsTaken)
                 {
-                    yVel = 0;
+                    YVel = 0;
                     gotItem = item;                    
                     gotItemTimer = maxGotItemTimer;
                     gotItemPostTimer = maxGotItemPostTimer;
@@ -391,14 +396,14 @@ namespace Wyri.Objects
                         if (onGround)
                         {
                             State = PlayerState.Walk;
-                            xVel = Math.Max(xVel - .16f, -1.2f);
+                            XVel = Math.Max(XVel - .16f, -1.2f);
                         }
                         else
                         {
                             if (state != PlayerState.Hover)
                                 State = PlayerState.Jump;
-                            if (xVel > -1.2f)
-                                xVel = Math.Max(xVel - .06f, -1.2f);
+                            if (XVel > -1.2f)
+                                XVel = Math.Max(XVel - .06f, -1.2f);
                         }
                     }
                     if (kRight && !kLeft)
@@ -407,14 +412,14 @@ namespace Wyri.Objects
                         if (onGround)
                         {
                             State = PlayerState.Walk;
-                            xVel = Math.Min(xVel + .16f, 1.2f);
+                            XVel = Math.Min(XVel + .16f, 1.2f);
                         }
                         else
                         {
                             if (state != PlayerState.Hover)
                                 State = PlayerState.Jump;
-                            if (xVel < 1.2f)
-                                xVel = Math.Min(xVel + .06f, 1.2f);
+                            if (XVel < 1.2f)
+                                XVel = Math.Min(XVel + .06f, 1.2f);
                         }
                     }
 
@@ -422,25 +427,25 @@ namespace Wyri.Objects
                     {
                         if (onGround)
                         {
-                            xVel *= .6f;
-                            if (Math.Abs(xVel) < .15f)
+                            XVel *= .6f;
+                            if (Math.Abs(XVel) < .15f)
                             {
-                                xVel = 0;
+                                XVel = 0;
                                 State = PlayerState.Idle;
                             }
                         }
                         else
                         {
-                            xVel *= .9f;
+                            XVel *= .9f;
                         }
                     }
                 }
 
                 if (State == PlayerState.Jump)
                 {
-                    if (yVel < 0 && AnimationState[State].Frame >= 2)
+                    if (YVel < 0 && AnimationState[State].Frame >= 2)
                         AnimationState[State].Frame = 2;
-                    if (yVel >= 0 && AnimationState[State].Frame < 3)
+                    if (YVel >= 0 && AnimationState[State].Frame < 3)
                         AnimationState[State].Frame = 3;                    
                 }
 
@@ -461,7 +466,7 @@ namespace Wyri.Objects
                 xMax = inWater ? xVelMaxWater : xVelMaxAir;
                 yMax = inWater ? yVelMaxWater : yVelMaxAir;
 
-                onGround = yVel >= 0 && this.CollisionSolidTile(0, yGrav);
+                onGround = YVel >= 0 && this.CollisionSolidTile(0, yGrav);
 
                 HandlePlatforms();
 
@@ -496,7 +501,7 @@ namespace Wyri.Objects
                         State = PlayerState.Jump;
                         AnimationState[State].Frame = 2;
                     }
-                    xVel = 0;
+                    XVel = 0;
 
                     if (Direction == PlayerDirection.Left)
                         X = M.Div(X, G.T) * G.T + 3.5f;
@@ -505,11 +510,11 @@ namespace Wyri.Objects
 
                     if (kDown)
                     {
-                        yVel = Math.Min(yVel + .2f, .5f);
+                        YVel = Math.Min(YVel + .2f, .5f);
                     }
                     else
                     {
-                        yVel = -yGrav;
+                        YVel = -yGrav;
                     }
 
                     if (kDown)
@@ -522,13 +527,13 @@ namespace Wyri.Objects
 
                         if ((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right))
                         {
-                            xVel = 1.5f * Math.Sign((int)Direction);
-                            yVel = -2f;
+                            XVel = 1.5f * Math.Sign((int)Direction);
+                            YVel = -2f;
                         }
                         else
                         {                            
-                            xVel = (OnWallEdge() ? 0 : .5f) * Math.Sign((int)Direction);
-                            yVel = -1.5f;
+                            XVel = (OnWallEdge() ? 0 : .5f) * Math.Sign((int)Direction);
+                            YVel = -1.5f;
                         }
 
                         ResetJumps();
@@ -558,7 +563,7 @@ namespace Wyri.Objects
                         }
                         if (!jumped)
                         {
-                            yVel = -2f;
+                            YVel = -2f;
                             State = PlayerState.Jump;
                             onGround = false;
                         }
@@ -579,11 +584,11 @@ namespace Wyri.Objects
                     {
                         if (!inWater && !onGround)
                         {
-                            if (hoverPower > 0 && yVel >= 0)
+                            if (hoverPower > 0 && YVel >= 0)
                             {
                                 //yVel = onGround ? -1.3f : -yGrav;
                                 //Y += onGround ? -1.8f : 0;
-                                yVel = -yGrav;
+                                YVel = -yGrav;
                                 State = PlayerState.Hover;
                             }
                         }
@@ -597,21 +602,21 @@ namespace Wyri.Objects
                         var o = (hoverPower % 6 == 0) ? -3 : 3;                        
                         var eff = new AnimationEffect(new Vector2(X + o, Bottom), 3, MainGame.Camera.Room);
                         eff.Depth = depth - .0001f;
-                        eff.XVel = -xVel * .1f;
-                        eff.YVel = .5f + .5f * yVel;
+                        eff.XVel = -XVel * .1f;
+                        eff.YVel = .5f + .5f * YVel;
                     }
 
                     yGrav = 0;
                     if (kUp)
                     {
-                        yVel = Math.Max(yVel - .03f, -1.5f);
+                        YVel = Math.Max(YVel - .03f, -1.5f);
                     } else if (kDown)
                     {
-                        yVel = Math.Min(yVel + .03f, 1.5f);
+                        YVel = Math.Min(YVel + .03f, 1.5f);
                     } else
                     {                        
-                        if (yVel < 0) yVel += .1f;
-                        if (yVel > 0) yVel -= .1f;
+                        if (YVel < 0) YVel += .1f;
+                        if (YVel > 0) YVel -= .1f;
                     }
                     
                     hoverTimeout = 60;
@@ -629,6 +634,63 @@ namespace Wyri.Objects
                     }
                 }
 
+                /* DRILL */
+                if (Abilities.HasFlag(PlayerAbility.DRILL))
+                {
+                    if (kAction2Pressed)
+                    {
+                        if (drill == null)
+                        {
+                            drill = new Drill(Position, MainGame.Camera.Room);
+                            if (Direction == PlayerDirection.Right)
+                                drill.Angle = 0;
+                            if (Direction == PlayerDirection.Left)
+                                drill.Angle = 180;
+                            if (kUp)
+                                drill.Angle = 270;
+                            if (kDown)
+                                drill.Angle = 90;
+                        }
+                    }
+
+                    if (drill != null && drill.IsAlive && kAction2 && !(kJumpHolding && kDown))
+                    {
+                        /*if (kUp)
+                            drill.Angle = 270;
+                        else if (!kDown)
+                        {
+                            if (Direction == PlayerDirection.Right)
+                                drill.Angle = 0;
+                            else if (Direction == PlayerDirection.Left)
+                                drill.Angle = 180;
+                        }
+                        else if (kDown)
+                            drill.Angle = 90;
+                        else
+                        {
+                        }*/
+
+                        if (drill.IsDrilling || (kDown && onGround))
+                        {                            
+                            State = PlayerState.Jump;
+                            AnimationState[State].Frame = YVel < 0 ?  2 : 4;
+
+                            XVel = M.LengthDirX(drill.Angle) * 1.5f;
+                            YVel = M.LengthDirY(drill.Angle) * 1.5f;
+                            yGrav = 0;
+                        }
+
+                        int drillOffY = (drill.Angle == 270) ? -2 : ((drill.Angle == 90) ? 1 : 0);
+
+                        drill.Position = Position + new Vector2(XVel, YVel + drillOffY) + new Vector2(M.LengthDirX(drill.Angle) * 8, M.LengthDirY(drill.Angle) * 8);
+                    }
+                    else
+                    {
+                        drill?.Destroy();
+                        drill = null;
+                    }
+                }
+
 
                 if (inWater)
                 {
@@ -637,7 +699,7 @@ namespace Wyri.Objects
 
                 if (State == PlayerState.GotItem)
                 {
-                    xVel *= .5f;
+                    XVel *= .5f;
                     if (gotItem != null)
                     {
                         gotItem.Position = Position + new Vector2(.5f * (int)Direction, -5 - 8 * (1 - (float)gotItemTimer / (float)(maxGotItemTimer)));
@@ -670,35 +732,35 @@ namespace Wyri.Objects
 
                 // movement & collision
 
-                yVel += yGrav;
+                YVel += yGrav;
 
-                xVel = Math.Sign(xVel) * Math.Min(Math.Abs(xVel), xMax);
-                yVel = Math.Sign(yVel) * Math.Min(Math.Abs(yVel), yMax);
+                XVel = Math.Sign(XVel) * Math.Min(Math.Abs(XVel), xMax);
+                YVel = Math.Sign(YVel) * Math.Min(Math.Abs(YVel), yMax);
 
-                if (!this.CollisionSolidTile(xVel, 0))
+                if (!this.CollisionSolidTile(XVel, 0))
                 {
-                    X += xVel;
+                    X += XVel;
                 }
                 else
                 {
-                    xVel = 0;
+                    XVel = 0;
                 }
-                if (!this.CollisionSolidTile(0, yVel))
+                if (!this.CollisionSolidTile(0, YVel))
                 {
-                    Y += yVel;
+                    Y += YVel;
                 }
                 else
                 {
-                    if (yVel >= 0)
+                    if (YVel >= 0)
                     {
-                        Y = M.Div(Y + yVel + yGrav, (float)G.T) * G.T;
-                        if (State == PlayerState.Jump)
+                        Y = M.Div(Y + YVel + yGrav, (float)G.T) * G.T;
+                        if (State == PlayerState.Jump && drill == null)
                         {
                             State = PlayerState.Idle;
                         }
                     }
 
-                    yVel = 0;
+                    YVel = 0;
                 }
             }
             else
