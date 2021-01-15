@@ -194,10 +194,10 @@ namespace Wyri
             return false;
         }
 
-        public static List<Tile> CollisionTiles(this SpatialObject o, float offX, float offY)
+        public static List<(Tile, Vector2)> CollisionTiles(this SpatialObject o, float offX, float offY)
         {
 
-            List<Tile> tiles = new List<Tile>();
+            List<(Tile, Vector2)> tiles = new List<(Tile, Vector2)>();
 
             var grid = MainGame.Map.LayerData["FG"];
 
@@ -211,7 +211,7 @@ namespace Wyri
 
                     var tileRect = new RectF(i * G.T, j * G.T, G.T, G.T);
                     if ((o.BBox + new Vector2(o.X + offX, o.Y + offY)).Intersects(tileRect))
-                        tiles.Add(t);
+                        tiles.Add((t, new Vector2(i * G.T, j * G.T)));
                 }
             }
 

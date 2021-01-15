@@ -273,11 +273,6 @@ namespace Wyri.Objects
             if (kLeftPressed) leftTimer = maxDirectionGrabTimer;
             if (kRightPressed) rightTimer = maxDirectionGrabTimer;
 
-            if (InputController.IsKeyPressed(Keys.K, KeyState.Pressed))
-            {
-                State = PlayerState.Dead;
-            }
-
             if (InputController.IsKeyPressed(Keys.LeftShift, KeyState.Holding))
             {
                 if (kLeftPressed)
@@ -332,7 +327,14 @@ namespace Wyri.Objects
 
             var obstacle = this.CollisionBounds<Obstacle>().FirstOrDefault();
             if (obstacle != null)
+            {
+            //    if (State != PlayerState.Dead)
+            //    {
+            //        new TextureBurstEmitter(GameResources.Player[32], Position, MainGame.Camera.Room);
+            //    }
+
                 State = PlayerState.Dead;
+            }
 
             var waterTile = Collisions.TileAt(X, Y + 4, "WATER");
             inWater = waterTile != null;
@@ -580,14 +582,12 @@ namespace Wyri.Objects
 
                 if (Abilities.HasFlag(PlayerAbility.JETPACK))
                 {
-                    if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && kAction && !kJumpHolding)
+                    if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && kAction && !kJumpHolding && drill == null)
                     {
                         if (!inWater && !onGround)
                         {
                             if (hoverPower > 0 && YVel >= 0)
-                            {
-                                //yVel = onGround ? -1.3f : -yGrav;
-                                //Y += onGround ? -1.8f : 0;
+                            {                                
                                 YVel = -yGrav;
                                 State = PlayerState.Hover;
                             }
@@ -622,7 +622,7 @@ namespace Wyri.Objects
                     hoverTimeout = 60;
                     hoverPower = Math.Max(hoverPower - 1, 0);
 
-                    if (!kAction || kJumpHolding || hoverPower == 0)
+                    if (!kAction || kJumpHolding || hoverPower == 0 || drill != null)
                         state = PlayerState.Jump;
                 }
                 else
@@ -653,36 +653,59 @@ namespace Wyri.Objects
                         }
                     }
 
-                    if (drill != null && drill.IsAlive && kAction2 && !(kJumpHolding && kDown))
+                    if (drill != null && drill.IsAlive)
                     {
-                        /*if (kUp)
-                            drill.Angle = 270;
-                        else if (!kDown)
+                        if (!drill.IsDrilling)
                         {
-                            if (Direction == PlayerDirection.Right)
-                                drill.Angle = 0;
-                            else if (Direction == PlayerDirection.Left)
-                                drill.Angle = 180;
-                        }
-                        else if (kDown)
-                            drill.Angle = 90;
-                        else
-                        {
-                        }*/
+                            if (drill.Angle != 90 && drill.Angle != 270)
+                            {
+                                if (Direction == PlayerDirection.Right)
+                                    drill.Angle = 0;
+                                if (Direction == PlayerDirection.Left)
+                                    drill.Angle = 180;
+                            }
+                            else
+                            {
+                                if (kRight)
+                                    drill.Angle = 0;
+                                if (kLeft)
+                                    drill.Angle = 180;
+                            }
 
-                        if (drill.IsDrilling || (kDown && onGround))
-                        {                            
+                            if (kUp)
+                                drill.Angle = 270;
+                            if (kDown)
+                                drill.Angle = 90;
+                        }
+
+                        if (drill.IsDrilling)
+                        {
+                            ResetJumps();
+                            hoverPower = (int)maxHoverPower;
+
                             State = PlayerState.Jump;
                             AnimationState[State].Frame = YVel < 0 ?  2 : 4;
 
-                            XVel = M.LengthDirX(drill.Angle) * 1.5f;
-                            YVel = M.LengthDirY(drill.Angle) * 1.5f;
+                            XVel = M.LengthDirX(drill.Angle) * 2f;
+                            YVel = M.LengthDirY(drill.Angle) * 2f;
+                            if (drill.Angle == 90)
+                                YVel = 3f;
                             yGrav = 0;
                         }
 
                         int drillOffY = (drill.Angle == 270) ? -2 : ((drill.Angle == 90) ? 1 : 0);
 
+                        if (!onGround)
+                            drillOffY += 2;
+
                         drill.Position = Position + new Vector2(XVel, YVel + drillOffY) + new Vector2(M.LengthDirX(drill.Angle) * 8, M.LengthDirY(drill.Angle) * 8);
+
+                        if (!drill.IsDrilling && !kAction2)
+                        {
+                            drill?.Destroy();
+                            drill = null;
+                        }
+
                     }
                     else
                     {

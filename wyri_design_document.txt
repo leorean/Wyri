@@ -62,7 +62,7 @@ Gear
 ^^^^
 
 * Gecko Glove
-	- Wall grab
+	- Wall jump
 * Map
 	- Can open map
 * Compass
@@ -75,12 +75,28 @@ Gear
 	- Can hover
 * Drill
 	- Can drill through certain blocks
-* Pulsator?
-	- Can toggle switch-blocks
+
+Order of abilities:
+^^^^^^^^^^^^^^^^^^^
+
+Map -> wall jump -> double jump -> compass -> swim -> hover -> drill
 
 Biomes/Places
 ^^^^^^^^^^^^^
 
 * The Fallow Grounds
-* Sunken Metropolis
-* The rift
+	- The first area, forest, rather stale
+* Abandoned plant
+	- underground factory ruins etc.
+* Desolate grounds
+	- desert
+* Ancient neatherwoods
+	- jungle + house ruins, vines with spikes, etc.
+* Sunken capital city
+	- high tech city ruins underwater
+* Western peninsula
+	- west end of the world
+* Eastern atoll
+	- east end of the world
+* Dunkirk's wharf
+	- floating island in the sky (remaining humans, hiding from robots etc)
