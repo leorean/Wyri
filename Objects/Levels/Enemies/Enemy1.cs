@@ -25,7 +25,6 @@ namespace Wyri.Objects.Levels.Enemies
 
         Vector2 target;
         Vector2 newTarget;
-        float distance = 80;
         float lineAlpha, hairAlpha;
 
         enum State
@@ -61,9 +60,10 @@ namespace Wyri.Objects.Levels.Enemies
 
             var ang = M.VectorToAngle(MainGame.Player.Center - center + offvec);            
             var rc = this.RayCast(MainGame.Player, ang, 1, 255);
-            bool inRange = M.Euclidean(center, MainGame.Player.Center) <= distance;
+            bool inCloseRange = M.Euclidean(center, MainGame.Player.Center) <= 80;
+            bool inLongRange = M.Euclidean(center, MainGame.Player.Center) <= 160;
 
-            rc = (rc.Item1, Math.Min(rc.Item2, distance));
+            rc = (rc.Item1, Math.Min(rc.Item2, 144));
 
             if (MainGame.Player.State == PlayerState.Dead)
             {
@@ -78,7 +78,7 @@ namespace Wyri.Objects.Levels.Enemies
                     lineAlpha = 0;
                     prepareShootTimeout = maxPrepareShootTimeout;
                     crossHairTimeout = maxCrossHairTimeout;
-                    if (rc.Item1 && inRange)
+                    if (rc.Item1 && inCloseRange)
                     {                        
                         rayCast = rc;
                         angle = ang;
@@ -89,7 +89,7 @@ namespace Wyri.Objects.Levels.Enemies
                     frame = Math.Min(frame + .2f, 3.9f);
                     rayCast = rc;
                     target = center + new Vector2(M.LengthDirX(angle) * rayCast.Item2, M.LengthDirY(angle) * rayCast.Item2);
-                    if (!rc.Item1 || !inRange)
+                    if (!rc.Item1 || !inLongRange)
                     {
                         newTarget = target;
 
