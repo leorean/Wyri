@@ -90,6 +90,8 @@ Biomes/Places
 	- underground factory ruins etc.
 * Desolate grounds
 	- desert
+* Great wall
+	- end of desert
 * Ancient neatherwoods
 	- jungle + house ruins, vines with spikes, etc.
 * Sunken capital city
