@@ -75,11 +75,18 @@ Gear
 	- Can hover
 * Drill
 	- Can drill through certain blocks
-
+* Card A
+	- Access to certain Areas
+* Card B
+	- Access to certain Areas
+* Card C
+	- Access to certain Areas
+	
+	
 Order of abilities:
 ^^^^^^^^^^^^^^^^^^^
 
-Map -> wall jump -> double jump -> compass -> swim -> hover -> drill
+Map -> wall jump -> double jump -> compass -> swim -> hover -> drill -> card A -> card B -> card C
 
 Biomes/Places
 ^^^^^^^^^^^^^
