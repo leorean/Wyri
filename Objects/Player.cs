@@ -340,6 +340,10 @@ namespace Wyri.Objects
             }
 
             var waterTile = Collisions.TileAt(X, Y + 4, "WATER");
+
+            if ((!inWater && waterTile != null) || (inWater && waterTile == null))
+                new WaterSplashEmitter(new Vector2(X, Bottom), MainGame.Camera.Room);
+
             inWater = waterTile != null;
 
             /*if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
