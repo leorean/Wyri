@@ -26,6 +26,7 @@ namespace Wyri.Objects.Levels.Effects
             if (type == 01) animation = new Animation(GameResources.Effects, 08, 7, .4f, false);
             if (type == 02) animation = new Animation(GameResources.Effects, 16, 8, .3f, false);
             if (type == 03) animation = new Animation(GameResources.Effects, 24, 7, .2f, false);
+            if (type == 04) animation = new Animation(GameResources.Effects, 32, 8, .3f, false);
         }
 
         public override void Update()

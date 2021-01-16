@@ -9,7 +9,10 @@ namespace Wyri.Types
     {
         Default,        
         Platform,
-        DestroyBlock
+        DestroyBlock,
+        Card_A,
+        Card_B,
+        Card_C
     }
 
     /// <summary>
@@ -78,6 +81,15 @@ namespace Wyri.Types
                             break;
                         case "SB2":
                             SwitchState = SwitchState.Switch2;
+                            break;
+                        case "CARD_A":
+                            Type = TileType.Card_A;
+                            break;
+                        case "CARD_B":
+                            Type = TileType.Card_B;
+                            break;
+                        case "CARD_C":
+                            Type = TileType.Card_C;
                             break;
                         default:
                             typeData = o;

@@ -47,7 +47,10 @@ namespace Wyri.Objects
         JETPACK = 8,
         MAP = 16,
         COMPASS = 32,
-        DRILL = 64
+        DRILL = 64,
+        CARD_A = 128,
+        CARD_B = 256,
+        CARD_C = 512
     }
 
     public static class PlayerExtensions
@@ -235,7 +238,7 @@ namespace Wyri.Objects
                     MainGame.Camera.Position = Position;
                     var effects = ObjectController.FindAll<IDestroyOnRoomChange>();
                     foreach(var e in effects)
-                        e.Destroy();
+                        e.Destroy();                
                 }
                 if (!MainGame.SaveGame.VisitedRooms.Contains(room.ID))
                 {
@@ -361,6 +364,42 @@ namespace Wyri.Objects
                     gotItem.Take();
                     ControlsEnabled = false;
                     return;
+                }
+                
+                for (var i = MainGame.Camera.Room.X; i < MainGame.Camera.Room.X + MainGame.Camera.Room.Width; i += G.T)
+                {
+                    for (var j = MainGame.Camera.Room.Y; j < MainGame.Camera.Room.Y + MainGame.Camera.Room.Height; j += G.T)
+                    {
+                        var t = Collisions.TileAt(i, j, "FG");
+                        if (t == null)
+                            continue;                        
+
+                        if (M.Euclidean(Center, new Vector2(i + 4, j + 4)) > 32)
+                        {
+                            if (!t.IsSolid)
+                            {
+                                if (t.Type == TileType.Card_A)
+                                {
+                                    new AnimationEffect(new Vector2(i + 4, j + 4), 4, MainGame.Camera.Room);
+                                    t.IsSolid = true;
+                                    t.IsVisible = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (Abilities.HasFlag(PlayerAbility.CARD_A) && t.Type == TileType.Card_A)
+                            {
+                                if (t.IsSolid)
+                                {
+                                    new AnimationEffect(new Vector2(i + 4, j + 4), 4, MainGame.Camera.Room);
+                                }
+
+                                t.IsSolid = false;
+                                t.IsVisible = false;
+                            }
+                        }
+                    }
                 }
 
                 if (inWater && !Abilities.HasFlag(PlayerAbility.DIVE))

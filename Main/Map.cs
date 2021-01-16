@@ -330,6 +330,15 @@ namespace Wyri.Main
                                 case "I8":
                                     new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 7, room);
                                     break;
+                                case "I9":
+                                    new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 8, room);
+                                    break;
+                                case "I10":
+                                    new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 9, room);
+                                    break;
+                                case "I11":
+                                    new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 10, room);
+                                    break;
                                 case "TB1":
                                     var tb = new TriggerBlock(new Vector2(i * G.T, j * G.T), t.ID, false, room);
                                     break;
@@ -337,48 +346,12 @@ namespace Wyri.Main
                         }
                     }
                 }
-
-                //// load rooms of standard size when there is none
-                //for (var i = 0; i < Width * G.T; i += camera.ViewWidth)
-                //{
-                //    for (var j = 0; j < Height * G.T; j += camera.ViewHeight)
-                //    {
-                //        var c = Collisions.CollisionPoint<Room>(i + G.T, j + G.T);
-                //        if (c.Count == 0)
-                //        {
-                //            room = new Room(i, j, camera.ViewWidth, camera.ViewHeight);
-                //            Rooms.Add(room);
-                //        }
-                //    }
-                //}
-
-
             }            
             catch (Exception e)
             {
                 Debug.WriteLine("Unable to initialize room from data: " + e.Message);
                 throw;
             }
-
-            // +++ draw map +++
-
-            // TODO: REMOVE
-
-            //var rmW = (int)((double)Width / (double)camera.ViewWidth * (double)G.T);
-            //var rmH = (int)((double)Height / (double)camera.ViewHeight * (double)G.T);
-            //RoomMap = new Grid<string>(rmW, rmH);
-
-            //for (var i = 0; i < rmW; i ++)
-            //{
-            //    for (var j = 0; j < rmH; j ++)
-            //    {
-            //        var r = Collisions.CollisionPoint<Room>(i * camera.ViewWidth + G.T, j * camera.ViewHeight + G.T).FirstOrDefault();
-            //        if (r != null)
-            //        {
-            //            RoomMap[i, j] = r.ID;
-            //        }
-            //    }
-            //}
         }
 
         public async Task UnloadAsync()

@@ -86,7 +86,7 @@ Gear
 Order of abilities:
 ^^^^^^^^^^^^^^^^^^^
 
-Map -> wall jump -> double jump -> compass -> swim -> hover -> drill -> card A -> card B -> card C
+Map -> wall jump -> compass -> double jump -> hover -> drill -> card A -> swim -> card B -> card C
 
 Biomes/Places
 ^^^^^^^^^^^^^

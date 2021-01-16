@@ -191,8 +191,8 @@ namespace Wyri.Main
                     var curIndex = l == curLine ? index : textLines[l].Length;
                     var t = textLines[l].Substring(0, curIndex);
 
-                    var tx = 0f;
-                    var ty = 0f;
+                    var tx = 2f;
+                    var ty = 2f;
 
                     var yoff = GameResources.Font.MeasureString(t).Y * .25f * l;
 
@@ -219,8 +219,8 @@ namespace Wyri.Main
 
                         var col = inColorMode ? textPages[page].Item3 : Color.White;
 
-                        var blub = GameResources.Font.MeasureString(t.Substring(0, i)).X * .25f;
-                        sb.DrawString(GameResources.Font, chr, new Vector2(x + 2 + tx + blub, y + 2 + ty + yoff), col, 0, Vector2.Zero, .25f, SpriteEffects.None, G.D_UI + .0001f);
+                        var indentation = GameResources.Font.MeasureString(t.Substring(0, i)).X * .25f;
+                        sb.DrawString(GameResources.Font, chr, new Vector2(x + 2 + tx + indentation, y + 2 + ty + yoff), col, 0, Vector2.Zero, .25f, SpriteEffects.None, G.D_UI + .0001f);
                     }
                 }
             }

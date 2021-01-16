@@ -71,6 +71,18 @@ namespace Wyri.Objects.Levels
                     MainGame.SaveGame.Abilities |= PlayerAbility.DIVE;
                     Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~GILLS~!|These allow you to breathe underwater.";
                     break;
+                case 8:
+                    MainGame.SaveGame.Abilities |= PlayerAbility.CARD_A;
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT ~ACCESS CARD -A-~!|This will give you access to new areas.";
+                    break;
+                case 9:
+                    MainGame.SaveGame.Abilities |= PlayerAbility.CARD_B;
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT ~ACCESS CARD -B-~!|This will give you access to new areas.";
+                    break;
+                case 10:
+                    MainGame.SaveGame.Abilities |= PlayerAbility.CARD_C;
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT ~ACCESS CARD -C-~!|This will give you access to new areas.";
+                    break;
                 default:
                     throw new NotImplementedException("Type not implemented!");
             }
