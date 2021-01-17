@@ -64,7 +64,7 @@ namespace Wyri.Objects.Levels.Effects
         }
     }
 
-    public class WaterSplashEmitter : ParticleEmitter
+    public class WaterSplashEmitter : ParticleEmitter, Wyri.Types.IDestroyOnRoomChange
     {
         public List<Color> ParticleColors { get; set; } = new List<Color>
         {
