@@ -319,14 +319,14 @@ namespace Wyri.Main
                 var vh = (float)ViewHeight;
                 var ry = Room.Y;
                 var vy = ViewY;
-                var minYcam = ry;
-                var maxYcam = ry + rh + .5f * vh;
+                var minYcam = ry + .5f * vh;
+                var maxYcam = ry + rh - .5f * vh;
                 var posY = vy;
-                var fac = 1f;
-                if (minYcam != maxYcam)
+                var bgh = 216f;
+                if (rh != vh)
                 {
-                    fac = ((vy - minYcam) / (maxYcam - minYcam)) * 1.5f;
-                    posY = ViewY - .5f * vh * fac;
+                    var fac = 1 - ((vy + .5f * vh) - minYcam) / (maxYcam - minYcam) * .3333333f;
+                    posY = ViewY - bgh + (bgh * fac);
                 }
 
                 var px = (Position.X * .5f) % 256;
