@@ -12,7 +12,11 @@ namespace Wyri.Types
         DestroyBlock,
         Card_A,
         Card_B,
-        Card_C
+        Card_C,
+        Move_Up,
+        Move_Down,
+        Move_Left,
+        Move_Right
     }
 
     /// <summary>
@@ -90,6 +94,18 @@ namespace Wyri.Types
                             break;
                         case "CARD_C":
                             Type = TileType.Card_C;
+                            break;
+                        case "MOVE_U":
+                            Type = TileType.Move_Up;
+                            break;
+                        case "MOVE_D":
+                            Type = TileType.Move_Down;
+                            break;
+                        case "MOVE_L":
+                            Type = TileType.Move_Left;
+                            break;
+                        case "MOVE_R":
+                            Type = TileType.Move_Right;
                             break;
                         default:
                             typeData = o;

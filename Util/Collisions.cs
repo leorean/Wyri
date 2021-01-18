@@ -194,7 +194,7 @@ namespace Wyri
             return false;
         }
 
-        public static List<(Tile, Vector2)> CollisionTiles(this SpatialObject o, float offX, float offY)
+        public static List<(Tile, Vector2)> CollisionTiles(this SpatialObject o, float offX, float offY, bool solid = true)
         {
 
             List<(Tile, Vector2)> tiles = new List<(Tile, Vector2)>();
@@ -206,7 +206,7 @@ namespace Wyri
                 for (float j = M.Div(o.Top + offX, G.T) - G.T; j < M.Div(o.Bottom + offX, G.T) + G.T; j++)
                 {
                     var t = grid[(int)i, (int)j];
-                    if (t == null || !t.IsSolid)
+                    if (t == null || (solid && !t.IsSolid))
                         continue;
 
                     var tileRect = new RectF(i * G.T, j * G.T, G.T, G.T);

@@ -306,6 +306,18 @@ namespace Wyri.Main
                                 case "E2":
                                     new Enemy2(new Vector2((i + .5f) * G.T, j * G.T), room);
                                     break;
+                                case "E3_U":
+                                    new Enemy3(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), Enemy3.Direction.Up, room);
+                                    break;
+                                case "E3_D":
+                                    new Enemy3(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), Enemy3.Direction.Down, room);
+                                    break;
+                                case "E3_L":
+                                    new Enemy3(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), Enemy3.Direction.Left, room);
+                                    break;
+                                case "E3_R":
+                                    new Enemy3(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), Enemy3.Direction.Right, room);
+                                    break;
                                 case "I1":
                                     new Item(new Vector2((i + .5f) * G.T, (j + .5f) * G.T), 0, room);
                                     break;
