@@ -87,16 +87,19 @@ namespace Wyri.Main
                     if (player.Abilities.HasFlag(PlayerAbility.COMPASS))
                     {
                         // items
-                        Item item = r.Objects.Where(x => x is Item).FirstOrDefault() as Item;
-                        if (item != null)
+                        var items = r.Objects.Where(x => x is Item).Cast<Item>();
+                        foreach (var item in items)
                         {
-                            var itemx = (item.X / (float)(map.Width)) * sizeX * rmW / (float)G.T;
-                            var itemy = (item.Y / (float)(map.Height)) * sizeY * rmH / (float)G.T;
+                            if (item != null)
+                            {
+                                var itemx = (item.X / (float)(map.Width)) * sizeX * rmW / (float)G.T;
+                                var itemy = (item.Y / (float)(map.Height)) * sizeY * rmH / (float)G.T;
 
-                            var itemCol = item.Type == 0 ? GameResources.CollectabledisplayColor : GameResources.ItemDisplayColor;
-                            itemCol = (MainGame.Ticks % 60 > 55) ? Color.White : itemCol;
+                                var itemCol = item.Type == 0 ? GameResources.CollectabledisplayColor : GameResources.ItemDisplayColor;
+                                itemCol = (MainGame.Ticks % 60 > 55) ? Color.White : itemCol;
 
-                            sb.DrawPixel(new Vector2(xo + itemx, yo + itemy), itemCol, d);                            
+                                sb.DrawPixel(new Vector2(xo + itemx, yo + itemy), itemCol, d);
+                            }
                         }
                     }
                 }
