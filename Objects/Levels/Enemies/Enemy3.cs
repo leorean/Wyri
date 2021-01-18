@@ -57,7 +57,12 @@ namespace Wyri.Objects.Levels.Enemies
                     yVel = spd;
                     break;
             }
-            var tile = this.CollisionTiles(0, 0, false).Where(t => t.Item1.IsSolid).FirstOrDefault().Item1;
+            var tile = this.CollisionTiles(0, 0, false).Where(
+                t => t.Item1.IsSolid 
+                || t.Item1.Type == TileType.Move_Up 
+                || t.Item1.Type == TileType.Move_Down 
+                || t.Item1.Type == TileType.Move_Left
+                || t.Item1.Type == TileType.Move_Right).FirstOrDefault().Item1;
 
             if (tile != null)
             {
