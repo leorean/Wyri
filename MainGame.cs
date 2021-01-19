@@ -85,7 +85,7 @@ namespace Wyri
 
             GameResources.Init(Content);
 
-            LoadingAnimation = new Animation(GameResources.Spinner, 0, 7, .3f);
+            LoadingAnimation = new Animation(GameResources.Spinner, 0, 9, .45f);
 
             Reload();
         }
