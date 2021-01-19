@@ -331,10 +331,11 @@ namespace Wyri.Objects
             var obstacle = this.CollisionBounds<Obstacle>().FirstOrDefault();
             if (obstacle != null)
             {
-            //    if (State != PlayerState.Dead)
-            //    {
-            //        new TextureBurstEmitter(GameResources.Player[32], Position, MainGame.Camera.Room);
-            //    }
+                //if (State != PlayerState.Dead)
+                //{
+                //    var eff = new TextureBurstEmitter(GameResources.Player[32], Position, new Vector2(1.25f, 1f), .1f, 30);
+                //    eff.Depth = G.D_PLAYER_DEAD + .0001f;
+                //}
 
                 State = PlayerState.Dead;
             }
@@ -803,7 +804,7 @@ namespace Wyri.Objects
                 XVel = Math.Sign(XVel) * Math.Min(Math.Abs(XVel), xMax);
                 YVel = Math.Sign(YVel) * Math.Min(Math.Abs(YVel), yMax);
 
-                if (!this.CollisionSolidTile(XVel, 0))
+                if (!this.CollisionSolidTile(XVel, 0) && this.CollisionPoint<Room>(Left + XVel, Y).Count > 0 && this.CollisionPoint<Room>(Right + XVel, Y).Count > 0)
                 {
                     X += XVel;
                 }
@@ -811,7 +812,7 @@ namespace Wyri.Objects
                 {
                     XVel = 0;
                 }
-                if (!this.CollisionSolidTile(0, YVel))
+                if (!this.CollisionSolidTile(0, YVel) && this.CollisionPoint<Room>(X, Top + YVel).Count > 0 && this.CollisionPoint<Room>(X, Bottom + YVel).Count > 0)
                 {
                     Y += YVel;
                 }
@@ -835,6 +836,17 @@ namespace Wyri.Objects
                 {
                     depth = G.D_PLAYER_DEAD;
                     deadTimer = Math.Max(deadTimer - 1, 0);
+
+                    if (deadTimer == 110)
+                    {
+                        //var eff = new TextureBurstEmitter(GameResources.Player[32], Position, new Vector2(1.25f, 1f), .1f, 60);
+                        var eff = new TextureBurstEmitter(GameResources.Player[32], Position, new Vector2(1.3f, 1f), .1f, 60);
+                        eff.Depth = G.D_PLAYER_DEAD + .0001f;
+                    }
+
+                    if (deadTimer > 110)
+                        AnimationState[State].Frame = 0;
+
                     if (deadTimer == 0)
                     {
                         MainGame.ReloadLevel();

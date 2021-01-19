@@ -10,13 +10,15 @@ namespace Wyri.Objects.Levels.Effects
 {
     public class TextureBurstParticle : Particle
     {
-        float yGrav = .2f;
+        float yGrav;
 
-        public TextureBurstParticle(ParticleEmitter emitter, Color color, Vector2 power) : base(emitter, 40)
+        public TextureBurstParticle(ParticleEmitter emitter, Color color) : base(emitter, (emitter as TextureBurstEmitter).LifeTime)
         {
+            var power = (emitter as TextureBurstEmitter).Power;
+            yGrav = (emitter as TextureBurstEmitter).YGrav;
             Color = color;
             XVel = -power.X + RND.Next * 2 * power.X;
-            YVel = -power.Y + RND.Next * power.Y;
+            YVel = -power.Y - RND.Next * power.Y;
         }
 
         public override void Update()
@@ -27,7 +29,7 @@ namespace Wyri.Objects.Levels.Effects
             YVel *= .95f;
 
             var t = Collisions.TileAt(X, Y, "FG");
-            if (t != null && t.IsSolid && LifeTime < 30)
+            if (t != null && t.IsSolid && LifeTime < MaxLifeTime - 10)
             {
                 XVel *= -.5f;
                 YVel = 0;
@@ -48,10 +50,16 @@ namespace Wyri.Objects.Levels.Effects
     public class TextureBurstEmitter : ParticleEmitter, IDestroyOnRoomChange
     {
         private Grid<Color> colors;
-        private Vector2 power;
-        public TextureBurstEmitter(Texture2D texture, Vector2 position, Vector2 power, Room room) : base(position, room)
+        
+        public Vector2 Power { get; private set; }
+        public float YGrav { get; private set; }
+        public int LifeTime { get; private set; }
+
+        public TextureBurstEmitter(Texture2D texture, Vector2 position, Vector2 power, float yGrav, int lifeTime) : base(position, MainGame.Camera.Room)
         {
-            this.power = power;
+            Power = power;
+            YGrav = yGrav;
+            LifeTime = lifeTime;
             SpawnTimeout = 0;
             colors = new Grid<Color>(texture.Width, texture.Height);
 
@@ -83,7 +91,7 @@ namespace Wyri.Objects.Levels.Effects
             {
                 for (var j = 0; j < colors.Height; j++)
                 {
-                    var part = new TextureBurstParticle(this, colors[i, j], power);
+                    var part = new TextureBurstParticle(this, colors[i, j]);
                     part.Position = Position - new Vector2(colors.Width * .5f, colors.Height * .5f) + new Vector2(i, j);
                 }
             }

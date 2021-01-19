@@ -55,7 +55,7 @@ namespace Wyri.Objects.Levels.Enemies
 
         public override void Kill()
         {
-            new TextureBurstEmitter(GameResources.Enemy1[2], Position, new Vector2(1.5f, 3), Room);
+            new TextureBurstEmitter(GameResources.Enemy1[2], Position, new Vector2(1.5f), .2f, 40);
         }
 
         public override void Update()

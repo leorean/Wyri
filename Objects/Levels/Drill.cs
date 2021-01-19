@@ -40,14 +40,14 @@ namespace Wyri.Objects.Levels
 
                     var tx = M.Div(X, G.T);
                     var ty = M.Div(Y, G.T);
-                    new TextureBurstEmitter(GameResources.Tiles[t.Item1.ID], t.Item2 + new Vector2(4, 4), new Vector2(1), Room);
+                    new TextureBurstEmitter(GameResources.Tiles[t.Item1.ID], t.Item2 + new Vector2(4, 4), new Vector2(1), .2f, 40);
 
                 }
             }
 
             if (tiles.Where(t => t.Item1.Type == TileType.DestroyBlock).ToList().Count > 0)
             {
-                drillTimeout = 10;                
+                drillTimeout = 10;
             }
 
             IsDrilling = drillTimeout > 0;            
