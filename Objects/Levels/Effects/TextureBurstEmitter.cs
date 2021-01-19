@@ -25,8 +25,8 @@ namespace Wyri.Objects.Levels.Effects
         {
             YVel += yGrav;
 
-            XVel *= .95f;
-            YVel *= .95f;
+            XVel *= .98f;
+            YVel *= .98f;
 
             var t = Collisions.TileAt(X, Y, "FG");
             if (t != null && t.IsSolid && LifeTime < MaxLifeTime - 10)

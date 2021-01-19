@@ -121,7 +121,7 @@ namespace Wyri.Objects
         Item gotItem;
         private MessageBox itemMsgBox;
 
-        private int grabTimer;
+        private int grabTimer, wasOnWallTimer;
 
         private int hoverPower;
         const float maxHoverPower = 60;
@@ -532,7 +532,9 @@ namespace Wyri.Objects
                 }
 
                 if (State == PlayerState.Climb)
-                {                    
+                {
+                    wasOnWallTimer = 5;
+
                     if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown && !kAction)
                         grabTimer = Math.Max(grabTimer - 1, 0);
                     else
@@ -592,6 +594,10 @@ namespace Wyri.Objects
                         AnimationState[State].Frame = 3;
                     }
                 }
+                else
+                {
+                    wasOnWallTimer = Math.Max(wasOnWallTimer - 1, 0);
+                }
 
                 if (kJumpPressed && jumps == 1 && Abilities.HasFlag(PlayerAbility.DOUBLE_JUMP))
                     new AnimationEffect(new Vector2(X, Bottom), 1, MainGame.Camera.Room);
@@ -629,7 +635,7 @@ namespace Wyri.Objects
                 {
                     if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && (kUp || kDown) && !kJumpHolding && drill == null)
                     {
-                        if (!inWater && !onGround)
+                        if (!inWater && !onGround && wasOnWallTimer == 0)
                         {
                             if (hoverPower > 5 && YVel >= 0)
                             {                                
