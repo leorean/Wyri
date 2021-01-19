@@ -76,7 +76,7 @@ namespace Wyri.Objects.Levels.Effects
 
         public virtual void Draw(SpriteBatch sb)
         {
-            sb.Draw(Texture, Position, null, new Color(Color, Alpha), Angle, DrawOffset, Scale, SpriteEffects.None, Depth);
+            sb.Draw(Texture, Position, null, new Color(Color, ((float)Color.A / 255f) * Alpha), Angle, DrawOffset, Scale, SpriteEffects.None, Depth);
         }
     }
 

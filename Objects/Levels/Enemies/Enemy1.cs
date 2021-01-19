@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using Wyri.Main;
+using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
 using Wyri.Util;
 
 namespace Wyri.Objects.Levels.Enemies
 {
-    public class Enemy1 : Obstacle
+    public class Enemy1 : Enemy
     {
         int prepareShootTimeout;
         int maxPrepareShootTimeout;
 
         float angle = 0;
         (bool, float) rayCast;
-        Vector2 offvec = new Vector2(0, -4);
+        Vector2 offvec = new Vector2(0, 0);
         float crossHairTimeout, maxCrossHairTimeout;
 
         float tDistortionDist;
@@ -50,6 +51,11 @@ namespace Wyri.Objects.Levels.Enemies
             crossHairTimeout = maxCrossHairTimeout;
             prepareShootTimeout = maxPrepareShootTimeout;
             state = State.Idle;
+        }
+
+        public override void Kill()
+        {
+            new TextureBurstEmitter(GameResources.Enemy1[2], Position, new Vector2(1.5f, 3), Room);
         }
 
         public override void Update()
@@ -132,7 +138,7 @@ namespace Wyri.Objects.Levels.Enemies
                         shotTimeout = Math.Max(shotTimeout - 1, 0);
                         if (shotTimeout == 0)
                         {
-                            var bullet = new Bullet(center, Room);
+                            var bullet = new Bullet(center, this, Room);
                             bullet.Angle = M.VectorToAngle(newTarget - center);
 
                             shots = Math.Max(shots - 1 , 0);

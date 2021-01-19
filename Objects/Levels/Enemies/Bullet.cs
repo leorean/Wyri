@@ -16,8 +16,17 @@ namespace Wyri.Objects.Levels.Enemies
         float speed = 0;
         public float Angle { get; set; } = 0;
 
-        public Bullet(Vector2 position, Room room) : base(position, new Types.RectF(-1, -1, 2, 2), room)
+        public SpatialObject Parent { get; private set; }
+
+        public Bullet(Vector2 position, SpatialObject parent, Room room) : base(position, new Types.RectF(-1, -1, 2, 2), room)
         {
+            Parent = parent;
+        }
+
+        public void Kill()
+        {
+            new AnimationEffect(Position, 2, Room);
+            Destroy();
         }
 
         public override void Update()
@@ -43,8 +52,7 @@ namespace Wyri.Objects.Levels.Enemies
 
             if (this.CollisionSolidTile(xVel * .5f, yVel * .5f) || triggerBlock != null)
             {
-                new AnimationEffect(Position, 2, Room);
-                Destroy();
+                Kill();
             }
             else
             {

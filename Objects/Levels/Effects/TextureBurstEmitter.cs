@@ -12,16 +12,15 @@ namespace Wyri.Objects.Levels.Effects
     {
         float yGrav = .2f;
 
-        public TextureBurstParticle(ParticleEmitter emitter, Color color) : base(emitter, 40)
+        public TextureBurstParticle(ParticleEmitter emitter, Color color, Vector2 power) : base(emitter, 40)
         {
             Color = color;
-            XVel = -1 + RND.Next * 2;
-            YVel = -1 + RND.Next * 1;
+            XVel = -power.X + RND.Next * 2 * power.X;
+            YVel = -power.Y + RND.Next * power.Y;
         }
 
         public override void Update()
         {
-            base.Update();
             YVel += yGrav;
 
             XVel *= .95f;
@@ -36,6 +35,8 @@ namespace Wyri.Objects.Levels.Effects
             }
 
             Alpha = LifeTime / (float)MaxLifeTime;
+
+            base.Update();
         }
 
         public override void Draw(SpriteBatch sb)
@@ -46,12 +47,21 @@ namespace Wyri.Objects.Levels.Effects
 
     public class TextureBurstEmitter : ParticleEmitter, IDestroyOnRoomChange
     {
-        private Color[] colors;
-        public TextureBurstEmitter(Texture2D texture, Vector2 position, Room room) : base(position, room)
-        {            
+        private Grid<Color> colors;
+        private Vector2 power;
+        public TextureBurstEmitter(Texture2D texture, Vector2 position, Vector2 power, Room room) : base(position, room)
+        {
+            this.power = power;
             SpawnTimeout = 0;
-            colors = texture.GetPixels();
-            SpawnRate = colors.Length;            
+            colors = new Grid<Color>(texture.Width, texture.Height);
+
+            var pixels = texture.GetPixels();
+            for (var i = 0; i < pixels.Length; i++)
+            {
+                colors[i] = pixels[i];
+            }
+
+            SpawnRate = 1;
         }
 
         public override void Update()
@@ -68,8 +78,15 @@ namespace Wyri.Objects.Levels.Effects
         }
 
         public override void CreateParticle()
-        {            
-            new TextureBurstParticle(this, colors[Particles.Count]);
+        {
+            for(var i = 0; i < colors.Width; i++)
+            {
+                for (var j = 0; j < colors.Height; j++)
+                {
+                    var part = new TextureBurstParticle(this, colors[i, j], power);
+                    part.Position = Position - new Vector2(colors.Width * .5f, colors.Height * .5f) + new Vector2(i, j);
+                }
+            }
         }
     }
 }

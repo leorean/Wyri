@@ -40,7 +40,7 @@ namespace Wyri.Objects.Levels
 
                     var tx = M.Div(X, G.T);
                     var ty = M.Div(Y, G.T);
-                    new TextureBurstEmitter(GameResources.Tiles[t.Item1.ID], t.Item2 + new Vector2(4, 4), Room);
+                    new TextureBurstEmitter(GameResources.Tiles[t.Item1.ID], t.Item2 + new Vector2(4, 4), new Vector2(1), Room);
 
                 }
             }

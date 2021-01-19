@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Wyri.Main;
+using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
 using Wyri.Util;
 
 namespace Wyri.Objects.Levels.Enemies
 {
-    public class Enemy2 : Obstacle
+    public class Enemy2 : Enemy
     {
         enum State
         {
@@ -36,6 +37,11 @@ namespace Wyri.Objects.Levels.Enemies
             state = State.Idle;
             direction = RND.Choose(Direction.Left, Direction.Right);
             waitTimer = 30 + RND.Int(60);
+        }
+
+        public override void Kill()
+        {
+            new TextureBurstEmitter(GameResources.Enemy2[0], Center, new Vector2(2, 3), Room);
         }
 
         public override void Update()

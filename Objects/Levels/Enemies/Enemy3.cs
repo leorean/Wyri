@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Wyri.Main;
+using Wyri.Objects.Levels.Effects;
 using Wyri.Types;
 
 namespace Wyri.Objects.Levels.Enemies
 {
-    public class Enemy3 : Obstacle
+    public class Enemy3 : Enemy
     {
         public enum Direction
         {
@@ -33,6 +34,11 @@ namespace Wyri.Objects.Levels.Enemies
         {
             direction = dir;
             animation = new Animation(GameResources.Enemy3, 0, 4, .4f);
+        }
+
+        public override void Kill()
+        {
+            Dead = false; // immortal enemies
         }
 
         public override void Update()
