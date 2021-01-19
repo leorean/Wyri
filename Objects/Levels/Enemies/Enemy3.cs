@@ -36,7 +36,7 @@ namespace Wyri.Objects.Levels.Enemies
             animation = new Animation(GameResources.Enemy3, 0, 4, .4f);
         }
 
-        public override void Kill()
+        protected override void OnKillEffect()
         {
             Dead = false; // immortal enemies
         }

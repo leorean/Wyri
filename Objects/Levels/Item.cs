@@ -65,11 +65,11 @@ namespace Wyri.Objects.Levels
                     break;
                 case 5:
                     MainGame.SaveGame.Abilities |= PlayerAbility.JETPACK;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~JET PACK~!|[color:{gc2}]Press and hold ~S~ to hover.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~JET PACK~!|[color:{gc2}]Press and hold ~UP~ or ~DOWN~ to hover.";
                     break;
                 case 6:
                     MainGame.SaveGame.Abilities |= PlayerAbility.DRILL;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~DRILL~!|[color:{gc2}]Press and hold ~D~ to drill certain blocks.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~DRILL~!|[color:{gc2}]Press and hold ~S~ to drill certain blocks.";
                     break;
                 case 7:
                     MainGame.SaveGame.Abilities |= PlayerAbility.DIVE;

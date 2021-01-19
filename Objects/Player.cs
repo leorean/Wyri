@@ -125,7 +125,7 @@ namespace Wyri.Objects
 
         private int hoverPower;
         const float maxHoverPower = 60;
-        private int hoverTimeout;
+        private int hoverTimeout, hoverButtonTimeout;
         private float hoverAlpha;
 
         public bool ControlsEnabled { get; set; } = true;
@@ -134,6 +134,7 @@ namespace Wyri.Objects
         const int maxDirectionGrabTimer = 25;
 
         private Drill drill;
+        private Vector2 drillTargetPosition;
         
         public Player(Vector2 position) : base(position, new RectF(-3, -4, 6, 12))
         {
@@ -267,8 +268,8 @@ namespace Wyri.Objects
             var kJumpReleased = InputController.IsKeyPressed(Keys.A, KeyState.Released) && ControlsEnabled;
             var kAction = InputController.IsKeyPressed(Keys.S, KeyState.Holding) && ControlsEnabled;
             var kActionPressed = InputController.IsKeyPressed(Keys.S, KeyState.Pressed) && ControlsEnabled;
-            var kAction2 = InputController.IsKeyPressed(Keys.D, KeyState.Holding) && ControlsEnabled;
-            var kAction2Pressed = InputController.IsKeyPressed(Keys.D, KeyState.Pressed) && ControlsEnabled;
+            //var kAction2 = InputController.IsKeyPressed(Keys.D, KeyState.Holding) && ControlsEnabled;
+            //var kAction2Pressed = InputController.IsKeyPressed(Keys.D, KeyState.Pressed) && ControlsEnabled;
 
             leftTimer = Math.Max(leftTimer - 1, 0);
             rightTimer = Math.Max(rightTimer - 1, 0);
@@ -626,18 +627,25 @@ namespace Wyri.Objects
 
                 if (Abilities.HasFlag(PlayerAbility.JETPACK))
                 {
-                    if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && kAction && !kJumpHolding && drill == null)
+                    if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && (kUp || kDown) && !kJumpHolding && drill == null)
                     {
                         if (!inWater && !onGround)
                         {
-                            if (hoverPower > 0 && YVel >= 0)
+                            if (hoverPower > 5 && YVel >= 0)
                             {                                
                                 YVel = -yGrav;
                                 State = PlayerState.Hover;
                             }
                         }
                     }
+
+                    if (kUp || kDown)
+                    {
+                        hoverButtonTimeout = 5;
+                    }
                 }
+
+                hoverButtonTimeout = Math.Max(hoverButtonTimeout - 1, 0);
 
                 if (state == PlayerState.Hover)
                 {
@@ -651,22 +659,21 @@ namespace Wyri.Objects
                     }
 
                     yGrav = 0;
-                    if (kUp)
+                    if (kUp && !kDown)
                     {
                         YVel = Math.Max(YVel - .03f, -1.5f);
-                    } else if (kDown)
+                    } else if (kDown && !kUp)
                     {
                         YVel = Math.Min(YVel + .03f, 1.5f);
                     } else
-                    {                        
-                        if (YVel < 0) YVel += .1f;
-                        if (YVel > 0) YVel -= .1f;
+                    {
+                        YVel *= .8f;                        
                     }
                     
-                    hoverTimeout = 60;
+                    hoverTimeout = 30;
                     hoverPower = Math.Max(hoverPower - 1, 0);
 
-                    if (!kAction || kJumpHolding || hoverPower == 0 || drill != null)
+                    if (hoverButtonTimeout == 0 || hoverPower == 0 || drill != null)
                         state = PlayerState.Jump;
                 }
                 else
@@ -681,11 +688,11 @@ namespace Wyri.Objects
                 /* DRILL */
                 if (Abilities.HasFlag(PlayerAbility.DRILL))
                 {
-                    if (kAction2Pressed)
+                    if (kActionPressed)
                     {
                         if (drill == null)
                         {
-                            drill = new Drill(Position, MainGame.Camera.Room);
+                            drill = new Drill(Position, MainGame.Camera.Room);                            
                             if (Direction == PlayerDirection.Right)
                                 drill.Angle = 0;
                             if (Direction == PlayerDirection.Left)
@@ -718,8 +725,15 @@ namespace Wyri.Objects
 
                             if (kUp)
                                 drill.Angle = 270;
-                            if (kDown)
+                            else if (kDown)
                                 drill.Angle = 90;
+                            else
+                            {
+                                if (Direction == PlayerDirection.Right)
+                                    drill.Angle = 0;
+                                if (Direction == PlayerDirection.Left)
+                                    drill.Angle = 180;
+                            }
                         }
 
                         if (drill.IsDrilling)
@@ -742,9 +756,11 @@ namespace Wyri.Objects
                         if (!onGround)
                             drillOffY += 2;
 
-                        drill.Position = Position + new Vector2(XVel, YVel + drillOffY) + new Vector2(M.LengthDirX(drill.Angle) * 8, M.LengthDirY(drill.Angle) * 8);
+                        drill.Position += new Vector2(XVel, YVel);
 
-                        if (!drill.IsDrilling && !kAction2)
+                        drillTargetPosition = Position + new Vector2(XVel, YVel + drillOffY) + new Vector2(M.LengthDirX(drill.Angle) * 8, M.LengthDirY(drill.Angle) * 8);
+                        drill.Position = drill.Position + new Vector2((drillTargetPosition.X - drill.X) / 3f, (drillTargetPosition.Y - drill.Y) / 3f);
+                        if (!drill.IsDrilling && !kAction)
                         {
                             drill?.Destroy();
                             drill = null;

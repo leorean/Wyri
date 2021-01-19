@@ -39,9 +39,20 @@ namespace Wyri.Objects.Levels.Enemies
             waitTimer = 30 + RND.Int(60);
         }
 
-        public override void Kill()
+        protected override void OnKillEffect()
         {
-            new TextureBurstEmitter(GameResources.Enemy2[0], Center, new Vector2(2), .2f, 40);
+            var emitter = new TextureBurstEmitter(GameResources.Enemy2[8], Center, new Vector2(1.5f), .15f, 60);
+            emitter.Depth = G.D_ENEMY - .0001f;
+
+            for(int i = 0; i < 8; i++)
+            {
+                new AnimationEffect(Position, 5, Room);
+
+                var eff = new AnimationEffect(Position + new Vector2(-8) + new Vector2(RND.Next * 16, RND.Next * 16), 2, Room);
+                eff.Delay = i * 4;
+            }
+
+            
         }
 
         public override void Update()

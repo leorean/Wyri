@@ -53,7 +53,7 @@ namespace Wyri.Objects.Levels.Enemies
             state = State.Idle;
         }
 
-        public override void Kill()
+        protected override void OnKillEffect()
         {
             new TextureBurstEmitter(GameResources.Enemy1[2], Position, new Vector2(1.5f), .2f, 40);
         }

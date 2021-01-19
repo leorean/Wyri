@@ -22,11 +22,12 @@ namespace Wyri.Objects.Levels.Effects
 
         public AnimationEffect(Vector2 position, int type, Room room) : base(position, new RectF(0, 0, 16, 16), room)
         {
-            if (type == 00) animation = new Animation(GameResources.Effects, 00, 7, .3f, false);
-            if (type == 01) animation = new Animation(GameResources.Effects, 08, 7, .4f, false);
-            if (type == 02) animation = new Animation(GameResources.Effects, 16, 8, .3f, false);
-            if (type == 03) animation = new Animation(GameResources.Effects, 24, 7, .2f, false);
-            if (type == 04) animation = new Animation(GameResources.Effects, 32, 8, .3f, false);
+            if (type == 0) animation = new Animation(GameResources.Effects, 00, 7, .3f, false);
+            if (type == 1) animation = new Animation(GameResources.Effects, 08, 7, .4f, false);
+            if (type == 2) animation = new Animation(GameResources.Effects, 16, 8, .3f, false);
+            if (type == 3) animation = new Animation(GameResources.Effects, 24, 7, .2f, false);
+            if (type == 4) animation = new Animation(GameResources.Effects, 32, 8, .3f, false);
+            if (type == 5) animation = new Animation(GameResources.Effects, 40, 8, .35f, false);
         }
 
         public override void Update()

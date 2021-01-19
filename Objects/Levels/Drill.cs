@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Wyri.Main;
 using Wyri.Objects.Levels.Effects;
+using Wyri.Objects.Levels.Enemies;
 using Wyri.Types;
 
 namespace Wyri.Objects.Levels
@@ -45,7 +46,11 @@ namespace Wyri.Objects.Levels
                 }
             }
 
-            if (tiles.Where(t => t.Item1.Type == TileType.DestroyBlock).ToList().Count > 0)
+            var enemy = this.CollisionBounds<Enemy>().FirstOrDefault();
+            if (enemy != null)
+                enemy.Dead = true;
+
+            if (tiles.Where(t => t.Item1.Type == TileType.DestroyBlock).ToList().Count > 0 || enemy != null)
             {
                 drillTimeout = 10;
             }
@@ -70,13 +75,15 @@ namespace Wyri.Objects.Levels
 
         public override void Draw(SpriteBatch sb)
         {
-            if (Angle != 90 && Angle != 270)
-                drawAngle = M.VectorToAngle(new Vector2(M.LengthDirX(Angle) * 3 + MainGame.Player.XVel, M.LengthDirY(Angle) * 3 + MainGame.Player.YVel));
-            else
-                drawAngle = Angle;
+            //if (Angle != 90 && Angle != 270)
+            //    drawAngle = M.VectorToAngle(new Vector2(M.LengthDirX(Angle) * 3 + MainGame.Player.XVel, M.LengthDirY(Angle) * 3 + MainGame.Player.YVel));
+            //else
+            //    drawAngle = Angle;
+
+            drawAngle = M.VectorToAngle(new Vector2(X - MainGame.Player.X, Y - MainGame.Player.Y));
 
             drillAnimation.Update();
-            drillAnimation.Draw(sb, Position, new Vector2(8), Vector2.One, Color.White, M.DegToRad(drawAngle), G.D_FG - .001f);            
+            drillAnimation.Draw(sb, Position, new Vector2(8), Vector2.One, Color.White, M.DegToRad(drawAngle), G.D_PLAYER - .001f);            
         }
     }
 }

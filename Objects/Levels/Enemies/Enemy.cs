@@ -27,7 +27,7 @@ namespace Wyri.Objects.Levels.Enemies
                 Dead = true;
             }
 
-            if (Dead) Kill();
+            if (Dead) OnKillEffect();
             if (Dead) Destroy();
         }
 
@@ -36,6 +36,6 @@ namespace Wyri.Objects.Levels.Enemies
             base.Draw(sb);
         }
 
-        public abstract void Kill();
+        protected abstract void OnKillEffect();
     }
 }
