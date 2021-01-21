@@ -536,7 +536,9 @@ namespace Wyri.Objects
 
                 if (State == PlayerState.Climb)
                 {
-                    wasOnWallTimer = 5;
+                    
+                    if (kDown)
+                        wasOnWallTimer = 10;
 
                     if (!((kLeft && Direction == PlayerDirection.Left) || (kRight && Direction == PlayerDirection.Right)) && !kDown && !kAction)
                         grabTimer = Math.Max(grabTimer - 1, 0);

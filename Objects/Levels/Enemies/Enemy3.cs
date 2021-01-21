@@ -63,14 +63,7 @@ namespace Wyri.Objects.Levels.Enemies
                     yVel = spd;
                     break;
             }
-            //var tile = this.CollisionTiles(0, 0, false).Where(
-            //    t => t.Item1.IsSolid
-            //    || t.Item1.Type == TileType.Move_Up
-            //    || t.Item1.Type == TileType.Move_Down
-            //    || t.Item1.Type == TileType.Move_Left
-            //    || t.Item1.Type == TileType.Move_Right).FirstOrDefault().Item1;
 
-            //var solidTile = this.CollisionTiles(0, 0, false).Where(t => t.Item1.IsSolid).FirstOrDefault().Item1;
             var solidTile = Collisions.TileAt(X + Math.Sign(xVel) * 4, Y + Math.Sign(yVel) * 4, "FG");
             var directionTile = Collisions.TileAt(X, Y, "FG");
 
@@ -81,11 +74,6 @@ namespace Wyri.Objects.Levels.Enemies
                 else if (directionTile.Type == Types.TileType.Move_Left) direction = Direction.Left;
                 else if (directionTile.Type == Types.TileType.Move_Right) direction = Direction.Right;
 
-                //if ((int)prevDirection == -(int)direction)
-                //{
-                //    txVel = 0;
-                //    tyVel = 0;
-                //}
             }
             else if (solidTile != null && solidTile.IsSolid)
             {
