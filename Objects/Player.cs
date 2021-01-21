@@ -203,6 +203,9 @@ namespace Wyri.Objects
             if (inWater || onGround)
                 return false;
 
+            if (Left <= MainGame.Camera.Room.X + 4 || Right >= MainGame.Camera.Room.X + MainGame.Camera.Room.Width - 4)
+                return false;
+
             var grid = MainGame.Map.LayerData["FG"];
             float tx = M.Div(X + Math.Sign((int)Direction) * 4f, G.T);
             float ty = M.Div(Y + 2, G.T);
