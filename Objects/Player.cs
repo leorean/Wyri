@@ -297,6 +297,9 @@ namespace Wyri.Objects
             AnimationState[State].Update();
             SetCameraRoom();
 
+            if (MainGame.Camera.Room == null)
+                return;
+
             // logic
 
             if (State == PlayerState.StandUp)
@@ -335,12 +338,6 @@ namespace Wyri.Objects
             var obstacle = this.CollisionBounds<Obstacle>().FirstOrDefault();
             if (obstacle != null)
             {
-                //if (State != PlayerState.Dead)
-                //{
-                //    var eff = new TextureBurstEmitter(GameResources.Player[32], Position, new Vector2(1.25f, 1f), .1f, 30);
-                //    eff.Depth = G.D_PLAYER_DEAD + .0001f;
-                //}
-
                 State = PlayerState.Dead;
             }
 
@@ -350,9 +347,6 @@ namespace Wyri.Objects
                 new WaterSplashEmitter(new Vector2(X, Bottom), MainGame.Camera.Room);
 
             inWater = waterTile != null;
-
-            /*if (inWater && !Abilities.HasFlag(PlayerAbility.SWIM))
-                State = PlayerState.Dead;*/
 
             if (State != PlayerState.Dead && State != PlayerState.StandUp)
             {
@@ -374,7 +368,7 @@ namespace Wyri.Objects
                     ControlsEnabled = false;
                     return;
                 }
-                
+
                 for (var i = MainGame.Camera.Room.X; i < MainGame.Camera.Room.X + MainGame.Camera.Room.Width; i += G.T)
                 {
                     for (var j = MainGame.Camera.Room.Y; j < MainGame.Camera.Room.Y + MainGame.Camera.Room.Height; j += G.T)

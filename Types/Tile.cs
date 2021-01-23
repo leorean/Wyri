@@ -31,6 +31,7 @@ namespace Wyri.Types
         public bool IsAnimated { get { return AnimationLength > 0 && AnimationTimeout > 0; } }
         public int AnimationLength { get; set; } = 0;
         public int AnimationTimeout = 0;
+        public int AnimationOffset = 1;
         private int timeout;
         public int AnimationFrame { get; private set; } = 0;        
         public SwitchState SwitchState { get; set; } = SwitchState.None;
@@ -61,7 +62,8 @@ namespace Wyri.Types
                     {
                         string[] animationOptions = o.Remove(0, 1).Split('-');
                         AnimationLength = int.Parse(animationOptions[0]);
-                        AnimationTimeout = int.Parse(animationOptions[1]);
+                        AnimationTimeout = int.Parse(animationOptions[1]);                        
+                        AnimationOffset = animationOptions.Length == 3 ? int.Parse(animationOptions[2]) : 1;
                         continue;
                     }
 
@@ -122,7 +124,7 @@ namespace Wyri.Types
             timeout = Math.Max(timeout - 1, 0);
             if (timeout == 0)
             {
-                AnimationFrame = (AnimationFrame + 1) % AnimationLength;
+                AnimationFrame = (AnimationFrame + AnimationOffset) % (AnimationLength * AnimationOffset);
                 timeout = AnimationTimeout;
             }
         }
