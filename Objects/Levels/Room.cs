@@ -42,7 +42,7 @@ namespace Wyri.Objects.Levels
         {
             foreach(var o in objects.ToList())
             {
-                o.Destroy();
+                o?.Destroy();
             }
             base.Destroy();
         }
