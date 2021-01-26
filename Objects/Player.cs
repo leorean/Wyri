@@ -794,7 +794,9 @@ namespace Wyri.Objects
                         gotItemTimer = Math.Max(gotItemTimer - 1, 0);
                         if (gotItemTimer == 0 && itemMsgBox == null)
                         {
-                            itemMsgBox = new MessageBox(16, 16, gotItem.Text);                            
+                            var msgY = Y >= MainGame.Camera.ViewY + 96 ? 16 : 80;
+
+                            itemMsgBox = new MessageBox(16, msgY, gotItem.Text);                            
                             itemMsgBox.OnFinished += () =>
                             {
                                 ControlsEnabled = true;
