@@ -40,10 +40,11 @@ namespace Wyri.Objects.Levels
             switch (Type)
             {
                 case 0:                    
-                    Text = $"[color:{gc1},center:true,spd:{gs}]GOT A ~TIME CAPSULE~!";
+                    Text = $"[color:{gc1},center:true,spd:{gs}]GOT A ~QUANTUM FRAGMENT~!";
                     if (MainGame.SaveGame.Collected == 0)
                     {
-                        Text += $"|[color:{gc2}]You need to find enough of them to go\n~back in time~!";
+                        //Text += $"|[color:{gc2}]You need to find enough of them to go\n~back in time~!";
+                        Text += $"|[color:{gc2}]Collect them all so you can\nfinally fix your ~time capsule~!";
                     }
                     MainGame.SaveGame.Collected++;
                     break;
@@ -73,7 +74,7 @@ namespace Wyri.Objects.Levels
                     break;
                 case 7:
                     MainGame.SaveGame.Abilities |= PlayerAbility.DIVE;
-                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~GILLS~!|These allow you to breathe underwater.";
+                    Text = $"[color:{gc2},center:true,spd:{gs}]GOT THE ~GILLS~!|These allow you to breathe anywhere.";
                     break;
                 case 8:
                     MainGame.SaveGame.Abilities |= PlayerAbility.CARD_A;

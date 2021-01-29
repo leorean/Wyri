@@ -107,5 +107,5 @@ Biomes/Places
 	- west end of the world
 * Eastern atoll
 	- east end of the world
-* Dunkirk's wharf
-	- floating island in the sky (remaining humans, hiding from robots etc)
+* Daedalus
+	- floating island in the sky (remaining humans?, hiding from robots etc?)

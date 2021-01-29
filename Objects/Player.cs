@@ -415,8 +415,7 @@ namespace Wyri.Objects
                         oxygen = Math.Max(oxygen - 1, 0);
                         if (oxygen == 0)
                         {                            
-                            ControlsEnabled = false;
-                            if (onGround)
+                            ControlsEnabled = false;                            
                             {
                                 State = PlayerState.Dead;
                                 return;
@@ -636,11 +635,12 @@ namespace Wyri.Objects
                 {
                     if ((State == PlayerState.Jump || State == PlayerState.Walk || State == PlayerState.Idle) && (kUp || kDown) && !kJumpHolding && drill == null)
                     {
-                        if (!inWater && !onGround && wasOnWallTimer == 0)
+                        if (/*!inWater &&*/ !onGround && wasOnWallTimer == 0)
                         {
-                            if (hoverPower > 5 && YVel >= 0)
-                            {                                
-                                YVel = -yGrav;
+                            if (hoverPower > 5 && (YVel >= 0 || inWater))
+                            {
+                                if (!kDown)
+                                    YVel = -yGrav;
                                 State = PlayerState.Hover;
                             }
                         }
@@ -656,9 +656,9 @@ namespace Wyri.Objects
 
                 if (state == PlayerState.Hover)
                 {
-                    if (hoverPower % 3 == 0)
+                    if (MainGame.Ticks % 3 == 0)
                     {
-                        var o = (hoverPower % 6 == 0) ? -3 : 3;                        
+                        var o = (MainGame.Ticks % 6 == 0) ? -3 : 3;                        
                         var eff = new AnimationEffect(new Vector2(X + o, Bottom), 3, MainGame.Camera.Room);
                         eff.Depth = depth - .0001f;
                         eff.XVel = -XVel * .1f;
@@ -678,14 +678,16 @@ namespace Wyri.Objects
                     }
                     
                     hoverTimeout = 30;
-                    hoverPower = Math.Max(hoverPower - 1, 0);
+                    if (!inWater)
+                        hoverPower = Math.Max(hoverPower - 1, 0);                    
 
                     if (hoverButtonTimeout == 0 || hoverPower == 0 || drill != null)
                         state = PlayerState.Jump;
                 }
                 else
                 {
-                    hoverTimeout = Math.Max(hoverTimeout - 1, 0);
+                    if (onGround || (!kUp && !kDown))
+                        hoverTimeout = Math.Max(hoverTimeout - 1, 0);
                     if (hoverTimeout == 0)
                     {
                         hoverPower = (int)Math.Min(hoverPower + 2, maxHoverPower);
@@ -781,7 +783,6 @@ namespace Wyri.Objects
                     }
                 }
 
-
                 if (inWater)
                 {
                     ResetJumps();
@@ -846,7 +847,7 @@ namespace Wyri.Objects
                     if (YVel >= 0)
                     {
                         Y = M.Div(Y + YVel + yGrav, (float)G.T) * G.T;
-                        if (State == PlayerState.Jump && drill == null)
+                        if (State == PlayerState.Jump && drill == null && this.CollisionPoint<Room>(X, Bottom + YVel + 1).Count != 0)
                         {
                             State = PlayerState.Idle;
                         }
