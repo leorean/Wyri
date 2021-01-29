@@ -35,7 +35,7 @@ namespace Wyri.Types
         private int timeout;
         public int AnimationFrame { get; private set; } = 0;        
         public SwitchState SwitchState { get; set; } = SwitchState.None;
-        
+        public bool IsHidden { get; private set; } = false;
         public TileType Type { get; private set; }
 
         public string typeData { get; private set; }
@@ -108,6 +108,9 @@ namespace Wyri.Types
                             break;
                         case "MOVE_R":
                             Type = TileType.Move_Right;
+                            break;
+                        case "HIDDEN":
+                            IsHidden = true;
                             break;
                         default:
                             typeData = o;

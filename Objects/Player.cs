@@ -218,7 +218,7 @@ namespace Wyri.Objects
             if (tground != null && tground.IsSolid)
                 return false;
 
-            if (t != null && t.IsSolid)
+            if (t != null && t.IsSolid && !t.IsHidden)
             {
                 return true;
             }
@@ -381,7 +381,7 @@ namespace Wyri.Objects
                         {
                             if (!t.IsSolid)
                             {
-                                if (t.Type == TileType.Card_A)
+                                if (t.Type == TileType.Card_A || t.Type == TileType.Card_B || t.Type == TileType.Card_C)
                                 {
                                     new AnimationEffect(new Vector2(i + 4, j + 4), 4, MainGame.Camera.Room);
                                     t.IsSolid = true;
@@ -391,7 +391,9 @@ namespace Wyri.Objects
                         }
                         else
                         {
-                            if (Abilities.HasFlag(PlayerAbility.CARD_A) && t.Type == TileType.Card_A)
+                            if ((Abilities.HasFlag(PlayerAbility.CARD_A) && t.Type == TileType.Card_A)
+                                || (Abilities.HasFlag(PlayerAbility.CARD_B) && t.Type == TileType.Card_B)
+                                || (Abilities.HasFlag(PlayerAbility.CARD_C) && t.Type == TileType.Card_C))
                             {
                                 if (t.IsSolid)
                                 {
