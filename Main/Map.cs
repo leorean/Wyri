@@ -21,6 +21,18 @@ namespace Wyri.Main
 {
     public static class MapExtensions
     {
+        public static bool HasAttribute(this XmlAttributeCollection attribs, string name)
+        {
+            foreach (XmlAttribute a in attribs)
+            {
+                if (a.Name == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static string Find(this XmlAttributeCollection attribs, string name)
         {
             foreach (XmlAttribute a in attribs)
@@ -74,8 +86,11 @@ namespace Wyri.Main
                         {
                             if (tileNode.Name == "tile")
                             {
-                                string val = tileNode.Attributes["type"].Value;
-                                TileOptionsDictionary.Add(int.Parse(tileNode.Attributes["id"].Value), val);
+                                if (tileNode.Attributes.HasAttribute("type"))
+                                {
+                                    string val = tileNode.Attributes["type"].Value;
+                                    TileOptionsDictionary.Add(int.Parse(tileNode.Attributes["id"].Value), val);
+                                }
                             }
                         }
                     }
